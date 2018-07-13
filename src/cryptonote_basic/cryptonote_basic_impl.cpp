@@ -135,16 +135,16 @@ namespace cryptonote {
        return false;
      }
 
-     uint64_t base_reward = ((unsigned long long) MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
+     uint64_t base_reward = ( MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
       MERROR("Base Reward: " << base_reward);
-      if (already_generated_coins <=  uint64_t(3000000000000000000)) {
-                uint64_t bad_tail_emission_reward = uint64_t(3000000000000000000);
-                if (already_generated_coins + bad_tail_emission_reward >= (unsigned long long) MONEY_SUPPLY || base_reward < bad_tail_emission_reward)
+      if (already_generated_coins <=  uint64_t(300000000)) {
+                uint64_t bad_tail_emission_reward = uint64_t(300000000);
+                if (already_generated_coins + bad_tail_emission_reward >=  MONEY_SUPPLY || base_reward < bad_tail_emission_reward)
                 {
                     base_reward = bad_tail_emission_reward;
                 }
               }else{
-                base_reward = ((unsigned long long) MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
+                base_reward = ( MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
 
               }
 
@@ -152,7 +152,7 @@ namespace cryptonote {
      reward +=  fee;
      MERROR("Printed:" << print_money(fee + reward));
      MERROR("Already Generated:" << print_money(already_generated_coins));
-     MERROR("Supply:" << print_money((unsigned long long) MONEY_SUPPLY));
+     MERROR("Supply:" << print_money(MONEY_SUPPLY));
 
      return true;
   }
