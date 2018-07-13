@@ -58,7 +58,7 @@
 #define BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW               60
 
 // MONEY_SUPPLY - total number coins to be generated
-#define MONEY_SUPPLY                                  ((uint64_t) 84000000000000000000LLU)
+#define MONEY_SUPPLY                                   ((unsigned long long)84000000000000000000)
 #define PREMINE                                        (30000000000000000)
 
 #define EMISSION_SPEED_FACTOR_PER_MINUTE                (20)
