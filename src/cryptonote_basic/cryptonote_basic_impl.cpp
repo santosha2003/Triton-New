@@ -142,11 +142,6 @@ namespace cryptonote {
                 if (already_generated_coins + bad_tail_emission_reward >=  MONEY_SUPPLY || base_reward < bad_tail_emission_reward)
                 {
                     base_reward = bad_tail_emission_reward;
-                     reward = base_reward;
-                    MERROR("Printed:" << print_money(fee + reward));
-                    MERROR("Already Generated:" << print_money(already_generated_coins));
-                    MERROR("Supply:" << print_money(MONEY_SUPPLY));
-                    return true;
                 }
               }
 
