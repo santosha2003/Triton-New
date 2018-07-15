@@ -137,11 +137,12 @@ namespace cryptonote {
 
      uint64_t base_reward = ( MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
       MERROR("Base Reward: " << base_reward);
-      if (already_generated_coins <=  (uint64_t)30000000000 && version == BLOCK_MAJOR_VERSION_1) {
+      if (already_generated_coins <=  uint64_t(30000000000) && version == BLOCK_MAJOR_VERSION_1) {
                 uint64_t bad_tail_emission_reward =uint64_t (30000000000);
-
+                if (already_generated_coins + bad_tail_emission_reward >= MONEY_SUPPLY || base_reward < bad_tail_emission_reward)
+     {
                   base_reward = bad_tail_emission_reward;
-
+                  }
               }
 
      reward = get_penalized_amount(base_reward, median_size, current_block_size);
