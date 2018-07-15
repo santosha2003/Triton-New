@@ -71,8 +71,8 @@
 #define CRYPTONOTE_COINBASE_BLOB_RESERVED_SIZE          600
 #define CRYPTONOTE_DISPLAY_DECIMAL_POINT                4
 // COIN - number of smallest units in one coin
-#define COIN                                            ((uint64_t)100000) // pow(10, 2)
-#define LEGACY_MINIMUM_FEE								              ((uint64_t)100000)
+#define COIN                                            ((uint64_t)10000) // pow(10, 2)
+#define LEGACY_MINIMUM_FEE								              ((uint64_t)1000000)
 #define FEE_PER_KB_OLD                                  ((uint64_t)10000000000) // pow(10, 10)
 #define FEE_PER_KB                                      ((uint64_t)2000000000) // 2 * pow(10, 9)
 #define DYNAMIC_FEE_PER_KB_BASE_FEE                     ((uint64_t)2000000000) // 2 * pow(10,9)
