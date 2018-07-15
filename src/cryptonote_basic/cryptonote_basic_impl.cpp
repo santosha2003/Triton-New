@@ -150,6 +150,8 @@ namespace cryptonote {
      MERROR("Printed:" << print_money(fee + reward));
      MERROR("Already Generated:" << print_money(already_generated_coins));
      MERROR("Supply:" << print_money(MONEY_SUPPLY));
+     MERROR("Base Reward:" << print_money(base_reward));
+
 
      return true;
   }
