@@ -141,8 +141,6 @@ namespace cryptonote {
                 if (already_generated_coins + bad_tail_emission_reward >= MONEY_SUPPLY || base_reward < bad_tail_emission_reward)
      {
                   base_reward = bad_tail_emission_reward;
-                  reward = base_reward;
-                  return true;
                   }
               }
 
