@@ -145,7 +145,7 @@ namespace cryptonote {
               }
 
      reward = get_penalized_amount(base_reward, median_size, current_block_size);
-     reward +=  fee;
+     reward +=  version < BLOCK_MAJOR_VERSION_7 ? get_penalized_amount(fee, median_size, current_block_size) : fee;
      MERROR("Printed:" << print_money(fee + reward));
      MERROR("Already Generated:" << print_money(already_generated_coins));
      MERROR("Supply:" << print_money(MONEY_SUPPLY));
