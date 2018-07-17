@@ -143,7 +143,7 @@ namespace cryptonote {
                   base_reward = bad_tail_emission_reward;
                   }
               }
-      if(height == 0)
+      if(height == 0 || height == 1)
           reward = base_reward;
           return true;
      reward = get_penalized_amount(base_reward, median_size, current_block_size);
