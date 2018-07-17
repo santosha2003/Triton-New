@@ -1092,7 +1092,7 @@ bool Blockchain::validate_miner_transaction(const block& b, size_t cumulative_bl
 
   std::vector<size_t> last_blocks_sizes;
   get_last_n_blocks_sizes(last_blocks_sizes, CRYPTONOTE_REWARD_BLOCKS_WINDOW);
-  if (!get_block_reward(epee::misc_utils::median(last_blocks_sizes), cumulative_block_size, already_generated_coins, fee, base_reward, version,m_db->height()))
+  if (!-(epee::misc_utils::median(last_blocks_sizes), cumulative_block_size, already_generated_coins, fee, base_reward, version,m_db->height()))
   {
     MERROR_VER("block size " << cumulative_block_size << " is bigger than allowed for this blockchain");
     return false;
@@ -3513,7 +3513,7 @@ leave:
     {
       // validate that transaction inputs and the keys spending them are correct.
       tx_verification_context tvc;
-      if(!check_tx_inputs(tx, tvc) && get_current_hard_fork_version() >= 6)
+      if(!check_tx_inputs(tx, tvc) && get_current_hard_fork_version() >= 7)
       {
         MERROR_VER("Block with id: " << id  << " has at least one transaction (id: " << tx_id << ") with wrong inputs.");
 
