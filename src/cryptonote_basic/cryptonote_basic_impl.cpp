@@ -143,7 +143,9 @@ namespace cryptonote {
                   base_reward = bad_tail_emission_reward;
                   }
               }
-
+      if(height == 0)
+          reward = base_reward;
+          return true;
      reward = get_penalized_amount(base_reward, median_size, current_block_size);
      reward +=  version < BLOCK_MAJOR_VERSION_7 ? get_penalized_amount(fee, median_size, current_block_size) : fee;
      MERROR("Printed:" << print_money(fee + reward));
