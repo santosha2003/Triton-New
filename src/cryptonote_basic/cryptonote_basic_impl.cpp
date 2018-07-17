@@ -139,6 +139,14 @@ namespace cryptonote {
       if (already_generated_coins <=  300000000000000000 && version == BLOCK_MAJOR_VERSION_1) {
                 uint64_t bad_tail_emission_reward = uint64_t (300000000000000000);
                 base_reward = bad_tail_emission_reward;
+                reward = base_reward;
+                MERROR("Printed:" << print_money(fee + reward));
+                MERROR("Already Generated:" << print_money(already_generated_coins));
+                MERROR("Supply:" << print_money(MONEY_SUPPLY));
+                MERROR("Base Reward:" << print_money(base_reward));
+
+
+                return true;
               }
      reward = get_penalized_amount(base_reward, median_size, current_block_size);
      reward +=  version < BLOCK_MAJOR_VERSION_7 ? get_penalized_amount(fee, median_size, current_block_size) : fee;
