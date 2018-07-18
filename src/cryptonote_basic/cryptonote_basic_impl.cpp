@@ -128,7 +128,7 @@ namespace cryptonote {
     }
     if (already_generated_coins == 0)
    {
-     reward = 30000000000000000;
+     reward = 300000000000000000;
      return true;
    }
     uint64_t full_reward_zone = get_min_block_size(version);
