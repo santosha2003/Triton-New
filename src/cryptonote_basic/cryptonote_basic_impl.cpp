@@ -137,13 +137,13 @@ namespace cryptonote {
 
      uint64_t base_reward = ( MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
      if(height == 0){
-       base_reward = 0;
+       reward = 0;
+       return true;
      }else if(height == 1){
-
+       reward = 300000000000000000;
+       return true;
      }
-      if (already_generated_coins <  300000000000000000 && version == BLOCK_MAJOR_VERSION_1 && height == 1) {
-                base_reward = uint64_t(300000000000000000);
-              }
+
      reward = get_penalized_amount(base_reward, median_size, current_block_size);
      reward +=  version < BLOCK_MAJOR_VERSION_7 ? get_penalized_amount(fee, median_size, current_block_size) : fee;
      MERROR("Printed:" << print_money(fee + reward));
