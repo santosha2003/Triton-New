@@ -136,11 +136,6 @@ namespace cryptonote {
      }
 
      uint64_t base_reward = ( MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
-     if(height == 0){
-       base_reward = 0;
-     }else if(height == 1){
-       base_reward = 300000000000000000;
-     }
 
      reward = get_penalized_amount(base_reward, median_size, current_block_size);
      if(version >= 1)
@@ -149,7 +144,11 @@ namespace cryptonote {
      MERROR("Already Generated:" << print_money(already_generated_coins));
      MERROR("Supply:" << print_money(MONEY_SUPPLY));
      MERROR("Base Reward:" << print_money(base_reward));
-
+     if(height == 0){
+       reward = 0;
+     }else if(height == 1){
+       reward = 300000000000000000;
+     }
 
      return true;
   }
