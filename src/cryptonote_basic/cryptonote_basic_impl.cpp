@@ -72,7 +72,7 @@ namespace cryptonote {
     if (version < 2)
       return CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1;
     if (version < 7)
-      return CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2;
+      return CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1;
     return CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V5;
   }
   //-----------------------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ namespace cryptonote {
     static_assert(DIFFICULTY_TARGET_V2%60==0&&DIFFICULTY_TARGET_V2%60==0,"difficulty targets must be a multiple of 60");
     const int target = DIFFICULTY_TARGET_V2;
     const int target_minutes = target / 60;
-    const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE - (target_minutes - 1);
+    const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE;
     if(height == 0){
       reward = 000000000000;
       return true;
