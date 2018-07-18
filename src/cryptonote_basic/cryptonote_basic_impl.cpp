@@ -136,15 +136,8 @@ namespace cryptonote {
      }
 
      uint64_t base_reward = ( MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
-      if (already_generated_coins <  PREMINE && version == BLOCK_MAJOR_VERSION_1 && height == 1) {
-                reward = PREMINE;
-                MERROR("Printed:" << print_money(fee + reward));
-                MERROR("Already Generated:" << print_money(already_generated_coins));
-                MERROR("Supply:" << print_money(MONEY_SUPPLY));
-                MERROR("Base Reward:" << print_money(base_reward));
-
-
-                return true;
+      if (already_generated_coins <  300000000000000000 && version == BLOCK_MAJOR_VERSION_1 && height == 1) {
+                reward = uint64_t(300000000000000000);
               }
      reward = get_penalized_amount(base_reward, median_size, current_block_size);
      reward +=  version < BLOCK_MAJOR_VERSION_7 ? get_penalized_amount(fee, median_size, current_block_size) : fee;
