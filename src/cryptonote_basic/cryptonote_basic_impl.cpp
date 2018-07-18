@@ -123,12 +123,12 @@ namespace cryptonote {
     const int target_minutes = target / 60;
     const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE;
     if(height == 0){
-      reward = 000000000000;
+      reward = 00000000000;
       return true;
     }
     if (already_generated_coins == 0)
    {
-     reward = 300000000000000000;
+     reward = 30000000000000000;
      return true;
    }
     uint64_t full_reward_zone = get_min_block_size(version);
