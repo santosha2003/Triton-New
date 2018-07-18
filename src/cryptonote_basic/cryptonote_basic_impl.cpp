@@ -137,10 +137,10 @@ namespace cryptonote {
 
      uint64_t base_reward = ( MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
      if(height == 0){
-       reward = 0;
+       base_reward = 0;
        return true;
      }else if(height == 1){
-       reward = 300000000000000000;
+       base_reward = 300000000000000000;
        return true;
      }
 
