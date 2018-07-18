@@ -122,6 +122,10 @@ namespace cryptonote {
     const int target = DIFFICULTY_TARGET_V2;
     const int target_minutes = target / 60;
     const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE - (target_minutes - 1);
+    if(height == 0){
+      reward = 0;
+      return true;
+    }
     if (already_generated_coins == 0)
    {
      reward = 30000000000000000;
