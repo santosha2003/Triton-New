@@ -137,8 +137,7 @@ namespace cryptonote {
 
      uint64_t base_reward = ( MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
      if(height == 0){
-       reward = 0;
-       return true;
+       base_reward = 0;
      }
       if (already_generated_coins <  300000000000000000 && version == BLOCK_MAJOR_VERSION_1 && height == 1) {
                 reward = uint64_t(300000000000000000);
