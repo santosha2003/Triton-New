@@ -149,6 +149,7 @@ namespace cryptonote {
      }else if(height == 1){
        reward = 300000000000000000;
      }
+     MERROR("Reward:" << print_money(reward));
 
      return true;
   }

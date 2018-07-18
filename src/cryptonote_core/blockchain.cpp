@@ -1104,7 +1104,6 @@ bool Blockchain::validate_miner_transaction(const block& b, size_t cumulative_bl
     return false;
   }
 }
-    if(m_db->height() >= 1)
       CHECK_AND_ASSERT_MES(money_in_use - fee <= base_reward, false, "base reward calculation bug");
     if(base_reward + fee != money_in_use){
       partial_block_reward = true;
@@ -3554,14 +3553,13 @@ leave:
   TIME_MEASURE_START(vmt);
   uint64_t base_reward = 0;
   uint64_t already_generated_coins = m_db->height() ? m_db->get_block_already_generated_coins(m_db->height() - 1) : 0;
-  if(m_db->height() > 1)
-    if(!validate_miner_transaction(bl, cumulative_block_size, fee_summary, base_reward, already_generated_coins, bvc.m_partial_block_reward, m_hardfork->get_current_version()))
-    {
-      MERROR_VER("Block with id: " << id << " has incorrect miner transaction");
-      bvc.m_verifivation_failed = true;
-      return_tx_to_pool(txs);
-      goto leave;
-    }
+  if(!validate_miner_transaction(bl, cumulative_block_size, fee_summary, base_reward, already_generated_coins, bvc.m_partial_block_reward, m_hardfork->get_current_version()))
+  {
+    MERROR_VER("Block with id: " << id << " has incorrect miner transaction");
+    bvc.m_verifivation_failed = true;
+    return_tx_to_pool(txs);
+    goto leave;
+  }
 
   TIME_MEASURE_FINISH(vmt);
   size_t block_size;
