@@ -122,7 +122,11 @@ namespace cryptonote {
     const int target = DIFFICULTY_TARGET_V2;
     const int target_minutes = target / 60;
     const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE - (target_minutes - 1);
-
+    if (already_generated_coins == 0)
+   {
+     reward = 30000000000000000;
+     return true;
+   }
     uint64_t full_reward_zone = get_min_block_size(version);
 
      //make it soft
@@ -138,17 +142,11 @@ namespace cryptonote {
      uint64_t base_reward = ( MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
 
      reward = get_penalized_amount(base_reward, median_size, current_block_size);
-     if(version >= 1)
       reward +=  version < BLOCK_MAJOR_VERSION_7 ? get_penalized_amount(fee, median_size, current_block_size) : fee;
      MERROR("Printed:" << print_money(fee + reward));
      MERROR("Already Generated:" << print_money(already_generated_coins));
      MERROR("Supply:" << print_money(MONEY_SUPPLY));
      MERROR("Base Reward:" << print_money(base_reward));
-     if(height == 0){
-       reward = 0;
-     }else if(height == 1){
-       reward = 300000000000000000;
-     }
      MERROR("Reward:" << print_money(reward));
 
      return true;
