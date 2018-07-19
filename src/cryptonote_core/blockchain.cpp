@@ -1104,11 +1104,13 @@ bool Blockchain::validate_miner_transaction(const block& b, size_t cumulative_bl
     return false;
   }
 }
+  if(m_db->height() >=2){
       CHECK_AND_ASSERT_MES(money_in_use - fee <= base_reward, false, "base reward calculation bug");
     if(base_reward + fee != money_in_use){
       partial_block_reward = true;
     base_reward = money_in_use - fee;
 	}
+}
   return true;
 }
 //------------------------------------------------------------------
