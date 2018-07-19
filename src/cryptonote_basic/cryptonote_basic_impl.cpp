@@ -122,7 +122,7 @@ namespace cryptonote {
     const int target = DIFFICULTY_TARGET_V2;
     const int target_minutes = target / 60;
     const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE;
-    unsigned long long supply = 84000000000000000000;
+    unsigned long long supply = 84000000000000000000ull;
     if(height == 0){
       reward = 0000000000000;
       return true;
