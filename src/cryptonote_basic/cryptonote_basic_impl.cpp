@@ -124,12 +124,17 @@ namespace cryptonote {
     const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE;
     uint64_t yeet = pow(10, 12);
     if(height == 0){
-      reward = (0 * yeet);
+      reward = 0000000000000;
       return true;
     }
     if (already_generated_coins == 0)
    {
      reward = 300000000000000000;
+     MERROR("Printed:" << print_money(fee + reward));
+     MERROR("Already Generated:" << print_money(already_generated_coins));
+     MERROR("Supply:" << print_money((MONEY_SUPPLY * yeet)));
+     MERROR("Base Reward:" << print_money(base_reward));
+     MERROR("Reward:" << print_money(reward));
      return true;
    }
     uint64_t full_reward_zone = get_min_block_size(version);
