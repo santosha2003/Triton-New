@@ -122,7 +122,7 @@ namespace cryptonote {
     const int target = DIFFICULTY_TARGET_V2;
     const int target_minutes = target / 60;
     const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE;
-    const int yeet = (uint64_t)pow(10, 12);
+    uint64_t yeet = pow(10, 12);
     if(height == 0){
       reward = (0 * yeet);
       return true;
