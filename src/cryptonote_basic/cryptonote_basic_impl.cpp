@@ -125,6 +125,9 @@ namespace cryptonote {
     uint64_t yeet = pow(10, 12);
     if(height == 0){
       reward = 0000000000000;
+      MERROR("Already Generated:" << print_money(already_generated_coins));
+      MERROR("Supply:" << print_money((MONEY_SUPPLY * yeet)));
+      MERROR("Reward:" << print_money(reward));
       return true;
     }
     if (already_generated_coins == 0)
