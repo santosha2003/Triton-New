@@ -3543,6 +3543,7 @@ leave:
       }
     }
 #endif
+
     TIME_MEASURE_FINISH(cc);
     t_checktx += cc;
     fee_summary += fee;
@@ -3570,6 +3571,7 @@ leave:
   // populate various metadata about the block to be stored alongside it.
   block_size = cumulative_block_size;
   cumulative_difficulty = current_diffic;
+  uint64_t yeet = pow(10, 12);
   // In the "tail" state when the minimum subsidy (implemented in get_block_reward) is in effect, the number of
   // coins will eventually exceed MONEY_SUPPLY and overflow a uint64. To prevent overflow, cap already_generated_coins
   // at MONEY_SUPPLY. already_generated_coins is only used to compute the block subsidy and MONEY_SUPPLY yields a
