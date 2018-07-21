@@ -124,12 +124,12 @@ namespace cryptonote {
     const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE;
     const int yeet = (uint64_t)pow(10, 12);
     if(height == 0){
-      reward = 0000000000000;
+      reward = (0 * yeet);
       return true;
     }
     if (already_generated_coins == 0)
    {
-     reward = 300000000000000;
+     reward = (3000000 * yeet);
      return true;
    }
     uint64_t full_reward_zone = get_min_block_size(version);
