@@ -3576,7 +3576,7 @@ leave:
   // coins will eventually exceed MONEY_SUPPLY and overflow a uint64. To prevent overflow, cap already_generated_coins
   // at MONEY_SUPPLY. already_generated_coins is only used to compute the block subsidy and MONEY_SUPPLY yields a
   // subsidy of 0 under the base formula and therefore the minimum subsidy >0 in the tail state.
-  already_generated_coins = base_reward < ((MONEY_SUPPLY * yeet)-already_generated_coins) ? already_generated_coins + base_reward : (MONEY_SUPPLY * yeet);
+  already_generated_coins = base_reward < ((MONEY_SUPPLY)-already_generated_coins) ? already_generated_coins + base_reward : (MONEY_SUPPLY);
   if(m_db->height())
     cumulative_difficulty += m_db->get_block_cumulative_difficulty(m_db->height() - 1);
 
