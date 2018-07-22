@@ -129,7 +129,7 @@ namespace cryptonote {
     if(height == 0){
       reward = 0000000000000;
       MERROR("Already Generated:" << print_money(already_generated_coins));
-      MERROR("Supply:" << print_money(yeet));
+      MERROR("Supply:" << print_money2(yeet));
       MERROR("Reward:" << print_money(reward));
       return true;
     }
@@ -137,7 +137,7 @@ namespace cryptonote {
    {
      reward = 300000000000000000;
      MERROR("Already Generated:" << print_money(already_generated_coins));
-     MERROR("Supply:" << print_money(yeet));
+     MERROR("Supply:" << print_money2(yeet));
      MERROR("Reward:" << print_money(reward));
      return true;
    }
@@ -159,7 +159,7 @@ namespace cryptonote {
       reward +=  version < BLOCK_MAJOR_VERSION_7 ? get_penalized_amount(fee, median_size, current_block_size) : fee;
      MERROR("Printed:" << print_money(fee + reward));
      MERROR("Already Generated:" << print_money(already_generated_coins));
-     MERROR("Supply:" << print_money((MONEY_SUPPLY)));
+     MERROR("Supply:" << print_money2(yeet));
      MERROR("Base Reward:" << print_money(base_reward));
      MERROR("Reward:" << print_money(reward));
 
