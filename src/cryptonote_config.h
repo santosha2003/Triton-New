@@ -32,6 +32,7 @@
 
 #include <string>
 #include <boost/uuid/uuid.hpp>
+#include <boost/multiprecision/cpp_int.hpp>
 
 #define CRYPTONOTE_DNS_TIMEOUT_MS                       20000
 

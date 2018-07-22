@@ -30,6 +30,8 @@
 
 #include "include_base_utils.h"
 using namespace epee;
+using namespace boost::multiprecision;
+#include <boost/multiprecision/cpp_int.hpp>
 
 #include "cryptonote_basic_impl.h"
 #include "string_tools.h"
@@ -122,7 +124,7 @@ namespace cryptonote {
     const int target = DIFFICULTY_TARGET_V2;
     const int target_minutes = target / 60;
     const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE;
-    uint64_t yeet = pow(10, 12);
+    int128_t yeet = 8400000000000000000;
     if(height == 0){
       reward = 0000000000000;
       MERROR("Already Generated:" << print_money(already_generated_coins));
