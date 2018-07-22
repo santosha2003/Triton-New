@@ -29,9 +29,10 @@
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
 #include "include_base_utils.h"
+#include <boost/multiprecision/cpp_int.hpp>
 using namespace epee;
 using namespace boost::multiprecision;
-#include <boost/multiprecision/cpp_int.hpp>
+
 
 #include "cryptonote_basic_impl.h"
 #include "string_tools.h"
