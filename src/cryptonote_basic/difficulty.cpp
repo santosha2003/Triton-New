@@ -262,7 +262,7 @@ namespace cryptonote {
        }
 
 
-       if (version >= 2) {
+       if (height >= 2) {
          if (high != 0) {
            return 0;
          }
