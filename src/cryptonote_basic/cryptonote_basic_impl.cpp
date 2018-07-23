@@ -160,13 +160,13 @@ namespace cryptonote {
        MERROR("Base Reward:" << print_money(base_reward));
        MERROR("Reward:" << print_money(reward));
      }else if(version < 7){
-       uint64_t base_reward = ((MONEY_SUPPLY * 100) - already_generated_coins) >> emission_speed_factor;
+       uint64_t base_reward = (MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
        reward = get_penalized_amount((base_reward * 100), median_size, current_block_size);
         reward +=  version < BLOCK_MAJOR_VERSION_7 ? get_penalized_amount(fee, median_size, current_block_size) : fee;
        MERROR("Printed:" << print_money(fee + reward));
        MERROR("Already Generated:" << print_money(already_generated_coins));
        MERROR("Supply:" << print_money(MONEY_SUPPLY));
-       MERROR("Base Reward:" << print_money(base_reward));
+       MERROR("Supply - now" << print_money(base_reward));
        MERROR("Reward:" << print_money(reward));
     }
 
