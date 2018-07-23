@@ -177,7 +177,7 @@ namespace cryptonote {
 
     return next_difficulty;
   }else if(height >= 24861){
-       if(height <= 24922 && height >= 24861){return 10000000;}
+       if(height <= 24922){return 10000000;}
     	 int64_t T = target_seconds;
 
     	//printf("size ts:%lu\n",timestamps.size());
