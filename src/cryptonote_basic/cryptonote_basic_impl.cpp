@@ -146,11 +146,12 @@ namespace cryptonote {
        median_size = full_reward_zone;
      }
 
-     if(current_block_size > 2 * median_size) {
-       MERROR("Block cumulative size is too big: " << current_block_size << ", expected less than " << 2 * median_size);
-       return false;
-     }
+
      if(version >= 7){
+       if(current_block_size > 2 * median_size) {
+         MERROR("Block cumulative size is too big: " << current_block_size << ", expected less than " << 2 * median_size);
+         return false;
+       }
        uint64_t base_reward = (MONEY_SUPPLYv7 - already_generated_coins) >> emission_speed_factor;
        reward = get_penalized_amount((base_reward), median_size, current_block_size);
         reward +=  version < BLOCK_MAJOR_VERSION_7 ? get_penalized_amount(fee, median_size, current_block_size) : fee;
