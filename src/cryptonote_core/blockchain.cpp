@@ -3204,7 +3204,7 @@ bool Blockchain::check_block_timestamp(const block& b, uint64_t& median_ts) cons
 {
   LOG_PRINT_L3("Blockchain::" << __func__);
   if(m_db->height() < 24830){
-    if(b.timestamp > get_adjusted_time() + 60 * 60 * 2)
+    if(b.timestamp > get_adjusted_time() + (60 * 60 * 2))
     {
       MERROR_VER("Timestamp of block with id: " << get_block_hash(b) << ", " << b.timestamp << ", bigger than adjusted time + 2 hours");
       return false;
