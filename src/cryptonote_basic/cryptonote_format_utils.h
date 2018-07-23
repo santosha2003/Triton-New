@@ -135,7 +135,6 @@ namespace cryptonote
   unsigned int get_default_decimal_point();
   std::string get_unit(unsigned int decimal_point = -1);
   std::string print_money(uint64_t amount, unsigned int decimal_point = -1);
-  std::string print_mone2y(uint128_t amount, unsigned int decimal_point = -1);
 
   //---------------------------------------------------------------
   template<class t_object>
