@@ -59,7 +59,7 @@
 #define BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW               60
 
 // MONEY_SUPPLY - total number coins to be generated
-#define MONEY_SUPPLY                                   84000000
+#define MONEY_SUPPLY                                   8400000000000000000
 #define MONEY_SUPPLYv7                                 8400000000000000
 
 
