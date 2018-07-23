@@ -270,4 +270,5 @@ namespace cryptonote {
 
          return nextDiffZ;
        }
+     }
   }
