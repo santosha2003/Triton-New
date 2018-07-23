@@ -122,7 +122,7 @@ namespace cryptonote {
 
   difficulty_type next_difficulty(std::vector<std::uint64_t> timestamps, std::vector<difficulty_type> cumulative_difficulties, size_t target_seconds, size_t height) {
     // LWMA difficulty algorithm
-    if(height >= 6130){
+    if(height >= 61130){
       if(height <= 61430 && height >= 61332){return 100000;}
 		// Copyright (c) 2017-2018 Zawy
 		// MIT license http://www.opensource.org/licenses/mit-license.php.
