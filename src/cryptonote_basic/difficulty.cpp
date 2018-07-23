@@ -220,46 +220,54 @@ namespace cryptonote {
       } else {
       //Old Shit lmao
 
-      if(timestamps.size() > DIFFICULTY_WINDOW)
-    {
-      timestamps.resize(DIFFICULTY_WINDOW);
-      cumulative_difficulties.resize(DIFFICULTY_WINDOW);
-    }
+       assert(DIFFICULTY_WINDOW >= 2);
+
+       if (timestamps.size() > DIFFICULTY_WINDOW) {
+         timestamps.resize(DIFFICULTY_WINDOW);
+         cumulative_difficulties.resize(DIFFICULTY_WINDOW);
+       }
+
+       size_t length = timestamps.size();
+       assert(length == cumulative_difficulties.size());
+       assert(length <= DIFFICULTY_WINDOW);
+       if (length <= 1) {
+         return 1;
+       }
+
+       sort(timestamps.begin(), timestamps.end());
+
+       size_t cutBegin, cutEnd;
+       assert(2 * 60 <= DIFFICULTY_WINDOW - 2);
+       if (length <= DIFFICULTY_WINDOW - 2 * 60) {
+         cutBegin = 0;
+         cutEnd = length;
+       } else {
+         cutBegin = (length - (DIFFICULTY_WINDOW - 2 * 60) + 1) / 2;
+         cutEnd = cutBegin + (DIFFICULTY_WINDOW - 2 * 60);
+       }
+
+       assert(/*cut_begin >= 0 &&*/ cutBegin + 2 <= cutEnd && cutEnd <= length);
+       uint64_t timeSpan = timestamps[cutEnd - 1] - timestamps[cutBegin];
+       if (timeSpan == 0) {
+         timeSpan = 1;
+       }
+
+       difficulty_type totalWork = cumulative_difficulties[cutEnd - 1] - cumulative_difficulties[cutBegin];
+       assert(totalWork > 0);
+
+       uint64_t low, high;
+       low = mul128(totalWork, target_seconds, &high);
+       if (high != 0 || std::numeric_limits<uint64_t>::max() - low < (timeSpan - 1)) {
+         return 0;
+       }
 
 
-    size_t length = timestamps.size();
-    assert(length == cumulative_difficulties.size());
-    if (length <= 1) {
-      return 1;
-    }
-    static_assert(DIFFICULTY_WINDOW >= 2, "Window is too small");
-    assert(length <= DIFFICULTY_WINDOW);
-    sort(timestamps.begin(), timestamps.end());
-    size_t cut_begin, cut_end;
-    static_assert(2 * DIFFICULTY_CUT <= DIFFICULTY_WINDOW - 2, "Cut length is too large");
-    if (length <= DIFFICULTY_WINDOW - 2 * DIFFICULTY_CUT) {
-      cut_begin = 0;
-      cut_end = length;
-    } else {
-      cut_begin = (length - (DIFFICULTY_WINDOW - 2 * DIFFICULTY_CUT) + 1) / 2;
-      cut_end = cut_begin + (DIFFICULTY_WINDOW - 2 * DIFFICULTY_CUT);
-    }
-    assert(/*cut_begin >= 0 &&*/ cut_begin + 2 <= cut_end && cut_end <= length);
-    uint64_t time_span = timestamps[cut_end - 1] - timestamps[cut_begin];
-    if (time_span == 0) {
-      time_span = 1;
-    }
-    difficulty_type total_work = cumulative_difficulties[cut_end - 1] - cumulative_difficulties[cut_begin];
-    assert(total_work > 0);
-    uint64_t low, high;
-    mul(total_work, target_seconds, low, high);
-    // blockchain errors "difficulty overhead" if this function returns zero.
-    // TODO: consider throwing an exception instead
-    if (high != 0 || low + time_span - 1 < low) {
-      return 0;
-    }
-    return (low + time_span - 1) / time_span;
-      }
+       if (version >= 2) {
+         if (high != 0) {
+           return 0;
+         }
+         uint64_t nextDiffZ = low / timeSpan;
 
-      }
+         return nextDiffZ;
+       }
   }
