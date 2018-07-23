@@ -266,10 +266,11 @@ namespace cryptonote {
          if (high != 0) {
            return 0;
          }
+          }
          uint64_t nextDiffZ = low / timeSpan;
 
          return nextDiffZ;
-       }
+
      }
   }
 }
