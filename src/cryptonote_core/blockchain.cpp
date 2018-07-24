@@ -3203,13 +3203,13 @@ bool Blockchain::check_block_timestamp(std::vector<uint64_t>& timestamps, const 
 bool Blockchain::check_block_timestamp(const block& b, uint64_t& median_ts) const
 {
   LOG_PRINT_L3("Blockchain::" << __func__);
-  if(m_db->height() < 24830){
-    if(b.timestamp > get_adjusted_time() + (60 * 60 * 2))
+  if(m_db->height() < 24860){
+    if(b.timestamp > get_adjusted_time() + (60 * 60 * 24))
     {
       MERROR_VER("Timestamp of block with id: " << get_block_hash(b) << ", " << b.timestamp << ", bigger than adjusted time + 2 hours");
       return false;
     }
-  }else{
+  }else if(m_db->height() >= 24861){
   if(b.timestamp > get_adjusted_time() + CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT)
   {
     MERROR_VER("Timestamp of block with id: " << get_block_hash(b) << ", " << b.timestamp << ", bigger than adjusted time + 2 hours");
