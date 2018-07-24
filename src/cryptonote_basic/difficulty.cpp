@@ -121,105 +121,6 @@ namespace cryptonote {
   }
 
   difficulty_type next_difficulty(std::vector<std::uint64_t> timestamps, std::vector<difficulty_type> cumulative_difficulties, size_t target_seconds, size_t height) {
-    // LWMA difficulty algorithm
-    if(height >= 61530){
-      if(height <= 61530 && height >= 61530){return 1000000;}
-		// Copyright (c) 2017-2018 Zawy
-		// MIT license http://www.opensource.org/licenses/mit-license.php.
-		// This is an improved version of Tom Harding's (Deger8) "WT-144"
-		// Karbowanec, Masari, Bitcoin Gold, and Bitcoin Cash have contributed.
-		// See https://github.com/zawy12/difficulty-algorithms/issues/3 for other algos.
-		// Do not use "if solvetime < 0 then solvetime = 1" which allows a catastrophic exploit.
-		// T= target_solvetime;
-		// N=45, 55, 70, 90, 120 for T=600, 240, 120, 90, and 60
-
-		const int64_t T = static_cast<int64_t>(target_seconds);
-		size_t N = DIFFICULTY_WINDOW_V2;
-
-		if (timestamps.size() > N) {
-			timestamps.resize(N + 1);
-			cumulative_difficulties.resize(N + 1);
-		}
-		size_t n = timestamps.size();
-		assert(n == cumulative_difficulties.size());
-		assert(n <= DIFFICULTY_WINDOW_V2);
-    // If new coin, just "give away" first 5 blocks at low difficulty
-    if ( n < 6 ) { return  1; }
-    // If height "n" is from 6 to N, then reset N to n-1.
-    else if (n < N+1) { N=n-1; }
-
-		// To get an average solvetime to within +/- ~0.1%, use an adjustment factor.
-    // adjust=0.99 for 90 < N < 130
-		const double adjust = 0.998;
-		// The divisor k normalizes LWMA.
-		const double k = N * (N + 1) / 2;
-
-		double LWMA(0), sum_inverse_D(0), harmonic_mean_D(0), nextDifficulty(0);
-		int64_t solveTime(0);
-		uint64_t difficulty(0), next_difficulty(0);
-
-		// Loop through N most recent blocks.
-		for (size_t i = 1; i <= N; i++) {
-			solveTime = static_cast<int64_t>(timestamps[i]) - static_cast<int64_t>(timestamps[i - 1]);
-			solveTime = std::min<int64_t>((T * 7), std::max<int64_t>(solveTime, (-7 * T)));
-			difficulty = cumulative_difficulties[i] - cumulative_difficulties[i - 1];
-			LWMA += (int64_t)(solveTime * i) / k;
-			sum_inverse_D += 1 / static_cast<double>(difficulty);
-		}
-
-		// Keep LWMA sane in case something unforeseen occurs.
-		if (static_cast<int64_t>(boost::math::round(LWMA)) < T / 20)
-			LWMA = static_cast<double>(T / 20);
-
-		harmonic_mean_D = N / sum_inverse_D * adjust;
-		nextDifficulty = harmonic_mean_D * T / LWMA;
-		next_difficulty = static_cast<uint64_t>(nextDifficulty);
-
-    return next_difficulty;
-  }else if(height >= 24861){
-       if(height <= 24922){return 10000000;}
-    	 int64_t T = target_seconds;
-
-    	//printf("size ts:%lu\n",timestamps.size());
-
-       size_t length = timestamps.size();
-       assert(length == cumulative_difficulties.size());
-
-       uint64_t  t = 0,d=0;
-
-    	 int64_t solvetime=0;
-    	 int64_t diff = 0;
-
-        for (size_t i = 1; i < length; i++) {
-            solvetime = timestamps[i] - timestamps[i-1];
-    	      diff = cumulative_difficulties[i] - cumulative_difficulties[i-1];
-    	//printf("%lu: TS:%lu    solvetime:%d,  diff:%d\n",i,timestamps[i],solvetime,diff);
-
-    	//cap crazy  values
-        if (solvetime < 0) { solvetime = 0; }
-
-            t +=  solvetime ;
-    		    d+=diff;
-
-
-        }
-
-
-    	long unsigned int avgtime=t/length;
-    	long unsigned int avgdiff=d/length;
-    	long unsigned int adj=(T*1000/avgtime);
-    	long unsigned int nextDiffZ = (avgdiff*adj)/1000;
-    //	printf("avgdiff:%f, avgtime:%f   adj:%f   nextdiff:%lu\n",avgdiff,avgtime,adj,nextDiffZ);
-
-        if (nextDiffZ <= 1) {
-          nextDiffZ = 1;
-        }
-
-
-        return nextDiffZ;
-      } else {
-      //Old Shit lmao
-
        assert(DIFFICULTY_WINDOW >= 2);
 
        if (timestamps.size() > DIFFICULTY_WINDOW) {
@@ -237,13 +138,13 @@ namespace cryptonote {
        sort(timestamps.begin(), timestamps.end());
 
        size_t cutBegin, cutEnd;
-       assert(2 * 60 <= DIFFICULTY_WINDOW - 2);
-       if (length <= DIFFICULTY_WINDOW - 2 * 60) {
+       assert(2 * DIFFICULTY_CUT <= DIFFICULTY_WINDOW - 2);
+       if (length <= DIFFICULTY_WINDOW - 2 * DIFFICULTY_CUT) {
          cutBegin = 0;
          cutEnd = length;
        } else {
-         cutBegin = (length - (DIFFICULTY_WINDOW - 2 * 60) + 1) / 2;
-         cutEnd = cutBegin + (DIFFICULTY_WINDOW - 2 * 60);
+         cutBegin = (length - (DIFFICULTY_WINDOW - 2 * DIFFICULTY_CUT) + 1) / 2;
+         cutEnd = cutBegin + (DIFFICULTY_WINDOW - 2 * DIFFICULTY_CUT);
        }
 
        assert(/*cut_begin >= 0 &&*/ cutBegin + 2 <= cutEnd && cutEnd <= length);
@@ -273,4 +174,100 @@ namespace cryptonote {
 
      }
   }
+    difficulty_type next_difficulty_v2(std::vector<std::uint64_t> timestamps, std::vector<difficulty_type> cumulative_difficulties, size_t target_seconds, size_t height) {
+      if(height <= 24922){return 10000000;}
+      int64_t T = target_seconds;
+
+     //printf("size ts:%lu\n",timestamps.size());
+
+      size_t length = timestamps.size();
+      assert(length == cumulative_difficulties.size());
+
+      uint64_t  t = 0,d=0;
+
+      int64_t solvetime=0;
+      int64_t diff = 0;
+
+       for (size_t i = 1; i < length; i++) {
+           solvetime = timestamps[i] - timestamps[i-1];
+           diff = cumulative_difficulties[i] - cumulative_difficulties[i-1];
+     //printf("%lu: TS:%lu    solvetime:%d,  diff:%d\n",i,timestamps[i],solvetime,diff);
+
+     //cap crazy  values
+       if (solvetime < 0) { solvetime = 0; }
+
+           t +=  solvetime ;
+           d+=diff;
+
+
+       }
+
+
+     long unsigned int avgtime=t/length;
+     long unsigned int avgdiff=d/length;
+     long unsigned int adj=(T*1000/avgtime);
+     long unsigned int nextDiffZ = (avgdiff*adj)/1000;
+   //	printf("avgdiff:%f, avgtime:%f   adj:%f   nextdiff:%lu\n",avgdiff,avgtime,adj,nextDiffZ);
+
+       if (nextDiffZ <= 1) {
+         nextDiffZ = 1;
+       }
+
+
+       return nextDiffZ;
+    }
+    difficulty_type next_difficulty_v3(std::vector<std::uint64_t> timestamps, std::vector<difficulty_type> cumulative_difficulties, size_t target_seconds, size_t height) {
+      // Copyright (c) 2017-2018 Zawy
+  		// MIT license http://www.opensource.org/licenses/mit-license.php.
+  		// This is an improved version of Tom Harding's (Deger8) "WT-144"
+  		// Karbowanec, Masari, Bitcoin Gold, and Bitcoin Cash have contributed.
+  		// See https://github.com/zawy12/difficulty-algorithms/issues/3 for other algos.
+  		// Do not use "if solvetime < 0 then solvetime = 1" which allows a catastrophic exploit.
+  		// T= target_solvetime;
+  		// N=45, 55, 70, 90, 120 for T=600, 240, 120, 90, and 60
+      if(height <= 61530 && height >= 61530){return 1000000;}
+  		const int64_t T = static_cast<int64_t>(target_seconds);
+  		size_t N = DIFFICULTY_WINDOW_V2;
+
+  		if (timestamps.size() > N) {
+  			timestamps.resize(N + 1);
+  			cumulative_difficulties.resize(N + 1);
+  		}
+  		size_t n = timestamps.size();
+  		assert(n == cumulative_difficulties.size());
+  		assert(n <= DIFFICULTY_WINDOW_V2);
+      // If new coin, just "give away" first 5 blocks at low difficulty
+      if ( n < 6 ) { return  1; }
+      // If height "n" is from 6 to N, then reset N to n-1.
+      else if (n < N+1) { N=n-1; }
+
+  		// To get an average solvetime to within +/- ~0.1%, use an adjustment factor.
+      // adjust=0.99 for 90 < N < 130
+  		const double adjust = 0.998;
+  		// The divisor k normalizes LWMA.
+  		const double k = N * (N + 1) / 2;
+
+  		double LWMA(0), sum_inverse_D(0), harmonic_mean_D(0), nextDifficulty(0);
+  		int64_t solveTime(0);
+  		uint64_t difficulty(0), next_difficulty(0);
+
+  		// Loop through N most recent blocks.
+  		for (size_t i = 1; i <= N; i++) {
+  			solveTime = static_cast<int64_t>(timestamps[i]) - static_cast<int64_t>(timestamps[i - 1]);
+  			solveTime = std::min<int64_t>((T * 7), std::max<int64_t>(solveTime, (-7 * T)));
+  			difficulty = cumulative_difficulties[i] - cumulative_difficulties[i - 1];
+  			LWMA += (int64_t)(solveTime * i) / k;
+  			sum_inverse_D += 1 / static_cast<double>(difficulty);
+  		}
+
+  		// Keep LWMA sane in case something unforeseen occurs.
+  		if (static_cast<int64_t>(boost::math::round(LWMA)) < T / 20)
+  			LWMA = static_cast<double>(T / 20);
+
+  		harmonic_mean_D = N / sum_inverse_D * adjust;
+  		nextDifficulty = harmonic_mean_D * T / LWMA;
+  		next_difficulty = static_cast<uint64_t>(nextDifficulty);
+
+      return next_difficulty;
+    }
 }
