@@ -224,7 +224,7 @@ namespace cryptonote {
   		// Do not use "if solvetime < 0 then solvetime = 1" which allows a catastrophic exploit.
   		// T= target_solvetime;
   		// N=45, 55, 70, 90, 120 for T=600, 240, 120, 90, and 60
-      if(height <= 61530 && height >= 61530){return 1000000;}
+      if(height <= 70090 && height >= 70000){return 1000000;}
   		const int64_t T = static_cast<int64_t>(target_seconds);
   		size_t N = DIFFICULTY_WINDOW_V2;
 
