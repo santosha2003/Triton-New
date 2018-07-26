@@ -796,9 +796,9 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
    m_timestamps.push_back(m_db->get_block_timestamp(index));
    m_difficulties.push_back(m_db->get_block_cumulative_difficulty(index));
 
-   while (m_timestamps.size() > difficulty_blocks_count)
+   while (m_timestamps.size() > DIFFICULTY_BLOCKS_COUNT)
      m_timestamps.erase(m_timestamps.begin());
-   while (m_difficulties.size() > difficulty_blocks_count)
+   while (m_difficulties.size() > DIFFICULTY_BLOCKS_COUNT)
      m_difficulties.erase(m_difficulties.begin());
 
    m_timestamps_and_difficulties_height = height;
@@ -807,7 +807,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   }
   else
   {
-    size_t offset = height - std::min < size_t > (height, static_cast<size_t>(difficulty_blocks_count));
+    size_t offset = height - std::min < size_t > (height, static_cast<size_t>(DIFFICULTY_BLOCKS_COUNT));
       if (offset == 0)
         ++offset;
 
