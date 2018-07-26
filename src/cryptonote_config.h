@@ -97,7 +97,7 @@
 #define DIFFICULTY_CUT_V2                               6  // timestamps to cut after sorting
 
 #define DIFFICULTY_BLOCKS_COUNT                         DIFFICULTY_WINDOW
-#define DIFFICULTY_BLOCKS_COUNT_V2                      DIFFICULTY_WINDOW_V2
+#define DIFFICULTY_BLOCKS_COUNT_V2                      DIFFICULTY_WINDOW
 
 
 
