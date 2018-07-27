@@ -1070,7 +1070,7 @@ namespace cryptonote
 		  return false;
     if(b.major_version >= 4){
       crypto::cn_slow_hash(bd.data(), bd.size(), res, 1, 1);
-    }else{
+    }else if(b.major_version < 4){
       crypto::cn_slow_hash(bd.data(), bd.size(), res, 0, 0);
     }
 	  return true;
