@@ -1068,8 +1068,11 @@ namespace cryptonote
 	  blobdata bd;
 	  if (!get_bytecoin_block_hashing_blob(b, bd))
 		  return false;
-
-    crypto::cn_slow_hash(bd.data(), bd.size(), res, 1, 1);
+    if(b.major_version >= 4){
+      crypto::cn_slow_hash(bd.data(), bd.size(), res, 1, 1);
+    }else{
+      crypto::cn_slow_hash(bd.data(), bd.size(), res, 0, 0);
+    }
 	  return true;
   }
   //---------------------------------------------------------------

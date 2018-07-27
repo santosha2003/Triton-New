@@ -117,6 +117,7 @@ namespace cryptonote {
 
   return amount_lo;
 }
+
   //-----------------------------------------------------------------------------------------------
   bool get_block_reward(size_t median_size, size_t current_block_size, uint64_t already_generated_coins, uint64_t fee, uint64_t &reward, uint8_t version,uint64_t height) {
     static_assert(DIFFICULTY_TARGET_V2%60==0&&DIFFICULTY_TARGET_V2%60==0,"difficulty targets must be a multiple of 60");
