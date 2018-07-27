@@ -74,7 +74,7 @@ namespace cryptonote {
       return CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1;
     if (version < 7)
       return CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1;
-    return CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V5;
+    return CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE;
   }
   //-----------------------------------------------------------------------------------------------
   size_t get_max_block_size()
@@ -122,7 +122,7 @@ namespace cryptonote {
     static_assert(DIFFICULTY_TARGET_V2%60==0&&DIFFICULTY_TARGET_V2%60==0,"difficulty targets must be a multiple of 60");
     const int target = DIFFICULTY_TARGET_V2;
     const int target_minutes = target / 60;
-    const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE;
+    const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE - (target_minutes-1);
     if(height == 0){
       reward = 0000000000000;
       MERROR("Already Generated:" << print_money(already_generated_coins));
