@@ -154,7 +154,7 @@ namespace cryptonote {
          return false;
        }
        uint64_t base_reward = (MONEY_SUPPLYv7 - already_generated_coins) >> emission_speed_factor;
-       reward = get_penalized_amount((base_reward), median_size, current_block_size);
+       reward = get_penalized_amount((base_reward * 100), median_size, current_block_size);
         reward +=  version < BLOCK_MAJOR_VERSION_7 ? get_penalized_amount(fee, median_size, current_block_size) : fee;
 
      }else if(version < 7){
