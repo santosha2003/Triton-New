@@ -205,7 +205,7 @@ namespace cryptonote {
      long unsigned int avgdiff=d/length;
      long unsigned int adj=(T*1000/avgtime);
      long unsigned int nextDiffZ = (avgdiff*adj)/1000;
-   	printf("avgdiff:%f, avgtime:%f   adj:%f   nextdiff:%lu\n",avgdiff,avgtime,adj,nextDiffZ);
+   	printf("avgdiff:%lu, avgtime:%lu   adj:%lu   nextdiff:%lu\n",avgdiff,avgtime,adj,nextDiffZ);
 
        if (nextDiffZ <= 1) {
          nextDiffZ = 1;
