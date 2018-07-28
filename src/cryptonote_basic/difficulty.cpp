@@ -177,7 +177,7 @@ namespace cryptonote {
       if(height <= 24922){return 10000000;}
       int64_t T = target_seconds;
 
-     //printf("size ts:%lu\n",timestamps.size());
+     printf("size ts:%lu\n",timestamps.size());
 
       size_t length = timestamps.size();
       assert(length == cumulative_difficulties.size());
@@ -193,12 +193,11 @@ namespace cryptonote {
      //printf("%lu: TS:%lu    solvetime:%d,  diff:%d\n",i,timestamps[i],solvetime,diff);
 
      //cap crazy  values
-       if (solvetime < 0) { solvetime = 0; }
-
+       if (solvetime < 0) {
+          solvetime = 0;
+        }
            t +=  solvetime ;
            d+=diff;
-
-
        }
 
 
@@ -206,7 +205,7 @@ namespace cryptonote {
      long unsigned int avgdiff=d/length;
      long unsigned int adj=(T*1000/avgtime);
      long unsigned int nextDiffZ = (avgdiff*adj)/1000;
-   //	printf("avgdiff:%f, avgtime:%f   adj:%f   nextdiff:%lu\n",avgdiff,avgtime,adj,nextDiffZ);
+   	printf("avgdiff:%f, avgtime:%f   adj:%f   nextdiff:%lu\n",avgdiff,avgtime,adj,nextDiffZ);
 
        if (nextDiffZ <= 1) {
          nextDiffZ = 1;
