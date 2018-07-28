@@ -1042,13 +1042,13 @@ difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std:
   size_t target =  DIFFICULTY_TARGET_V2;
   size_t height = alt_chain.size();
   // calculate the difficulty target for the block and return it
-  if(get_current_hard_fork_version() < 5){
+  if(get_current_hard_fork_version() < 5)
     return next_difficulty(timestamps, cumulative_difficulties, target,height);
-  }else if(get_current_hard_fork_version() >= 5 && get_current_hard_fork_version() < 7){
+  if(get_current_hard_fork_version() >= 5 && get_current_hard_fork_version() < 7)
     return next_difficulty_v2(timestamps, cumulative_difficulties, target,height);
-  }else if(get_current_hard_fork_version() >= 7){
+  if(get_current_hard_fork_version() >= 7)
     return next_difficulty_v3(timestamps, cumulative_difficulties, target,height);
-  }
+
 }
 //------------------------------------------------------------------
 // This function does a sanity check on basic things that all miner
