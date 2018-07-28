@@ -159,8 +159,9 @@ namespace cryptonote {
 
 
      }else if(version < 7){
-       reward = 77;
 
+       reward = 770000000000;
+        reward +=  version < BLOCK_MAJOR_VERSION_7 ? get_penalized_amount(fee, median_size, current_block_size) : fee;
 
     }
 
