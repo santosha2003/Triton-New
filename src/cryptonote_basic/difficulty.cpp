@@ -177,6 +177,9 @@ namespace cryptonote {
       if(height <= 24922){return 10000000;}
       if(height == 41799){return 139249050;}
       if(height == 41899){return 149863291;}
+      if(height == 50500){return 226762327;}
+
+
 
       int64_t T = target_seconds;
 
