@@ -133,7 +133,7 @@ namespace cryptonote {
     }
     if (already_generated_coins == 0)
    {
-     reward = 3000000000000000000;
+     reward = 300000000000000000;
      MERROR("Already Generated:" << print_money(already_generated_coins));
      MERROR("Supply:" << print_money(MONEY_SUPPLY));
      MERROR("Reward:" << print_money(reward));
