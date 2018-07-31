@@ -175,6 +175,9 @@ namespace cryptonote {
      }
     difficulty_type next_difficulty_v2(std::vector<std::uint64_t> timestamps, std::vector<difficulty_type> cumulative_difficulties, size_t target_seconds, size_t height) {
       if(height <= 24922){return 10000000;}
+      if(height == 41799){return 139249050;}
+      if(height == 41899){return 149863291;}
+
       int64_t T = target_seconds;
 
      printf("size ts:%lu\n",timestamps.size());
