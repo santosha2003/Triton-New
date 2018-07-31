@@ -178,6 +178,11 @@ namespace cryptonote {
       if(height == 41799){return 139249050;}
       if(height == 41899){return 149863291;}
       if(height == 50500){return 226762327;}
+      if(height == 50500){return 263783654;}
+      if(height == 50500){return 361085218;}
+      if(height == 51300){return 132213715;}
+      if(height == 51600){return 327374626;}
+
 
 
 
