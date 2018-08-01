@@ -831,11 +831,11 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   size_t target = get_difficulty_target();
   difficulty_type diff;
   if(version < 5){
-     diff = next_difficulty(timestamps, difficulties, target,height - 1);
+     diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height - 1);
   }else if(version >= 5 && version < 7){
-     diff = next_difficulty_v2(timestamps, difficulties, target,height - 1);
+     diff = next_difficulty_v2(std::move(timestamps), std::move(difficulties), target,height - 1);
   }else if(version >= 7){
-     diff = next_difficulty_v3(timestamps, difficulties, target,height - 1);
+     diff = next_difficulty_v3(std::move(timestamps), std::move(difficulties), target,height - 1);
   }
   m_difficulty_for_next_block_top_hash = top_hash;
   m_difficulty_for_next_block = diff;
