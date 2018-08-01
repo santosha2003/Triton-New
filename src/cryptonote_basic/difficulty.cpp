@@ -201,7 +201,7 @@ namespace cryptonote {
        for (size_t i = 1; i < length; i++) {
            solvetime = timestamps[i] - timestamps[i-1];
            diff = cumulative_difficulties[i] - cumulative_difficulties[i-1];
-     printf("%lu: TS:%lu    solvetime:%d,  diff:%d\n",i,timestamps[i],solvetime,diff);
+     printf("%lu: TS:%lu    solvetime:%lu,  diff:%lu\n",i,timestamps[i],solvetime,diff);
 
      //cap crazy  values
        if (solvetime < 0) {
