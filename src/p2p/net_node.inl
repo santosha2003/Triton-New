@@ -196,6 +196,8 @@ namespace nodetool
   template<class t_payload_net_handler>
   bool node_server<t_payload_net_handler>::block_host(const epee::net_utils::network_address &addr, time_t seconds)
   {
+    uint64_t test1 = 0;
+    if(test1 == 1){
     CRITICAL_REGION_LOCAL(m_blocked_hosts_lock);
     m_blocked_hosts[addr.host_str()] = time(nullptr) + seconds;
 
@@ -213,7 +215,9 @@ namespace nodetool
       m_net_server.get_config_object().close(c);
 
     MCLOG_CYAN(el::Level::Info, "global", "Host " << addr.host_str() << " blocked.");
+  }
     return true;
+
   }
   //-----------------------------------------------------------------------------------
   template<class t_payload_net_handler>
