@@ -789,7 +789,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   if(version < 5){
    difficulty_blocks_count = DIFFICULTY_BLOCKS_COUNT;
  }else if(version >= 5 && version < 7){
-   difficulty_blocks_count = DIFFICULTY_BLOCKS_COUNT_V2;
+   difficulty_blocks_count = DIFFICULTY_BLOCKS_COUNT;
  }else if(version >= 7){
    difficulty_blocks_count = DIFFICULTY_BLOCKS_COUNT_V7;
  }
