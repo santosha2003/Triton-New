@@ -785,7 +785,14 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   std::vector<difficulty_type> difficulties;
   uint8_t version = get_current_hard_fork_version();
   auto height = m_db->height();
-  size_t difficulty_blocks_count = version < BLOCK_MAJOR_VERSION_7 ? DIFFICULTY_BLOCKS_COUNT : DIFFICULTY_BLOCKS_COUNT_V2;
+  size_t difficulty_blocks_count = 0;
+  if(version < 5){
+   difficulty_blocks_count = DIFFICULTY_BLOCKS_COUNT;
+ }else if(version >= 5 && version < 7){
+   difficulty_blocks_count = DIFFICULTY_BLOCKS_COUNT_V2;
+ }else if(version >= 7){
+   difficulty_blocks_count = DIFFICULTY_BLOCKS_COUNT_V7;
+ }
   // ND: Speedup
   // 1. Keep a list of the last 735 (or less) blocks that is used to compute difficulty,
   //    then when the next block difficulty is queried, push the latest height data and
