@@ -816,8 +816,9 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   else
   {
     size_t offset = height - std::min < size_t > (height, static_cast<size_t>(difficulty_blocks_count));
-      if (offset == 0)
+      if (offset == 0){
         ++offset;
+      }
 
       timestamps.clear();
       difficulties.clear();
@@ -1050,13 +1051,13 @@ difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std:
   size_t target =  DIFFICULTY_TARGET_V2;
   size_t height = alt_chain.size();
   // calculate the difficulty target for the block and return it
-  unsigned int diff = 0;
+  difficulty_type diff = 0;
   if(get_current_hard_fork_version() < 5)
-    diff = next_difficulty(timestamps, cumulative_difficulties, target,height);
+    diff = next_difficulty(std::move(timestamps), std::move(cumulative_difficulties, target,height - 1);
   if(get_current_hard_fork_version() >= 5 && get_current_hard_fork_version() < 7)
-    diff =  next_difficulty_v2(timestamps, cumulative_difficulties, target,height);
+    diff =  next_difficulty_v2(std::move(timestamps), std::move(cumulative_difficulties), target,height - 1);
   if(get_current_hard_fork_version() >= 7)
-    diff =  next_difficulty_v3(timestamps, cumulative_difficulties, target,height);
+    diff =  next_difficulty_v3(std::move(timestamps), cstd::move(umulative_difficulties), target,height - 1);
 
   return diff;
 
