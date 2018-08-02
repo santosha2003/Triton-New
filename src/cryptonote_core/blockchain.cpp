@@ -791,9 +791,9 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   //    then when the next block difficulty is queried, push the latest height data and
   //    pop the oldest one from the list. This only requires 1x read per height instead
   //    of doing 735 (DIFFICULTY_BLOCKS_COUNT).
-  if (m_timestamps_and_difficulties_height != 0 && ((height - m_timestamps_and_difficulties_height) == 1)  && m_timestamps.size() >= difficulty_blocks_count)
+  if (m_timestamps_and_difficulties_height != 0 && ((height - m_timestamps_and_difficulties_height) == 1) && m_timestamps.size() >= difficulty_blocks_count)
   {
-    uint64_t index = height;
+    uint64_t index = height - 1;
    m_timestamps.push_back(m_db->get_block_timestamp(index));
    m_difficulties.push_back(m_db->get_block_cumulative_difficulty(index));
 
@@ -832,9 +832,9 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   size_t target = get_difficulty_target();
   difficulty_type diff;
   if(version < 5){
-     diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height);
+     diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height - 1);
   }else if(version >= 5 && version < 7){
-     diff = next_difficulty_v2(std::move(timestamps), std::move(difficulties), target,height);
+     diff = next_difficulty_v2(std::move(timestamps), std::move(difficulties), target,height - 1);
   }else if(version >= 7){
      diff = next_difficulty_v3(std::move(timestamps), std::move(difficulties), target,height - 1);
   }
