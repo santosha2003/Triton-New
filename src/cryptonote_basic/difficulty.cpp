@@ -157,7 +157,7 @@ namespace cryptonote {
        assert(totalWork > 0);
 
        uint64_t low, high;
-       mul(totalWork, target_seconds, low, high);
+       low = mul(totalWork, target_seconds, low, high);
    // blockchain errors "difficulty overhead" if this function returns zero.
    // TODO: consider throwing an exception instead
       if (high != 0 || low + timeSpan - 1 < low) {
