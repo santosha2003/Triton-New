@@ -1055,7 +1055,7 @@ difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std:
   if(get_current_hard_fork_version() < 5)
     diff = next_difficulty(timestamps, cumulative_difficulties, target,height - 1);
   if(get_current_hard_fork_version() >= 5 && get_current_hard_fork_version() < 7)
-    diff =  next_difficulty_v2(std::move(timestamps), cumulative_difficulties, target,height - 1 );
+    diff =  next_difficulty_v2(timestamps, cumulative_difficulties, target,height - 1 );
   if(get_current_hard_fork_version() >= 7)
     diff =  next_difficulty_v3(timestamps, cumulative_difficulties, target,height - 1);
 
