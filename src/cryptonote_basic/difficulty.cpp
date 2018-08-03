@@ -157,12 +157,10 @@ namespace cryptonote {
        assert(totalWork > 0);
 
        uint64_t low, high;
-       low = mul(totalWork, target_seconds, low, high);
-   // blockchain errors "difficulty overhead" if this function returns zero.
-   // TODO: consider throwing an exception instead
-      if (high != 0 || low + timeSpan - 1 < low) {
-        return 0;
-      }
+       low = mul128(totalWork, target_seconds, &high);
+       if (high != 0 || std::numeric_limits<uint64_t>::max() - low < (timeSpan - 1)) {
+         return 0;
+       }
 
 
        if (height >= 2) {
