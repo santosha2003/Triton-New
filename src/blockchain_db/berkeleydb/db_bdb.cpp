@@ -1371,7 +1371,7 @@ difficulty_type BlockchainBDB::get_block_cumulative_difficulty(const uint64_t& h
     LOG_PRINT_L3("BlockchainBDB::" << __func__ << "  height: " << height);
     check_open();
 
-    Dbt_copy<uint32_t> key(height + 1);
+    Dbt_copy<uint32_t> key(height);
     Dbt_copy<difficulty_type> result;
     auto get_result = m_block_diffs->get(DB_DEFAULT_TX, &key, &result, 0);
     if (get_result == DB_NOTFOUND)
