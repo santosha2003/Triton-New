@@ -194,10 +194,10 @@ namespace cryptonote {
   	printf("%lu: TS:%lu    solvetime:%lu,  diff:%lu\n",i,timestamps[i],solvetime,diff);
 
   	//cap crazy  values
-      if (solvetime < 0) { solvetime = 0; }
+        if (solvetime < 0) { solvetime = 0; }
 
-          t +=  solvetime ;
-  		d+=diff;
+            t +=  solvetime ;
+  		      d+=diff;
 
 
       }
@@ -206,8 +206,8 @@ namespace cryptonote {
   	long unsigned int avgtime=t/length;
   	long unsigned int avgdiff=d/length;
   	long unsigned int adj=(T*1000/avgtime);
-  	long unsigned int nextDiffZ = (avgdiff*adj)/1000;
-  	printf("avgdiff:%lu, avgtime:%lu   adj:%lu   nextdiff:%lu\n",avgdiff,avgtime,adj,nextDiffZ);
+  	long unsigned int nextDiffZ = (avgdiff*adj) / 1000;
+  	printf("avgdiff:%lu, avgtime:%lu   adj:%lu   nextdiff:%lu     height:%lu\n",avgdiff,avgtime,adj,nextDiffZ,height);
 
       if (nextDiffZ <= 1) {
         nextDiffZ = 1;
