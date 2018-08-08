@@ -270,47 +270,5 @@ namespace cryptonote {
 
       return next_difficulty;
     }
-	difficulty_type next_difficulty_v4(std::vector<std::uint64_t> timestamps, std::vector<difficulty_type> cumulative_difficulties, size_t target_seconds, size_t height) {
-      if (height >= (24861-1) && height <= (24861+60) ) {return 10000000;}
 
-      int64_t T = target_seconds;
-
-  	printf("size ts:%lu\n",timestamps.size());
-
-      size_t length = timestamps.size();
-      assert(length == cumulative_difficulties.size());
-
-      uint64_t  t = 0,d=0;
-
-  	int64_t solvetime=0;
-  	int64_t diff=0;
-
-      for (size_t i = 1; i < length; i++) {
-          solvetime = timestamps[i] - timestamps[i-1];
-  	diff = cumulative_difficulties[i] - cumulative_difficulties[i-1];
-  	printf("%lu: TS:%lu    solvetime:%lu,  diff:%lu\n",i,timestamps[i],solvetime,diff);
-
-  	//cap crazy  values
-      if (solvetime < 0) { solvetime = 0; }
-
-          t +=  solvetime ;
-  		d+=diff;
-
-
-      }
-
-
-  	long unsigned int avgtime=t/length;
-  	long unsigned int avgdiff=d/length;
-  	long unsigned int adj=(T*1000/avgtime);
-  	long unsigned int nextDiffZ = (avgdiff*adj)/1000;
-  	printf("avgdiff:%lu, avgtime:%lu   adj:%lu   nextdiff:%lu\n",avgdiff,avgtime,adj,nextDiffZ);
-
-      if (nextDiffZ <= 1) {
-        nextDiffZ = 1;
-      }
-
-
-      return nextDiffZ;
-    }
 }
