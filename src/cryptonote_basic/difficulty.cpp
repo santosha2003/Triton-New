@@ -170,7 +170,7 @@ namespace cryptonote {
           }
          uint64_t nextDiffZ = low / timeSpan;
          if(height == 5000 || height == 6500 || height == 7000){
-           printf("Low:%lu   timeSpan:%lu\n",low,timeSpan);
+           printf("Low:%lu   timeSpan:%llu     NextDiff:%lu    height:%lu\n",low,timeSpan,nextDiffZ,height);
 
          }
          return nextDiffZ;
