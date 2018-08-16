@@ -235,7 +235,7 @@ namespace cryptonote {
           solvetime = timestamps[i] - timestamps[i-1];
     diff = cumulative_difficulties[i] - cumulative_difficulties[i-1];
     if(height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495){
-     printf("%lu: TS:%lu    solvetime:%lu,  diff:%lu\n",i,timestamps[i],solvetime,diff);
+     printf("%lu: TS:%lu    solvetime:%u,  diff:%u\n",i,timestamps[i],solvetime,diff);
    }
 
     //cap crazy  values
@@ -251,10 +251,10 @@ namespace cryptonote {
     float avgtime=t/length;
     float avgdiff=d/length;
     float adj=T/avgtime;
-    uint64_t nextDiffZ = (vgdiff*adj;
+    uint64_t nextDiffZ = avgdiff*adj;
     if( height == 26000 ||height == 24500 || height == 24860 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495){
 
-    printf("avgdiff:%lu, avgtime:%lu   adj:%lu   nextdiff:%lu     height:%lu\n",avgdiff,avgtime,adj,nextDiffZ,height);
+    printf("avgdiff:%d, avgtime:%d   adj:%d   nextdiff:%d    height:%lu\n",avgdiff,avgtime,adj,nextDiffZ,height);
 }
       if (nextDiffZ <= 1) {
         nextDiffZ = 1;
