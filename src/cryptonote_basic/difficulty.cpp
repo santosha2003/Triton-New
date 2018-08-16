@@ -221,6 +221,7 @@ namespace cryptonote {
       if (nextDiffZ <= 1) {
         nextDiffZ = 1;
       }
+      return nextDiffZ;
     }else{
       size_t length = timestamps.size();
       assert(length == cumulative_difficulties.size());
@@ -258,10 +259,10 @@ namespace cryptonote {
       if (nextDiffZ <= 1) {
         nextDiffZ = 1;
       }
-
+      return nextDiffZ;
     }
 
-      return nextDiffZ;
+
     }
     difficulty_type next_difficulty_v3(std::vector<std::uint64_t> timestamps, std::vector<difficulty_type> cumulative_difficulties, size_t target_seconds, size_t height) {
       // Copyright (c) 2017-2018 Zawy
