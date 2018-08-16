@@ -254,7 +254,7 @@ namespace cryptonote {
     uint64_t nextDiffZ = avgdiff*adj;
     if( height == 26000 ||height == 24500 || height == 24860 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495){
 
-    printf("avgdiff:%d, avgtime:%d   adj:%d   nextdiff:%lu    height:%lu\n",avgdiff,avgtime,adj,nextDiffZ,height);
+    printf("avgdiff:%f, avgtime:%f   adj:%f   nextdiff:%lu    height:%lu\n",avgdiff,avgtime,adj,nextDiffZ,height);
 }
       if (nextDiffZ <= 1) {
         nextDiffZ = 1;
