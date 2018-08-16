@@ -184,6 +184,7 @@ namespace cryptonote {
 
   	printf("size ts:%lu\n",timestamps.size());
 }
+      if(height >= 25584){
       size_t length = timestamps.size();
       assert(length == cumulative_difficulties.size());
 
@@ -220,7 +221,45 @@ namespace cryptonote {
       if (nextDiffZ <= 1) {
         nextDiffZ = 1;
       }
+    }else{
+      size_t length = timestamps.size();
+      assert(length == cumulative_difficulties.size());
 
+      int64_t  t = 0,d=0;
+
+    int solvetime=0;
+    int diff=0;
+
+      for (size_t i = 1; i < length; i++) {
+          solvetime = timestamps[i] - timestamps[i-1];
+    diff = cumulative_difficulties[i] - cumulative_difficulties[i-1];
+    if(height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495){
+     printf("%lu: TS:%lu    solvetime:%lu,  diff:%lu\n",i,timestamps[i],solvetime,diff);
+   }
+
+    //cap crazy  values
+        if (solvetime < 0) { solvetime = 0; }
+
+            t +=  solvetime ;
+            d+=diff;
+
+
+      }
+
+
+    float avgtime=t/length;
+    float avgdiff=d/length;
+    float adj=T/avgtime;
+    uint64_t nextDiffZ = (vgdiff*adj;
+    if( height == 26000 ||height == 24500 || height == 24860 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495){
+
+    printf("avgdiff:%lu, avgtime:%lu   adj:%lu   nextdiff:%lu     height:%lu\n",avgdiff,avgtime,adj,nextDiffZ,height);
+}
+      if (nextDiffZ <= 1) {
+        nextDiffZ = 1;
+      }
+
+    }
 
       return nextDiffZ;
     }
