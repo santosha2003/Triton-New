@@ -196,7 +196,7 @@ namespace cryptonote {
       for (size_t i = 1; i < length; i++) {
           solvetime = timestamps[i] - timestamps[i-1];
   	diff = cumulative_difficulties[i] - cumulative_difficulties[i-1];
-    if( height == 26000 ||height == 24500 || height == 2486 height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495){
+    if( height == 26000 ||height == 24500 || height == 2486 || height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495){
   	 printf("%lu: TS:%lu    solvetime:%lu,  diff:%lu\n",i,timestamps[i],solvetime,diff);
    }
 
