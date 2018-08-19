@@ -180,7 +180,7 @@ namespace cryptonote {
       if (height >= (24861-1) && height <= (24861+60) ) {return 10000000;}
 
       int64_t T = target_seconds;
-      if( height == 26000 ||height == 24500 || height == 24860 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 || || height == 45495){
+      if( height == 26000 ||height == 24500 || height == 24860 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 || height == 45495){
 
   	printf("size ts:%lu\n",timestamps.size());
 }
@@ -196,7 +196,7 @@ namespace cryptonote {
       for (size_t i = 1; i < length; i++) {
           solvetime = timestamps[i] - timestamps[i-1];
   	diff = cumulative_difficulties[i] - cumulative_difficulties[i-1];
-    if( height == 26000 ||height == 24500 || height == 24860 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 || || height == 45495){
+    if( height == 26000 ||height == 24500 || height == 24860 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
   	 printf("%lu: TS:%lu    solvetime:%lu,  diff:%lu\n",i,timestamps[i],solvetime,diff);
    }
 
@@ -214,7 +214,7 @@ namespace cryptonote {
   	long unsigned int avgdiff=d/length;
   	long unsigned int adj=(T*1000/avgtime);
   	long unsigned int nextDiffZ = (avgdiff*adj) / 1000;
-    if( height == 26000 ||height == 24500 || height == 24860 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 || || height == 45495){
+    if( height == 26000 ||height == 24500 || height == 24860 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
 
   	printf("avgdiff:%lu, avgtime:%lu   adj:%lu   nextdiff:%lu     height:%lu\n",avgdiff,avgtime,adj,nextDiffZ,height);
 }
