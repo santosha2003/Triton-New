@@ -204,7 +204,7 @@ namespace cryptonote {
 
 
     if( height == 24861 || height == 24922 ||height == 25356 || height == 25851 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
-  	 printf("%lu: TS:%lu    solvetime:%lu,  diff:%lu\n",(height - (495 - i)),timestamps[i],solvetime,diff);
+  	 printf("%lu: TS:%lu    solvetime:%lu,  diff:%lu\n",(height - (495 + i)),timestamps[i],solvetime,diff);
    }
 
   	//cap crazy  values
