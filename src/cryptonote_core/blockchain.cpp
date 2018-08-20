@@ -840,6 +840,12 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   size_t target = get_difficulty_target();
   difficulty_type diff;
   if(version < 5){
+      if(height == 24831){
+        diff = 335687327;
+      }
+      if(height == 24859){
+        diff = 336,147,226;
+      }
      diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height - 1);
   }else if(version >= 5 && version < 7){
     if(height >= 24860 && height < 24922){
@@ -1059,6 +1065,10 @@ difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std:
   if(get_current_hard_fork_version() < 5)
     diff = next_difficulty(timestamps, cumulative_difficulties, target,height - 1);
   if(get_current_hard_fork_version() >= 5 && get_current_hard_fork_version() < 7)
+    if(height >= 24860 && height <= 24922){
+        diff = 10000000;
+      }
+
     diff =  next_difficulty_v2(timestamps, cumulative_difficulties, target,height - 1 );
   if(get_current_hard_fork_version() >= 7)
     diff =  next_difficulty_v3(timestamps, cumulative_difficulties, target,height - 1);
