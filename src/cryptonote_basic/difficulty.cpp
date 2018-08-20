@@ -184,7 +184,6 @@ namespace cryptonote {
 
   	printf("size ts:%lu\n",timestamps.size());
 }
-      if(height >= 25584){
       size_t length = timestamps.size();
       assert(length == cumulative_difficulties.size());
 
@@ -223,7 +222,7 @@ namespace cryptonote {
   	long unsigned int avgdiff=d/length;
   	long unsigned int adj=(T*1000/avgtime);
   	long unsigned int nextDiffZ = (avgdiff*adj) / 1000;
-    if( height == 26000 ||height == 24500 || height == 24860 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
+    if( height == 24861 ||height == 25356 || height == 25851 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
 
   	printf("avgdiff:%lu, avgtime:%lu   adj:%lu   nextdiff:%lu     height:%lu    lowest:%ld     lowestHeight:%lu \n",avgdiff,avgtime,adj,nextDiffZ,height,loweset,lowestHeight);
 }
@@ -231,46 +230,6 @@ namespace cryptonote {
         nextDiffZ = 1;
       }
       return nextDiffZ;
-    }else{
-      size_t length = timestamps.size();
-      assert(length == cumulative_difficulties.size());
-
-      int64_t  t = 0,d=0;
-
-    int solvetime=0;
-    int diff=0;
-
-      for (size_t i = 1; i < length; i++) {
-          solvetime = timestamps[i] - timestamps[i-1];
-    diff = cumulative_difficulties[i] - cumulative_difficulties[i-1];
-    if(height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495){
-     printf("%lu: TS:%lu    solvetime:%u,  diff:%u\n",i,timestamps[i],solvetime,diff);
-   }
-
-    //cap crazy  values
-        if (solvetime < 0) { solvetime = 0; }
-
-            t +=  solvetime ;
-            d+=diff;
-
-
-      }
-
-
-    float avgtime=t/length;
-    float avgdiff=d/length;
-    float adj=T/avgtime;
-    uint64_t nextDiffZ = avgdiff*adj;
-    if(height == 25584 || height == 25583  || height == 26000 ||height == 24500 || height == 24860 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495){
-
-    printf("avgdiff:%f, avgtime:%f   adj:%f   nextdiff:%lu    height:%lu\n",avgdiff,avgtime,adj,nextDiffZ,height);
-}
-      if (nextDiffZ <= 1) {
-        nextDiffZ = 1;
-      }
-      return nextDiffZ;
-    }
-
 
     }
     difficulty_type next_difficulty_v3(std::vector<std::uint64_t> timestamps, std::vector<difficulty_type> cumulative_difficulties, size_t target_seconds, size_t height) {
