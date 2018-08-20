@@ -844,7 +844,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
         diff = 335687327;
       }
       if(height == 24859){
-        diff = 336,147,226;
+        diff = 336147226;
       }
      diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height - 1);
   }else if(version >= 5 && version < 7){
