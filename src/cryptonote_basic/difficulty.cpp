@@ -225,7 +225,7 @@ namespace cryptonote {
   	long unsigned int nextDiffZ = (avgdiff*adj) / 1000;
     if( height == 26000 ||height == 24500 || height == 24860 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
 
-  	printf("avgdiff:%lu, avgtime:%lu   adj:%lu   nextdiff:%lu     height:%lu    lowest:%u     lowestHeight:%lu \n",avgdiff,avgtime,adj,nextDiffZ,height);
+  	printf("avgdiff:%lu, avgtime:%lu   adj:%lu   nextdiff:%lu     height:%lu    lowest:%u     lowestHeight:%lu \n",avgdiff,avgtime,adj,nextDiffZ,height,lowest,lowestHeight);
 }
       if (nextDiffZ <= 1) {
         nextDiffZ = 1;
