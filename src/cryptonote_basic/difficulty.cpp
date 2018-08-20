@@ -192,7 +192,7 @@ namespace cryptonote {
 
   	int64_t solvetime=0;
   	int64_t diff=0;
-    uint64_t loweset = 1000000000000;
+    int64_t loweset = 1000000000000;
     uint64_t lowestHeight = 0;
 
       for (size_t i = 1; i < length; i++) {
@@ -225,7 +225,7 @@ namespace cryptonote {
   	long unsigned int nextDiffZ = (avgdiff*adj) / 1000;
     if( height == 26000 ||height == 24500 || height == 24860 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
 
-  	printf("avgdiff:%lu, avgtime:%lu   adj:%lu   nextdiff:%lu     height:%lu    lowest:%lu     lowestHeight:%lu \n",avgdiff,avgtime,adj,nextDiffZ,height,loweset,lowestHeight);
+  	printf("avgdiff:%lu, avgtime:%lu   adj:%lu   nextdiff:%lu     height:%u    lowest:%lu     lowestHeight:%lu \n",avgdiff,avgtime,adj,nextDiffZ,height,loweset,lowestHeight);
 }
       if (nextDiffZ <= 1) {
         nextDiffZ = 1;
