@@ -841,7 +841,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   difficulty_type diff;
   if(version < 5){
      diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height - 1);
-  }else if(version >= 5 && version < 7){
+  }else if(version >= 4 && version < 7){
     if(height >= 24859 && height <= 24920){
       diff = 10000000;
     }else{
