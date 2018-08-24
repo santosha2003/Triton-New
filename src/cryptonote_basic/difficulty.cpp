@@ -220,7 +220,7 @@ namespace cryptonote {
   	long unsigned int avgtime=t/length;
   	long unsigned int avgdiff=d/length;
     if(height == 24922){
-      avgdiff == 373118345;
+      avgdiff = 373118345;
     }
   	long unsigned int adj=(T*1000/avgtime);
   	long unsigned int nextDiffZ = (avgdiff*adj) / 1000;
