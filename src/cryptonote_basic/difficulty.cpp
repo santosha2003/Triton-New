@@ -204,7 +204,7 @@ namespace cryptonote {
 
 
     if( height == 24861 || height == 24922 ||height == 25356 || height == 25851 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
-  	 printf("%lu: TS:%lu    solvetime:%lu,  diff:%lu\n",(height - (495 - i)),timestamps[i],solvetime,diff);
+  	 printf("diff:%lu\n",diff);
    }
 
   	//cap crazy  values
@@ -219,9 +219,6 @@ namespace cryptonote {
 
   	long unsigned int avgtime=t/length;
   	long unsigned int avgdiff=d/length;
-    if(height == 24922){
-      avgdiff = 373118345;
-    }
   	long unsigned int adj=(T*1000/avgtime);
   	long unsigned int nextDiffZ = (avgdiff*adj) / 1000;
     if( height == 24861 || height == 24922 ||height == 25356 || height == 25851 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
