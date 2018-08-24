@@ -179,7 +179,7 @@ namespace cryptonote {
     difficulty_type next_difficulty_v2(std::vector<std::uint64_t> timestamps, std::vector<difficulty_type> cumulative_difficulties, size_t target_seconds, size_t height) {
 
       int64_t T = target_seconds;
-      if( height == 24861 || height == 24922 ||height == 25356 || height == 25851 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
+      if( height == 24861 || height == 24922 ||height == 25205 || height == 25851 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
 
   	printf("size ts:%lu\n",timestamps.size());
 }
@@ -203,7 +203,7 @@ namespace cryptonote {
     }
 
 
-    if( height == 24861 || height == 24922 ||height == 25356 || height == 25851 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
+    if( height == 24861 || height == 24922 ||height == 25205 || height == 25851 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
   	 printf("diff:%lu\n",diff);
    }
 
