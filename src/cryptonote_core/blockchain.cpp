@@ -856,7 +856,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
 
 
   }else if(version >= 5 && version < 7){
-    if(height >= 24861 && height <= 24920){
+    if(height >= 24861 && height <= 24921){
       diff = 10000000;
     }else if(height == 24921){
       diff = 51286833;
