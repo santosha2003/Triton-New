@@ -231,6 +231,61 @@ namespace cryptonote {
       return nextDiffZ;
 
     }
+    difficulty_type next_difficulty_v2_float(std::vector<std::uint64_t> timestamps, std::vector<difficulty_type> cumulative_difficulties, size_t target_seconds, size_t height) {
+
+      int64_t T = target_seconds;
+      if( height == 24861 || height == 24922 ||height == 25205 || height == 25851 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
+
+  	printf("size ts:%lu\n",timestamps.size());
+}
+      size_t length = timestamps.size();
+      assert(length == cumulative_difficulties.size());
+
+      int64_t  t = 0,d=0;
+
+  	int solvetime=0;
+  	int diff=0;
+    int64_t loweset = 1000000000000;
+    uint64_t lowestHeight = 0;
+
+      for (size_t i = 1; i < length; i++) {
+          solvetime = timestamps[i] - timestamps[i-1];
+  	diff = cumulative_difficulties[i] - cumulative_difficulties[i-1];
+
+    if(diff < loweset){
+      loweset = diff;
+      lowestHeight = height - i;
+    }
+
+
+    if( height == 24861 || height == 24922 ||height == 25205 || height == 25851 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
+  	 printf("diff:%lu\n",diff);
+   }
+
+  	//cap crazy  values
+        if (solvetime < 0) { solvetime = 0; }
+
+            t +=  solvetime ;
+  		      d+=diff;
+
+
+      }
+
+
+  	float avgtime=t/length;
+  	float avgdiff=d/length;
+  	float adj=(T/avgtime);
+  	uint64_t nextDiffZ = (avgdiff*adj);
+    if( height == 24861 || height == 24922 ||height == 25205 || height == 25851 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
+
+  	printf("avgdiff:%f, avgtime:%f   adj:%f   nextdiff:%lu     height:%lu    lowest:%ld     lowestHeight:%lu \n",avgdiff,avgtime,adj,nextDiffZ,height,loweset,lowestHeight);
+}
+      if (nextDiffZ <= 1) {
+        nextDiffZ = 1;
+      }
+      return nextDiffZ;
+
+    }
     difficulty_type next_difficulty_v3(std::vector<std::uint64_t> timestamps, std::vector<difficulty_type> cumulative_difficulties, size_t target_seconds, size_t height) {
       // Copyright (c) 2017-2018 Zawy
   		// MIT license http://www.opensource.org/licenses/mit-license.php.

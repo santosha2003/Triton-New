@@ -853,16 +853,17 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
     int difficultiesforv4 [32] = {334548400,330009535,330209072,330252077,330298610,331947716,332574156,331515192,332574156,331515192,331120332,330840255,331866703,332366852,329906693,330494043,330699033,330858012,331210050,331142467,332613428,333252897,334161767,334594058,334764297,335859071,336394300,337546011,336886799,336147226,10000000};
 
     diff = difficultiesforv4[(height + 1) - 24831];
-
-
   }else if(version >= 5 && version < 7){
     if(height >= 24861 && height <= 24921){
       diff = 10000000;
     }else if(height == 24922){
-      diff = 51286833;
-    }else {
+      diffforblock = 51286833;
+    }else if(height >= 24923 && height <= 25583){
 
+     diff = next_difficulty_v2_float(std::move(timestamps), std::move(difficulties), target,height - 1);
+   }else {
      diff = next_difficulty_v2(std::move(timestamps), std::move(difficulties), target,height - 1);
+
    }
   }else if(version >= 7){
      diff = next_difficulty_v3(std::move(timestamps), std::move(difficulties), target,height - 1);
