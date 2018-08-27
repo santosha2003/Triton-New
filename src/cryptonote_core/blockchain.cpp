@@ -862,7 +862,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
       int startHeight = 24923;
       int difficultiesforv5 [10] = {50744095,50738436,46352241,40626859,40460733,40309070,37418692,37261152,37200894,36539370};
 
-      diff = difficultiesforv5[(height + 1) - 24923]
+      diff = difficultiesforv5[(height + 1) - 24923];
    }else {
      diff = next_difficulty_v2(std::move(timestamps), std::move(difficulties), target,height - 1);
 
