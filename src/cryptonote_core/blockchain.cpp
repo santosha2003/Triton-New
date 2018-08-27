@@ -859,10 +859,9 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
     }else if(height == 24922){
       diff = 51286833;
     }else if(height >= 24923 && height <= 24931){
-      int startHeight = 24923;
       int difficultiesforv5 [39] = {50744095,50738436,46352241,40626859,40460733,40309070,37418692,37261152,37200894,36539370,36400448,36396224,35754940,35558266,32017970,31532443,31417428,31334391,31249155,31163104,31081880,31000451,30934438,30860283,30759856,30707361,30632579,30557438,30471116,30410223,30321113,30241782,30181080,30104586,30029595,29958659,29884795,29805492};
 
-      diff = difficultiesforv5[(height + 1) - 24923];
+      diff = difficultiesforv5[(height) - 24923];
    }else {
      diff = next_difficulty_v2(std::move(timestamps), std::move(difficulties), target,height - 1);
 
