@@ -259,7 +259,7 @@ namespace cryptonote {
 
 
     if( height == 24861 || height == 24922 ||height == 25205 || height == 25851 ||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
-  	 printf("diff:%lu\n",diff);
+  	 printf("diff:%u\n",diff);
    }
 
   	//cap crazy  values
