@@ -179,7 +179,7 @@ namespace cryptonote {
     difficulty_type next_difficulty_v2(std::vector<std::uint64_t> timestamps, std::vector<difficulty_type> cumulative_difficulties, size_t target_seconds, size_t height) {
 
       int64_t T = target_seconds;
-      if( height == 24861 || height == 24922 ||height == 25205 || height == 25663||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
+      if( height == 24861 || height == 24922 ||height == 25205 || height == 25670||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
 
   	printf("size ts:%lu\n",timestamps.size());
 }
@@ -203,7 +203,7 @@ namespace cryptonote {
     }
 
 
-    if( height == 24861 || height == 24922 ||height == 25205 || height == 25663||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
+    if( height == 24861 || height == 24922 ||height == 25205 || height == 25670||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
   	 printf("diff:%lu\n",diff);
    }
 
@@ -221,7 +221,7 @@ namespace cryptonote {
   	long unsigned int avgdiff=d/length;
   	long unsigned int adj=(T*1000/avgtime);
   	long unsigned int nextDiffZ = (avgdiff*adj) / 1000;
-    if( height == 24861 || height == 24922 ||height == 25205 || height == 25663||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
+    if( height == 24861 || height == 24922 ||height == 25205 || height == 25670||height == 41495 || height == 42000 || height ==  42495 || height == 43000 || height == 43495 || height == 44400 || height == 44495 || height == 45000 ||height == 45495){
 
   	printf("avgdiff:%lu, avgtime:%lu   adj:%lu   nextdiff:%lu     height:%lu    lowest:%ld     lowestHeight:%lu \n",avgdiff,avgtime,adj,nextDiffZ,height,loweset,lowestHeight);
 }
