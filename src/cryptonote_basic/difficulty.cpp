@@ -187,17 +187,10 @@ namespace cryptonote {
 
   	int64_t solvetime=0;
   	int64_t diff=0;
-    int64_t loweset = 1000000000000;
-    uint64_t lowestHeight = 0;
 
       for (size_t i = 1; i < length; i++) {
           solvetime = timestamps[i] - timestamps[i-1];
   	diff = cumulative_difficulties[i] - cumulative_difficulties[i-1];
-
-    if(diff < loweset){
-      loweset = diff;
-      lowestHeight = height - i;
-    }
 
 
   	//cap crazy  values
