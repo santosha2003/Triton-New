@@ -201,7 +201,7 @@ namespace cryptonote {
 
 
       }
-    
+
 
   	long unsigned int avgtime=t/length;
   	long unsigned int avgdiff=d/length;
@@ -211,7 +211,7 @@ namespace cryptonote {
       if (nextDiffZ <= 1) {
         nextDiffZ = 1;
       }
-      if(height == 27190){
+      if(height == 27779){
 
         printf("NextDiff:%lu",nextDiffZ);
 
