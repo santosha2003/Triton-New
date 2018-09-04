@@ -401,11 +401,12 @@ namespace cryptonote
 	  }
 
 	  VARINT_FIELD_N("number_of_transactions", b.number_of_transactions);
-    if (b.number_of_transactions < 1 && b.major_version > BLOCK_MAJOR_VERSION_7) {
+    if(b.major_version >= 2){
+    if (b.number_of_transactions < 1) {
 		  MERROR("Num tx < 1?");
  		  return false;
 	  }
-
+  }
 	  if (!header_only)
 	  {
 		  ar.tag("miner_tx_branch");
