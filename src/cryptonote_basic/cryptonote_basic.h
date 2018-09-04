@@ -401,7 +401,7 @@ namespace cryptonote
 	  }
 
 	  VARINT_FIELD_N("number_of_transactions", b.number_of_transactions);
-    if (b.number_of_transactions < 1) {
+    if (b.number_of_transactions < 1 && b.height >= 7) {
 		  MERROR("Num tx < 1?");
  		  return false;
 	  }
