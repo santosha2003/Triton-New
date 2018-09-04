@@ -214,7 +214,7 @@ namespace cryptonote {
       if (nextDiffZ <= 1) {
         nextDiffZ = 1;
       }
-      prinf("NextDiff:%lu",nextDiffZ);
+      printf("NextDiff:%lu",nextDiffZ);
 
       return nextDiffZ;
 
