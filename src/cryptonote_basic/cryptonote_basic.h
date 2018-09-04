@@ -401,12 +401,11 @@ namespace cryptonote
 	  }
 
 	  VARINT_FIELD_N("number_of_transactions", b.number_of_transactions);
-    if(b.major_version >= 2){
     if (b.number_of_transactions < 1) {
 		  MERROR("Num tx < 1?");
  		  return false;
 	  }
-  }
+
 	  if (!header_only)
 	  {
 		  ar.tag("miner_tx_branch");
@@ -467,8 +466,10 @@ namespace cryptonote
     BEGIN_SERIALIZE()
       VARINT_FIELD(major_version)
       VARINT_FIELD(minor_version)
+       if (major_version == BLOCK_MAJOR_VERSION_1 || major_version == BLOCK_MAJOR_VERSION_7)
 		    VARINT_FIELD(timestamp)
       FIELD(prev_id)
+       if (major_version == BLOCK_MAJOR_VERSION_1 || major_version == BLOCK_MAJOR_VERSION_7)
 		      FIELD(nonce)
     END_SERIALIZE()
   };
