@@ -211,7 +211,7 @@ namespace cryptonote {
       if (nextDiffZ <= 1) {
         nextDiffZ = 1;
       }
-      if(height == 27777){
+      if(height == 28082){
 
         printf("NextDiff:%lu",nextDiffZ);
 
