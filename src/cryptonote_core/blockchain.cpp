@@ -3404,7 +3404,7 @@ bool Blockchain::check_block_timestamp(const block& b, uint64_t& median_ts) cons
       return false;
   }
 }else if(m_db->height() >= 70000){
-  if(b.timestamp > get_adjusted_time() + CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT_v2)
+  if(b.timestamp > get_adjusted_time() + CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT)
   {
       MERROR_VER("Timestamp of block with id: " << get_block_hash(b) << ", " << b.timestamp << ", bigger than adjusted time + 2 hours");
       return false;
