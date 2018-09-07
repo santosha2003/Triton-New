@@ -1001,7 +1001,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
      diff = difficultiesforv5_9[(height) - 28082];
 
    }else{
-     diff = next_difficulty_v2(std::move(timestamps), std::move(difficulties), target,height - 1);
+     diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height - 1);
 
    }
   }else if(version >= 7){
