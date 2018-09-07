@@ -158,7 +158,7 @@ namespace cryptonote {
          return true;
 
    }else{
-     uint64_t baseReward = 80;
+     uint64_t baseReward = (840000000000000000 - (already_generated_coins / 10000000)) >> emission_speed_factor;
 
 
 
