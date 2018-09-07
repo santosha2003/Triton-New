@@ -161,7 +161,14 @@ namespace cryptonote {
 
 
 
-     size_t blockGrantedFullRewardZone = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1;
+
+     size_t blockGrantedFullRewardZone;
+     if(version == 2){
+       blockGrantedFullRewardZone = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2;
+     }else if(version >=3){
+       blockGrantedFullRewardZone = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1;
+
+     }
      median_size = std::max(median_size, blockGrantedFullRewardZone);
 
      if (current_block_size > 2 * median_size) {
