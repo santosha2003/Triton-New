@@ -230,19 +230,6 @@ difficulty_type next_difficulty_v3(std::vector<uint64_t> timestamps,
     // Copyright (c) 2018 Haven Protocol (refinements)
     // Degnr8, Karbowanec, Masari, Bitcoin Gold, Bitcoin Candy, and Haven have contributed.
 
-    // This algorithm is: next_difficulty = harmonic_mean(Difficulties) * T / LWMA(Solvetimes)
-    // The harmonic_mean(Difficulties) = 1/average(Targets) so it is also:
-    // next_target = avg(Targets) * LWMA(Solvetimes) / T.
-    // This is "the best algorithm" because it has lowest root-mean-square error between
-    // needed & actual difficulty during hash attacks while having the lowest standard
-    // deviation during stable hashrate. That is, it's the fastest for a given stability and vice versa.
-    // Do not use "if solvetime < 1 then solvetime = 1" which allows a catastrophic exploit.
-    // Do not sort timestamps.  "Solvetimes" and "LWMA" variables must allow negatives.
-    // Do not use MTP as most recent block.  Do not use (POW)Limits, filtering, or tempering.
-    // Do not forget to set N (aka DIFFICULTY_WINDOW in Cryptonote) to recommendation below.
-    // The nodes' future time limit (FTL) aka CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT needs to
-    // be reduced from 60*60*2 to 500 seconds to prevent timestamp manipulation from miner's with
-    //  > 50% hash power.  If this is too small, it can be increased to 1000 at a cost in protection.
 
     // Set DIFFICULTY_WINDOW_V3 = N where N is defined below.
     // N=45, 55, 70, 90, 120 for T=600, 240, 120, 90, and 60 seconds
