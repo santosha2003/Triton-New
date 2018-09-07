@@ -90,32 +90,31 @@ namespace cryptonote {
   //-----------------------------------------------------------------------------------------------
   uint64_t get_penalized_amount(const uint64_t amount, const size_t median_size, const size_t current_block_size)
 {
-  assert(median_size < std::numeric_limits<uint32_t>::max());
-  assert(current_block_size < std::numeric_limits<uint32_t>::max());
+  static_assert(sizeof(size_t) >= sizeof(uint32_t), "size_t is too small");
+      assert(currentBlockSize <= 2 * medianSize);
+      assert(medianSize <= std::numeric_limits<uint32_t>::max());
+      assert(currentBlockSize <= std::numeric_limits<uint32_t>::max());
 
-  if (amount == 0) {
-    return amount;
-  }
+      if (amount == 0) {
+        return 0;
+      }
 
-  if (current_block_size <= median_size) {
-    return amount;
-  }
+      if (currentBlockSize <= medianSize) {
+        return amount;
+      }
 
-  uint64_t product_hi;
-  // BUGFIX: 32-bit saturation bug (e.g. ARM7), the result was being
-  // treated as 32-bit by default.
-  uint64_t multiplicand = 2 * median_size - current_block_size;
-  multiplicand *= current_block_size;
-  uint64_t product_lo = mul128(amount, multiplicand, &product_hi);
+      uint64_t productHi;
+      uint64_t productLo = mul128(amount, currentBlockSize * (UINT64_C(2) * medianSize - currentBlockSize), &productHi);
 
-  uint64_t amount_hi;
-  uint64_t amount_lo;
-  div128_32(product_hi, product_lo, static_cast<uint32_t>(median_size), &amount_hi, &amount_lo);
-  div128_32(amount_hi, amount_lo, static_cast<uint32_t>(median_size), &amount_hi, &amount_lo);
-  assert(0 == amount_hi);
-  assert(amount_lo < amount);
+      uint64_t penalizedAmountHi;
+      uint64_t penalizedAmountLo;
+      div128_32(productHi, productLo, static_cast<uint32_t>(medianSize), &penalizedAmountHi, &penalizedAmountLo);
+      div128_32(penalizedAmountHi, penalizedAmountLo, static_cast<uint32_t>(medianSize), &penalizedAmountHi, &penalizedAmountLo);
 
-  return amount_lo;
+      assert(0 == penalizedAmountHi);
+      assert(penalizedAmountLo < amount);
+
+      return penalizedAmountLo;
 }
 
   //-----------------------------------------------------------------------------------------------
