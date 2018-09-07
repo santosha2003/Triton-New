@@ -139,31 +139,43 @@ namespace cryptonote {
      MERROR("Reward:" << print_money(reward));
      return true;
    }
+   if(version >= 7){
 
-    uint64_t full_reward_zone = get_min_block_size(version);
+     uint64_t full_reward_zone = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1;
 
-     //make it soft
-     if (median_size < full_reward_zone) {
-       median_size = full_reward_zone;
+      //make it soft
+      if (median_size < full_reward_zone) {
+        median_size = full_reward_zone;
+      }
+
+
+        if(current_block_size > 2 * median_size) {
+          MERROR("Block cumulative size is too big: " << current_block_size << ", expected less than " << 2 * median_size);
+          return false;
+        }
+        uint64_t base_reward = (MONEY_SUPPLYv7 - already_generated_coins) >> emission_speed_factor;
+        reward = get_penalized_amount((base_reward), median_size, current_block_size);
+         reward +=  version < BLOCK_MAJOR_VERSION_7 ? get_penalized_amount(fee, median_size, current_block_size) : fee;
+
+   }else{
+     uint64_t baseReward = (MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
+
+
+
+     size_t blockGrantedFullRewardZone = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1;
+     medianSize = std::max(medianSize, blockGrantedFullRewardZone);
+
+     if (currentBlockSize > 2 * medianSize) {
+       logger(TRACE) << "Block cumulative size is too big: " << currentBlockSize << ", expected less than " << 2 * medianSize;
+       return false;
      }
 
+     uint64_t penalizedBaseReward = getPenalizedAmount(baseReward, medianSize, current_block_size);
 
-     if(version >= 7){
-       if(current_block_size > 2 * median_size) {
-         MERROR("Block cumulative size is too big: " << current_block_size << ", expected less than " << 2 * median_size);
-         return false;
-       }
-       uint64_t base_reward = (MONEY_SUPPLYv7 - already_generated_coins) >> emission_speed_factor;
-       reward = get_penalized_amount((base_reward), median_size, current_block_size);
-        reward +=  version < BLOCK_MAJOR_VERSION_7 ? get_penalized_amount(fee, median_size, current_block_size) : fee;
+     emissionChange = penalizedBaseReward;
+     reward = (penalizedBaseReward * m_numberOfDecimalUnits) + fee;
 
-
-     }else {
-       uint64_t base_reward = ((MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor) * 10;
-       reward = get_penalized_amount((base_reward), median_size, current_block_size);
-        reward +=  version < BLOCK_MAJOR_VERSION_7 ? get_penalized_amount(fee, median_size, current_block_size) : fee;
-     }
-
+   }
 
      return true;
   }
