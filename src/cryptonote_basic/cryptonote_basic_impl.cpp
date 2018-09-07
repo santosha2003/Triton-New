@@ -155,6 +155,7 @@ namespace cryptonote {
         uint64_t base_reward = (84000000 - already_generated_coins) >> emission_speed_factor;
         reward = get_penalized_amount((base_reward), median_size, current_block_size);
          reward +=  version < BLOCK_MAJOR_VERSION_7 ? get_penalized_amount(fee, median_size, current_block_size) : fee;
+         return true;
 
    }else{
      uint64_t baseReward = (MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
@@ -179,10 +180,10 @@ namespace cryptonote {
      uint64_t penalizedBaseReward = get_penalized_amount(baseReward, median_size, current_block_size);
 
      reward = (penalizedBaseReward) + fee;
+     return true;
 
    }
 
-     return true;
   }
   //------------------------------------------------------------------------------------
   uint8_t get_account_address_checksum(const public_address_outer_blob& bl)
