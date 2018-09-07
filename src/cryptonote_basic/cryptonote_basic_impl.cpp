@@ -104,7 +104,7 @@ namespace cryptonote {
       }
 
       uint64_t productHi;
-      uint64_t productLo = mul128(amount, current_block_size * (UINT64_C(2) * median_size - currentBlockSize), &productHi);
+      uint64_t productLo = mul128(amount, current_block_size * (UINT64_C(2) * median_size - current_block_size), &productHi);
 
       uint64_t penalizedAmountHi;
       uint64_t penalizedAmountLo;
