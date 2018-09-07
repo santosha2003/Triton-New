@@ -221,7 +221,7 @@ namespace cryptonote {
 
     }
 
-difficulty_type next_difficulty_v3(std::vector<uint64_t> timestamps,
+    difficulty_type next_difficulty_v3(std::vector<std::uint64_t> timestamps, std::vector<difficulty_type> cumulative_difficulties, size_t target_seconds, size_t height) {
   // LWMA difficulty algorithm
     // Background:  https://github.com/zawy12/difficulty-algorithms/issues/3
     // Copyright (c) 2017-2018 Zawy (pseudocode)
