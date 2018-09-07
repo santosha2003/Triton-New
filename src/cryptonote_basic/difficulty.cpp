@@ -249,11 +249,11 @@ namespace cryptonote {
     // Otherwise make sure timestamps and cumulative_difficulties are correct size.
     else {
       timestamps.resize(N + 1);
-      cumulativeDifficulties.resize(N + 1);
+      cumulative_difficulties.resize(N + 1);
     }
 
     size_t length = timestamps.size();
-    assert(length == cumulativeDifficulties.size());
+    assert(length == cumulative_difficulties.size());
     assert(length <= DIFFICULTY_BLOCKS_COUNT_V3);
 
     // To get an average solvetime to within +/- ~0.1%, use an adjustment factor.
@@ -271,7 +271,7 @@ namespace cryptonote {
       solveTime = static_cast<int64_t>(timestamps[i]) - static_cast<int64_t>(timestamps[i - 1]);
       // Next line not required if coin uses BTC's MTP of 11 blocks & FTL=500 to 1000.
       solveTime = std::min<int64_t>((T * 6), std::max<int64_t>(solveTime, (-6 * T)));
-      difficulty = cumulativeDifficulties[i] - cumulativeDifficulties[i - 1];
+      difficulty = cumulative_difficulties[i] - cumulative_difficulties[i - 1];
       LWMA += (int64_t)(solveTime * i) / k;
       sum_inverse_D += 1 / static_cast<double>(difficulty);
     }
