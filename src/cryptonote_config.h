@@ -60,7 +60,7 @@
 
 
 // MONEY_SUPPLY - total number coins to be generated
-#define MONEY_SUPPLY                                   84000000000000000000
+#define MONEY_SUPPLY                                   84000000
 #define MONEY_SUPPLYv7                                 8400000000000000
 
 
