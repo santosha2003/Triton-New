@@ -172,11 +172,6 @@ namespace cryptonote {
      }
      median_size = std::max(median_size, blockGrantedFullRewardZone);
 
-     if (current_block_size > 2 * median_size) {
-       MERROR("Block cumulative size is too big: " << current_block_size << ", expected less than " << 2 * median_size);
-       return false;
-     }
-
      uint64_t penalizedBaseReward = get_penalized_amount(baseReward, median_size, current_block_size);
 
      reward = (penalizedBaseReward * 100000000000) + fee;
