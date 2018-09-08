@@ -2961,6 +2961,8 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
       }
       else
       {
+        if(hf_version >= 7){
+
         check_ring_signature(tx_prefix_hash, in_to_key.k_image, pubkeys[sig_index], tx.signatures[sig_index], results[sig_index]);
         if (!results[sig_index])
         {
@@ -2976,6 +2978,7 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
         }
         it->second[in_to_key.k_image] = true;
       }
+    }
     }
 
     sig_index++;
