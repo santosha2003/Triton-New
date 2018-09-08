@@ -3750,7 +3750,7 @@ leave:
   uint64_t base_reward = 0;
   uint64_t already_generated_coins = 0;
 
-  if(height > 1){
+  if(m_db->height() > 1){
    already_generated_coins = m_db->get_block_already_generated_coins(m_db->height() - 1);
 } else{
   already_generated_coins = 0;
