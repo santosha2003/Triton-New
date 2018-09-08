@@ -3748,8 +3748,13 @@ leave:
 
   TIME_MEASURE_START(vmt);
   uint64_t base_reward = 0;
+  uint64_t already_generated_coins = 0;
 
-  uint64_t already_generated_coins = m_db->get_block_already_generated_coins(m_db->height() - 1);
+  if(height > 1){
+   already_generated_coins = m_db->get_block_already_generated_coins(m_db->height() - 1);
+} else{
+  already_generated_coins = 0;
+}
   if(!validate_miner_transaction(bl, cumulative_block_size, fee_summary, base_reward, already_generated_coins, bvc.m_partial_block_reward, m_hardfork->get_current_version()))
   {
     MERROR_VER("Block with id: " << id << " has incorrect miner transaction");
