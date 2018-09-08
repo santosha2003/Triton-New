@@ -3743,7 +3743,7 @@ leave:
     TIME_MEASURE_FINISH(cc);
     t_checktx += cc;
     if(m_db->height()  == 1158){
-      MERROR("Transaction(" << tx_id << ") Fee: " << fee);
+      MERROR("Transaction(" << tx_id << ") Fee: " << print_money(fee));
     }
     fee_summary += fee;
     cumulative_block_size += blob_size;
