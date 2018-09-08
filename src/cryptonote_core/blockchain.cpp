@@ -3445,7 +3445,8 @@ void Blockchain::return_tx_to_pool(std::vector<transaction> &txs)
     // that might not be always true. Unlikely though, and always relaying
     // these again might cause a spike of traffic as many nodes re-relay
     // all the transactions in a popped block when a reorg happens.
-    if (!m_tx_pool.add_tx(tx, tvc, true, true, false, version) && version >= 7)
+    if (!m_tx_pool.add_tx(tx, tvc, true, true, false, version) && version >= 7
+  )
     {
       MERROR("Failed to return taken transaction with hash: " << get_transaction_hash(tx) << " to tx_pool");
     }
