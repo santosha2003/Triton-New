@@ -157,15 +157,14 @@ namespace cryptonote {
          reward +=  version < BLOCK_MAJOR_VERSION_7 ? get_penalized_amount(fee, median_size, current_block_size) : fee;
          return true;
 
+   }else if(version == 2){
+     reward = 77;
+     return true;
    }else{
      uint64_t agc = already_generated_coins / 1000000000000;
      uint64_t base_reward = (84000000 - agc) >> emission_speed_factor;
 
-     size_t blockGrantedFullRewardZone;
-     if(version == 2){
-       blockGrantedFullRewardZone = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2;
-     }else if(version >=3){
-       blockGrantedFullRewardZone = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1;
+     size_t blockGrantedFullRewardZone = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1;
 
      }
      median_size = std::max(median_size, blockGrantedFullRewardZone);
