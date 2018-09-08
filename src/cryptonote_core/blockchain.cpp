@@ -3745,7 +3745,7 @@ leave:
     if(m_db->height()  == 1158){
       MERROR("Transaction(" << tx_id << ") Fee: " << print_money(fee));
       if(tx_id == "e9fbda3ade66fc1e8b122b9bd2440569d1dede568e16894b5832472c35209c0e"){
-        fee = 100000000
+        fee = 100000000;
       }
     }
     fee_summary += fee;
