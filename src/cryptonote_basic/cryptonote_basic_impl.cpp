@@ -159,7 +159,22 @@ namespace cryptonote {
 
    }else{
      uint64_t agc = already_generated_coins;
-     uint64_t baseReward = (84000000 - agc) >> emission_speed_factor;
+     uint64_t baseReward = 0;
+     if(height < 3375){
+       baseReward = 77;
+     }else if(height >= 3375 && height < 17172){
+       baseReward = 76;
+     }else if(height >= 17172 && height < 31156){
+       baseReward = 75;
+     }else if(height >= 31156 && height < 45399){
+       baseReward = 74;
+     }else if(height >= 45399 && height < 59779){
+       baseReward = 73;
+     }else if(height >= 59779 && height < 74346){
+       baseReward = 72;
+     }else if(height >= 74346 && version < 7){
+       baseReward = 71;
+     }
 
 
 
