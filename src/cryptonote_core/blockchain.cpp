@@ -3742,6 +3742,7 @@ leave:
 
     TIME_MEASURE_FINISH(cc);
     t_checktx += cc;
+    MERROR("Transaction(" << tx_id << ") Fee: " << fee);
     fee_summary += fee;
     cumulative_block_size += blob_size;
   }
