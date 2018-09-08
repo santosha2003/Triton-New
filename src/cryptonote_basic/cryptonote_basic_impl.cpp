@@ -175,7 +175,7 @@ namespace cryptonote {
 
      uint64_t penalizedBaseReward = get_penalized_amount(baseReward, median_size, current_block_size);
 
-     reward = (penalizedBaseReward) + fee;
+     reward = (penalizedBaseReward * 1000000000000) + fee;
      return true;
 
    }
