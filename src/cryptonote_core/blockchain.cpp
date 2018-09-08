@@ -1290,7 +1290,7 @@ bool Blockchain::validate_miner_transaction(const block& b, size_t cumulative_bl
     MERROR_VER("coinbase transaction spend too much money (" << print_money(money_in_use) << "). Block reward is " << print_money(base_reward + fee) << "(" << print_money(base_reward) << "+" << print_money(fee) << ")" << " AGC: " << print_money(already_generated_coins));
     return false;
   }
-  if(version >= 7{
+  if(version >= 7){
       CHECK_AND_ASSERT_MES(money_in_use - fee <= base_reward, false, "base reward calculation bug");
     if(base_reward + fee != money_in_use){
       partial_block_reward = true;
