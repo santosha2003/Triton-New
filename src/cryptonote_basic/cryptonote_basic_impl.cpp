@@ -166,7 +166,7 @@ namespace cryptonote {
 
      size_t blockGrantedFullRewardZone = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1;
 
-     }
+     
      median_size = std::max(median_size, blockGrantedFullRewardZone);
 
      uint64_t penalizedBaseReward = get_penalized_amount(base_reward, median_size, current_block_size);
