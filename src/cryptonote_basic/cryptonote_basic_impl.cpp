@@ -158,7 +158,7 @@ namespace cryptonote {
          return true;
 
    }else{
-     uint64_t agc = m_db->get_block_already_generated_coins(height - 1);
+     uint64_t agc = already_generated_coins;
      uint64_t baseReward = (84000000 - agc / 10) >> emission_speed_factor;
 
 

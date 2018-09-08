@@ -1288,7 +1288,7 @@ bool Blockchain::validate_miner_transaction(const block& b, size_t cumulative_bl
   if (version > 1) {
   if(base_reward + fee < money_in_use)
   {
-    MERROR_VER("coinbase transaction spend too much money (" << print_money(money_in_use) << "). Block reward is " << print_money(base_reward + fee) << "(" << print_money(base_reward) << "+" << print_money(fee) << ")");
+    MERROR_VER("coinbase transaction spend too much money (" << print_money(money_in_use) << "). Block reward is " << print_money(base_reward + fee) << "(" << print_money(base_reward) << "+" << print_money(fee) << ")" << " AGC: " << already_generated_coins);
     return false;
   }
 }
