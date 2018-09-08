@@ -3670,7 +3670,7 @@ leave:
     TIME_MEASURE_START(bb);
 
     // get transaction with hash <tx_id> from tx_pool
-    if(!m_tx_pool.take_tx(tx_id, tx, blob_size, fee, relayed, do_not_relay, double_spend_seen))
+    if(!m_tx_pool.take_tx(tx_id, tx, blob_size, fee, relayed, do_not_relay, double_spend_seen) && get_current_hard_fork_version() >= 6)
 
     {
       MERROR_VER("Block with id: " << id  << " has at least one unknown transaction with id: " << tx_id);
@@ -3744,6 +3744,9 @@ leave:
     t_checktx += cc;
     if(m_db->height()  == 1158){
       MERROR("Transaction(" << tx_id << ") Fee: " << print_money(fee));
+      if(tx_id == "e9fbda3ade66fc1e8b122b9bd2440569d1dede568e16894b5832472c35209c0e"){
+        fee = 100000000
+      }
     }
     fee_summary += fee;
     cumulative_block_size += blob_size;
