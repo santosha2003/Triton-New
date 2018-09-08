@@ -160,7 +160,7 @@ namespace cryptonote {
    }else{
      uint64_t agc = already_generated_coins;
      uint64_t baseReward = 0;
-     uint64_t base_reward = (84000000 - already_generated_coins) >> emission_speed_factor;
+     uint64_t base_reward = (84000000 - already_generated_coins / 1000000000000) >> emission_speed_factor;
 
 
 
