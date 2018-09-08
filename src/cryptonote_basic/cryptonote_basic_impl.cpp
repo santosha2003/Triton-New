@@ -158,7 +158,8 @@ namespace cryptonote {
          return true;
 
    }else{
-     uint64_t baseReward = (84000000 - already_generated_coins / 10) >> emission_speed_factor;
+     uint64_t agc = m_db->get_block_already_generated_coins(height - 1);
+     uint64_t baseReward = (84000000 - agc / 10) >> emission_speed_factor;
 
 
 
@@ -175,7 +176,7 @@ namespace cryptonote {
      uint64_t penalizedBaseReward = get_penalized_amount(baseReward, median_size, current_block_size);
 
      reward = (penalizedBaseReward * 1000000000000) + fee;
-     MERROR("BR: " << print_money(reward) << " AGC: " << print_money(already_generated_coins));
+     MERROR("BR: " << print_money(reward) << " AGC: " << print_money(agc));
 
      return true;
 
