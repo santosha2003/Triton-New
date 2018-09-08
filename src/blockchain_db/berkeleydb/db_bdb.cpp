@@ -1403,25 +1403,20 @@ difficulty_type BlockchainBDB::get_block_difficulty(const uint64_t& height) cons
 
 uint64_t BlockchainBDB::get_block_already_generated_coins(const uint64_t& height) const
 {
-  LOG_PRINT_L3("BlockchainLMDB::" << __func__);
-check_open();
+  LOG_PRINT_L3("BlockchainBDB::" << __func__);
+      check_open();
 
-TXN_PREFIX_RDONLY();
-RCURSOR(block_info);
+      Dbt_copy<uint32_t> key(height + 1);
+      Dbt_copy<uint64_t> result;
+      auto get_result = m_block_coins->get(DB_DEFAULT_TX, &key, &result, 0);
+      if (get_result == DB_NOTFOUND)
+      {
+          throw0(BLOCK_DNE(std::string("Attempt to get generated coins from height ").append(boost::lexical_cast<std::string>(height)).append(" failed -- block size not in db").c_str()));
+      }
+      else if (get_result)
+          throw0(DB_ERROR("Error attempting to retrieve a total generated coins from the db"));
 
-MDB_val_set(result, height);
-auto get_result = mdb_cursor_get(m_cur_block_info, (MDB_val *)&zerokval, &result, MDB_GET_BOTH);
-if (get_result == MDB_NOTFOUND)
-{
-  throw0(BLOCK_DNE(std::string("Attempt to get generated coins from height ").append(boost::lexical_cast<std::string>(height)).append(" failed -- block size not in db").c_str()));
-}
-else if (get_result)
-  throw0(DB_ERROR("Error attempting to retrieve a total generated coins from the db"));
-
-mdb_block_info *bi = (mdb_block_info *)result.mv_data;
-uint64_t ret = bi->bi_coins;
-TXN_POSTFIX_RDONLY();
-return ret;
+      return result;
 }
 
 crypto::hash BlockchainBDB::get_block_hash_from_height(const uint64_t& height) const
