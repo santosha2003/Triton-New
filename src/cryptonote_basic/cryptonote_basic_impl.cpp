@@ -158,7 +158,7 @@ namespace cryptonote {
          return true;
 
    }else{
-     uint64_t baseReward = (84000000 - (already_generated_coins)) >> emission_speed_factor;
+     uint64_t baseReward = (84000000 - already_generated_coins / 10) >> emission_speed_factor;
      MERROR("BR: " << baseReward << " AGC: " << already_generated_coins);
 
 
