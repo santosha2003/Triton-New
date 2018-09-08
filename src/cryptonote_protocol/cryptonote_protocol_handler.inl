@@ -300,7 +300,6 @@ namespace cryptonote
       }
       return true;
     }
-    MCLOG(el::Level::Info, "global", hshd.current_height);
     if (hshd.current_height > target)
     {
     /* As I don't know if accessing hshd from core could be a good practice,
