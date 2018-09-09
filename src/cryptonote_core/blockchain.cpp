@@ -1221,7 +1221,7 @@ difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std:
     if(height == 24830){
       diff = 335687327;
     }else {
-     diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height - 1);
+     diff = next_difficulty(std::move(timestamps), std::move(cumulative_difficulties), target,height - 1);
    }
   }else if(version == 4){
     //HARDCODE VERSION 4 DIFFICULTIES
@@ -1381,11 +1381,11 @@ difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std:
      diff = difficultiesforv5_9[(height) - 28082];
 
    }else{
-     diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height - 1);
+     diff = next_difficulty(std::move(timestamps), std::move(cumulative_difficulties), target,height - 1);
 
    }
   }else if(version >= 7){
-     diff = next_difficulty_v3(std::move(timestamps), std::move(difficulties), target,height - 1);
+     diff = next_difficulty_v3(std::move(timestamps), std::move(cumulative_difficulties), target,height - 1);
   }
   return diff;
 
