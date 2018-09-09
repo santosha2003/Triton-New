@@ -1229,7 +1229,7 @@ difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std:
     int difficultiesforv4 [32] = {334548400,330009535,330209072,330252077,330298610,331947716,332574156,331515192,332574156,331515192,331120332,330840255,331866703,332366852,329906693,330494043,330699033,330858012,331210050,331142467,332613428,333252897,334161767,334594058,334764297,335859071,336394300,337546011,336886799,336147226,10000000};
 
     diff = difficultiesforv4[(height + 1) - startHeight];
-  }else if(m_hardfork->get_current_version() >= 5 && version < 7){
+  }else if(m_hardfork->get_current_version() >= 5 && m_hardfork->get_current_version()  < 7){
     if(height >= 24861 && height <= 24921){
       diff = 10000000;
     }else if(height == 24922){
