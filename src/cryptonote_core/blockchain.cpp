@@ -1217,19 +1217,19 @@ difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std:
   size_t height = alt_chain.size();
   // calculate the difficulty target for the block and return it
   difficulty_type diff = 0;
-  if(m_hardfork->get_current_version(); <= 3){
+  if(m_hardfork->get_current_version() <= 3){
     if(height == 24830){
       diff = 335687327;
     }else {
      diff = next_difficulty(std::move(timestamps), std::move(cumulative_difficulties), target,height - 1);
    }
-  }else if(m_hardfork->get_current_version();== 4){
+  }else if(m_hardfork->get_current_version() == 4){
     //HARDCODE VERSION 4 DIFFICULTIES
     int startHeight = 24831;
     int difficultiesforv4 [32] = {334548400,330009535,330209072,330252077,330298610,331947716,332574156,331515192,332574156,331515192,331120332,330840255,331866703,332366852,329906693,330494043,330699033,330858012,331210050,331142467,332613428,333252897,334161767,334594058,334764297,335859071,336394300,337546011,336886799,336147226,10000000};
 
     diff = difficultiesforv4[(height + 1) - startHeight];
-  }else if(m_hardfork->get_current_version(); >= 5 && version < 7){
+  }else if(m_hardfork->get_current_version() >= 5 && version < 7){
     if(height >= 24861 && height <= 24921){
       diff = 10000000;
     }else if(height == 24922){
@@ -1384,7 +1384,7 @@ difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std:
      diff = next_difficulty(std::move(timestamps), std::move(cumulative_difficulties), target,height - 1);
 
    }
-  }else if(m_hardfork->get_current_version(); >= 7){
+  }else if(m_hardfork->get_current_version() >= 7){
      diff = next_difficulty_v3(std::move(timestamps), std::move(cumulative_difficulties), target,height - 1);
   }
   return diff;
