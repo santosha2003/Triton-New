@@ -172,7 +172,6 @@ namespace cryptonote {
      uint64_t penalizedBaseReward = get_penalized_amount(base_reward, median_size, current_block_size);
 
      reward = (penalizedBaseReward * 1000000000000) + get_penalized_amount(fee,median_size,current_block_size);
-     MERROR("AGC: " << agc << " BR: " << reward);
 
      return true;
 
