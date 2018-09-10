@@ -1520,7 +1520,7 @@ bool Blockchain::create_block_template(block& b, const account_public_address& m
   if (b.major_version >= BLOCK_MAJOR_VERSION_2 && b.major_version < BLOCK_MAJOR_VERSION_7) {
 	  b.minor_version = 0;
 	  b.parent_block.major_version = BLOCK_MAJOR_VERSION_1;
-	  b.parent_block.minor_version = 0;
+	  b.parent_block.minor_version = 1;
 	  b.parent_block.number_of_transactions = 1;
 	  //create MM tag
 	  tx_extra_merge_mining_tag mm_tag = boost::value_initialized<decltype(mm_tag)>();
