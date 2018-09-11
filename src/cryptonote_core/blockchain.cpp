@@ -1548,7 +1548,7 @@ bool Blockchain::create_block_template(block& b, const account_public_address& m
   << "PBMV: " << b.parent_block.major_version << "\n"
   << "PBMIV " << b.parent_block.minor_version << "\n"
   << "PB#TX " << b.parent_block.number_of_transactions << "\n"
-  << "TID: " << b.prev_id = get_tail_id() << "\n"
+  << "TID: " << b.prev_id << "\n"
   << "timestamp: " << b.timestamp);
 
   diffic = get_difficulty_for_next_block();
