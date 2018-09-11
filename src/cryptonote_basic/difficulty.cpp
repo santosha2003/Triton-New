@@ -208,17 +208,18 @@ namespace cryptonote {
        }
 
 
-       if (height >= 2) {
-         if (high != 0) {
-           return 0;
-         }
-          }
+
          uint64_t nextDiffZ = low / timeSpan;
          if(height == 5000 || height == 6500 || height == 7000 || height == 23000 || height == 23500 || height == 24830 || height == 24830 || height == 24860){
            printf("Low:%lu   timeSpan:%lu     NextDiff:%lu    height:%lu\n",low,timeSpan,nextDiffZ,height);
 
          }
-         return nextDiffZ;
+         if (height >= 2) {
+           if (high != 0) {
+             return 0;
+           }
+           return nextDiffZ;
+        }
 
      }
     difficulty_type next_difficulty_v2(std::vector<std::uint64_t> timestamps, std::vector<difficulty_type> cumulative_difficulties, size_t target_seconds, size_t height) {
