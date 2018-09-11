@@ -2095,7 +2095,7 @@ uint64_t BlockchainLMDB::height() const
   MDB_stat db_stats;
   if ((result = mdb_stat(m_txn, m_blocks, &db_stats)))
     throw0(DB_ERROR(lmdb_error("Failed to query m_blocks: ", result).c_str()));
-  return db_stats.ms_entries;
+  return db_stats.ms_entries - 1;
 }
 
 uint64_t BlockchainLMDB::num_outputs() const
