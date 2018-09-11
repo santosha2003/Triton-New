@@ -121,6 +121,51 @@ namespace cryptonote {
   }
 
   difficulty_type next_difficulty(std::vector<std::uint64_t> timestamps, std::vector<difficulty_type> cumulative_difficulties, size_t target_seconds, size_t height) {
+
+  if (version >= BLOCK_MAJOR_VERSION_5) {
+
+    uint64_t T = target_seconds;
+
+    size_t length = timestamps.size();
+    assert(length == cumulative_difficulties.size());
+
+    uint64_t  t = 0,d=0;
+
+  int64_t solvetime=0;
+  int64_t diff=0;
+
+    for (size_t i = 1; i < length; i++) {
+        solvetime = timestamps[i] - timestamps[i-1];
+  diff = cumulative_difficulties[i] - cumulative_difficulties[i-1];
+
+
+  //cap crazy  values
+      if (solvetime < 0) { solvetime = 0; }
+
+          t +=  solvetime ;
+          d += diff;
+
+
+    }
+
+
+  long unsigned int avgtime=t/length;
+  long unsigned int avgdiff=d/length;
+  long unsigned int adj=(T*1000/avgtime);
+  long unsigned int nextDiffZ = (avgdiff*adj) / 1000;
+
+    if (nextDiffZ <= 1) {
+      nextDiffZ = 1;
+    }
+    if(height == 29630){
+
+      printf("NextDiff:%lu",nextDiffZ);
+
+    }
+
+    return nextDiffZ;
+
+}
        assert(DIFFICULTY_WINDOW >= 2);
 
        if (timestamps.size() > DIFFICULTY_WINDOW) {

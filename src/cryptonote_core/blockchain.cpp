@@ -1514,14 +1514,14 @@ bool Blockchain::create_block_template(block& b, const account_public_address& m
   uint64_t already_generated_coins;
 
   CRITICAL_REGION_BEGIN(m_blockchain_lock);
-  height = m_db->height() -1;
+  height = m_db->height();
 
   b.major_version = m_hardfork->get_current_version();
   if (b.major_version >= BLOCK_MAJOR_VERSION_2 && b.major_version < BLOCK_MAJOR_VERSION_7) {
 	  b.minor_version = 0;
     //Same as in Old but doesn't make sense!! COMEBACK
 	  b.parent_block.major_version = BLOCK_MAJOR_VERSION_1;
-	  b.parent_block.major_version = BLOCK_MINOR_VERSION_0;
+	  b.parent_block.minor_version = BLOCK_MINOR_VERSION_0;
 	  b.parent_block.number_of_transactions = 1;
 	  //create MM tag
 	  tx_extra_merge_mining_tag mm_tag = boost::value_initialized<decltype(mm_tag)>();
