@@ -1519,8 +1519,9 @@ bool Blockchain::create_block_template(block& b, const account_public_address& m
   b.major_version = m_hardfork->get_current_version();
   if (b.major_version >= BLOCK_MAJOR_VERSION_2 && b.major_version < BLOCK_MAJOR_VERSION_7) {
 	  b.minor_version = 0;
+    //Same as in Old but doesn't make sense!! COMEBACK
 	  b.parent_block.major_version = BLOCK_MAJOR_VERSION_1;
-	  b.parent_block.minor_version = BLOCK_MINOR_VERSION_0;
+	  b.parent_block.major_version = BLOCK_MINOR_VERSION_0;
 	  b.parent_block.number_of_transactions = 1;
 	  //create MM tag
 	  tx_extra_merge_mining_tag mm_tag = boost::value_initialized<decltype(mm_tag)>();
@@ -1542,6 +1543,13 @@ bool Blockchain::create_block_template(block& b, const account_public_address& m
   {
     b.timestamp = median_ts;
   }
+  MERROR("BMV: " << b.major_version << "\n"
+  << "BMIV: " << b.minor_version << "\n"
+  << "PBMV: " << b.parent_block.major_version << "\n"
+  << "PBMIV " << b.parent_block.minor_version << "\n"
+  << "PB#TX " << b.parent_block.number_of_transactions << "\n"
+  << "TID: " << b.prev_id = get_tail_id() << "\n"
+  << "timestamp: " << b.timestamp);
 
   diffic = get_difficulty_for_next_block();
   CHECK_AND_ASSERT_MES(diffic, false, "difficulty overhead.");
