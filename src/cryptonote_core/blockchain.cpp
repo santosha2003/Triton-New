@@ -288,7 +288,7 @@ uint64_t Blockchain::get_current_blockchain_height() const
   // m_db functions which do not depend on one another (ie, no getheight + gethash(height-1), as
   // well as not accessing class members, even read only (ie, m_invalid_blocks). The caller must
   // lock if it is otherwise needed.
-  return m_db->height() - 1;
+  return m_db->height();
 }
 //------------------------------------------------------------------
 //FIXME: possibly move this into the constructor, to avoid accidentally
@@ -4116,7 +4116,7 @@ bool Blockchain::prepare_handle_incoming_blocks(const std::list<block_complete_e
     if(threads > m_max_prepare_blocks_threads)
       threads = m_max_prepare_blocks_threads;
 
-    uint64_t height = m_db->height() + 1;
+    uint64_t height = m_db->height();
     int batches = blocks_entry.size() / threads;
     int extra = blocks_entry.size() % threads;
     MDEBUG("block_batches: " << batches);
