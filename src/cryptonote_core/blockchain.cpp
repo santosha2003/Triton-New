@@ -1079,11 +1079,11 @@ difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std:
 
     diff = difficultiesforv4[(height + 1) - startHeight];
   }else if(m_hardfork->get_current_version() >= 5 && m_hardfork->get_current_version()  < 7){
-  
+
 
      diff = next_difficulty(std::move(timestamps), std::move(cumulative_difficulties), target,height - 1);
 
-   }
+   
   }else if(m_hardfork->get_current_version() >= 7){
      diff = next_difficulty_v3(std::move(timestamps), std::move(cumulative_difficulties), target,height - 1);
   }
