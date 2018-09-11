@@ -1514,7 +1514,7 @@ bool Blockchain::create_block_template(block& b, const account_public_address& m
   uint64_t already_generated_coins;
 
   CRITICAL_REGION_BEGIN(m_blockchain_lock);
-  height = m_db->height();
+  height = m_db->height() -1;
 
   b.major_version = m_hardfork->get_current_version();
   if (b.major_version >= BLOCK_MAJOR_VERSION_2 && b.major_version < BLOCK_MAJOR_VERSION_7) {
