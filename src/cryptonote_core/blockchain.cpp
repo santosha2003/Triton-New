@@ -784,7 +784,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   std::vector<uint64_t> timestamps;
   std::vector<difficulty_type> difficulties;
   uint8_t version = get_current_hard_fork_version();
-  auto height = m_db->height() - 1;
+  auto height = m_db->height();
   size_t difficulty_blocks_count = 0;
   if(version < 5){
    difficulty_blocks_count = DIFFICULTY_BLOCKS_COUNT;
@@ -1508,7 +1508,7 @@ bool Blockchain::create_block_template(block& b, const account_public_address& m
   uint64_t already_generated_coins;
 
   CRITICAL_REGION_BEGIN(m_blockchain_lock);
-  height = m_db->height();
+  height = m_db->height() - 1;
 
   b.major_version = m_hardfork->get_current_version();
   if (b.major_version >= BLOCK_MAJOR_VERSION_2 && b.major_version < BLOCK_MAJOR_VERSION_7) {
