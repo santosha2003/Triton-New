@@ -1553,7 +1553,6 @@ bool Blockchain::create_block_template(block& b, const account_public_address& m
     return false;
   }
 #if defined(DEBUG_CREATE_BLOCK_TEMPLATE)
-  CRITICAL_REGION_END();
   MDEBUG("Creating block template: height " << height <<
       ", median size " << median_size <<
       ", already generated coins " << already_generated_coins <<
