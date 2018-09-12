@@ -800,7 +800,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   //    of doing 735 (DIFFICULTY_BLOCKS_COUNT).
   if (m_timestamps_and_difficulties_height != 0 && ((height - m_timestamps_and_difficulties_height) == 1) && m_timestamps.size() >= difficulty_blocks_count)
   {
-    uint64_t index = height;
+    uint64_t index = height - 1;
    m_timestamps.push_back(m_db->get_block_timestamp(index));
    m_difficulties.push_back(m_db->get_block_cumulative_difficulty(index));
 
