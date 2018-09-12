@@ -1553,52 +1553,6 @@ bool Blockchain::create_block_template(block& b, const account_public_address& m
     return false;
   }
 #if defined(DEBUG_CREATE_BLOCK_TEMPLATE)
-  size_t real_txs_size = 0;
-  uint64_t real_fee = 0;
-  CRITICAL_REGION_BEGIN(m_tx_pool.m_transactions_lock);
-  for(crypto::hash &cur_hash: b.tx_hashes)
-  {
-    auto cur_res = m_tx_pool.m_transactions.find(cur_hash);
-    if (cur_res == m_tx_pool.m_transactions.end())
-    {
-      LOG_ERROR("Creating block template: error: transaction not found");
-      continue;
-    }
-    tx_memory_pool::tx_details &cur_tx = cur_res->second;
-    real_txs_size += cur_tx.blob_size;
-    real_fee += cur_tx.fee;
-    if (cur_tx.blob_size != get_object_blobsize(cur_tx.tx))
-    {
-      LOG_ERROR("Creating block template: error: invalid transaction size");
-    }
-    if (cur_tx.tx.version == 1)
-    {
-      uint64_t inputs_amount;
-      if (!get_inputs_money_amount(cur_tx.tx, inputs_amount))
-      {
-        LOG_ERROR("Creating block template: error: cannot get inputs amount");
-      }
-      else if (cur_tx.fee != inputs_amount - get_outs_money_amount(cur_tx.tx))
-      {
-        LOG_ERROR("Creating block template: error: invalid fee");
-      }
-    }
-    else
-    {
-      if (cur_tx.fee != cur_tx.tx.rct_signatures.txnFee)
-      {
-        LOG_ERROR("Creating block template: error: invalid fee");
-      }
-    }
-  }
-  if (txs_size != real_txs_size)
-  {
-    LOG_ERROR("Creating block template: error: wrongly calculated transaction size");
-  }
-  if (fee != real_fee)
-  {
-    LOG_ERROR("Creating block template: error: wrongly calculated fee");
-  }
   CRITICAL_REGION_END();
   MDEBUG("Creating block template: height " << height <<
       ", median size " << median_size <<
