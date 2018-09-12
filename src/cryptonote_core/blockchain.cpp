@@ -4410,7 +4410,7 @@ bool Blockchain::prepare_handle_incoming_blocks(const std::list<block_complete_e
     if(threads > m_max_prepare_blocks_threads)
       threads = m_max_prepare_blocks_threads;
 
-    uint64_t height = m_db->height();
+    uint64_t height = m_db->height() + 1;
     int batches = blocks_entry.size() / threads;
     int extra = blocks_entry.size() % threads;
     MDEBUG("block_batches: " << batches);
