@@ -56,7 +56,7 @@
 
 #define CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT              500
 #define CRYPTONOTE_DEFAULT_TX_SPENDABLE_AGE             0
-#define DEBUG_CREATE_BLOCK_TEMPLATE                     true
+#define DEBUG_CREATE_BLOCK_TEMPLATE                     false
 
 #define BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW            60
 
