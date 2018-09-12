@@ -855,7 +855,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
     diff = difficultiesforv4[(height + 1) - startHeight];
   }else if(version >= 5 && version < 7){
 
-    if(height >= 24861 && height <= 24921){
+    /** if(height >= 24861 && height <= 24921){
      diff = 10000000;
    }else if(height == 24922){
 
@@ -995,11 +995,11 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
       44150801,44197742,44328488,44582656,44639015,44740066,44837768,44979805,45021655,44723643,44707390,44724935,44442938,44472925,44404347,44227167,43825534,43752062,43792289,43797621,43748247,44159779,44272005,44391480,44228173,44024581,44087639,44370252,44257159,44262822,44443566,44522737,44573394,};
     diff = difficultiesforv5_9[(height) - 28082];
   }else{
-
+**/
 
 
      diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height - 1);
-}
+//}
 
   }else if(version >= 7){
      diff = next_difficulty_v3(std::move(timestamps), std::move(difficulties), target,height - 1);
@@ -1223,7 +1223,7 @@ difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std:
 
     diff = difficultiesforv4[(height + 1) - startHeight];
   }else if(m_hardfork->get_current_version() >= 5 && m_hardfork->get_current_version()  < 7){
-    if(height >= 24861 && height <= 24921){
+  /**  if(height >= 24861 && height <= 24921){
      diff = 10000000;
    }else if(height == 24922){
 
@@ -1374,10 +1374,10 @@ difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std:
     diff = difficultiesforv5_9[(height) - 28082];
 
   }else{
-
+**/
      diff = next_difficulty(std::move(timestamps), std::move(cumulative_difficulties), target,height - 1);
 
-   }
+  // }
   }else if(m_hardfork->get_current_version() >= 7){
      diff = next_difficulty_v3(std::move(timestamps), std::move(cumulative_difficulties), target,height - 1);
   }
