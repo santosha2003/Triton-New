@@ -672,7 +672,7 @@ void BlockchainLMDB::add_block(const block& blk, const size_t& block_size, const
   LOG_PRINT_L3("BlockchainLMDB::" << __func__);
   check_open();
   mdb_txn_cursors *m_cursors = &m_wcursors;
-  uint64_t m_height = height();
+  uint64_t m_height = height() + 1;
 
   CURSOR(block_heights)
   blk_height bh = {blk_hash, m_height};
@@ -735,7 +735,7 @@ void BlockchainLMDB::remove_block()
 
   LOG_PRINT_L3("BlockchainLMDB::" << __func__);
   check_open();
-  uint64_t m_height = height();
+  uint64_t m_height = height() + 1;
 
   if (m_height == 0)
     throw0(BLOCK_DNE ("Attempting to remove block from an empty blockchain"));
@@ -3052,7 +3052,7 @@ uint64_t BlockchainLMDB::add_block(const block& blk, const size_t& block_size, c
 {
   LOG_PRINT_L3("BlockchainLMDB::" << __func__);
   check_open();
-  uint64_t m_height = height();
+  uint64_t m_height = height() + 1;
 
   if (m_height % 1000 == 0)
   {
