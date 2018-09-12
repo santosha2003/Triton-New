@@ -352,7 +352,7 @@ bool Blockchain::init(BlockchainDB* db, const network_type nettype, bool offline
   // this feels kinda kludgy to do it this way, but can be looked at later.
   // TODO: add function to create and store genesis block,
   //       taking testnet into account
-  if(!m_db->height() + 1)
+  if(!m_db->height())
   {
     MINFO("Blockchain not loaded, generating genesis block.");
     block bl = boost::value_initialized<block>();
@@ -784,7 +784,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   std::vector<uint64_t> timestamps;
   std::vector<difficulty_type> difficulties;
   uint8_t version = get_current_hard_fork_version();
-  auto height = m_db->height();
+  auto height = m_db->height() - 1;
   size_t difficulty_blocks_count = 0;
   if(version < 5){
    difficulty_blocks_count = DIFFICULTY_BLOCKS_COUNT;
