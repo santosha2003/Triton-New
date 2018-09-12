@@ -288,7 +288,7 @@ uint64_t Blockchain::get_current_blockchain_height() const
   // m_db functions which do not depend on one another (ie, no getheight + gethash(height-1), as
   // well as not accessing class members, even read only (ie, m_invalid_blocks). The caller must
   // lock if it is otherwise needed.
-  return m_db->height() + 1;
+  return m_db->height();
 }
 //------------------------------------------------------------------
 //FIXME: possibly move this into the constructor, to avoid accidentally
@@ -784,7 +784,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   std::vector<uint64_t> timestamps;
   std::vector<difficulty_type> difficulties;
   uint8_t version = get_current_hard_fork_version();
-  auto height = m_db->height() - 1;
+  auto height = m_db->height();
   size_t difficulty_blocks_count = 0;
   if(version < 5){
    difficulty_blocks_count = DIFFICULTY_BLOCKS_COUNT;
