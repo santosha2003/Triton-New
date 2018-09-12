@@ -288,7 +288,7 @@ uint64_t Blockchain::get_current_blockchain_height() const
   // m_db functions which do not depend on one another (ie, no getheight + gethash(height-1), as
   // well as not accessing class members, even read only (ie, m_invalid_blocks). The caller must
   // lock if it is otherwise needed.
-  return m_db->height();
+  return m_db->height() + 1;
 }
 //------------------------------------------------------------------
 //FIXME: possibly move this into the constructor, to avoid accidentally
