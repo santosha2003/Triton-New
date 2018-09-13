@@ -831,7 +831,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
     m_timestamps = timestamps;
     m_difficulties = difficulties;
   }
-  uint64_t target = 180;
+  size_t target = 180;
   difficulty_type diff;
 
   //IF FORKING THIS PLEASE CHANGE IT TO YOUR LIKINGS
