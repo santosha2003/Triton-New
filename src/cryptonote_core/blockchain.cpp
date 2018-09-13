@@ -771,28 +771,23 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
 {
   LOG_PRINT_L3("Blockchain::" << __func__);
 
-  CRITICAL_REGION_LOCAL(m_difficulty_lock);
-  // we can call this without the blockchain lock, it might just give us
-  // something a bit out of date, but that's fine since anything which
-  // requires the blockchain lock will have acquired it in the first place,
-  // and it will be unlocked only when called from the getinfo RPC
   crypto::hash top_hash = get_tail_id();
-  if (top_hash == m_difficulty_for_next_block_top_hash)
-    return m_difficulty_for_next_block;
+  {
+    CRITICAL_REGION_LOCAL(m_difficulty_lock);
+    // we can call this without the blockchain lock, it might just give us
+    // something a bit out of date, but that's fine since anything which
+    // requires the blockchain lock will have acquired it in the first place,
+    // and it will be unlocked only when called from the getinfo RPC
+    if (top_hash == m_difficulty_for_next_block_top_hash)
+      return m_difficulty_for_next_block;
+  }
 
-  CRITICAL_REGION_LOCAL1(m_blockchain_lock);
+  CRITICAL_REGION_LOCAL(m_blockchain_lock);
   std::vector<uint64_t> timestamps;
   std::vector<difficulty_type> difficulties;
+  auto height = m_db->height();
   uint8_t version = get_current_hard_fork_version();
-  auto height = m_db->height() - 1;
-  size_t difficulty_blocks_count = 0;
-  if(version < 5){
-   difficulty_blocks_count = DIFFICULTY_BLOCKS_COUNT;
- }else if(version >= 5 && version < 7){
-   difficulty_blocks_count = DIFFICULTY_BLOCKS_COUNT;
- }else if(version >= 7){
-   difficulty_blocks_count = DIFFICULTY_BLOCKS_COUNT_V3;
- }
+  size_t difficulty_blocks_count = version < BLOCK_MAJOR_VERSION_2 ? DIFFICULTY_BLOCKS_COUNT : DIFFICULTY_BLOCKS_COUNT_V2;
   // ND: Speedup
   // 1. Keep a list of the last 735 (or less) blocks that is used to compute difficulty,
   //    then when the next block difficulty is queried, push the latest height data and
@@ -801,44 +796,43 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   if (m_timestamps_and_difficulties_height != 0 && ((height - m_timestamps_and_difficulties_height) == 1) && m_timestamps.size() >= difficulty_blocks_count)
   {
     uint64_t index = height - 1;
-   m_timestamps.push_back(m_db->get_block_timestamp(index));
-   m_difficulties.push_back(m_db->get_block_cumulative_difficulty(index));
+    m_timestamps.push_back(m_db->get_block_timestamp(index));
+    m_difficulties.push_back(m_db->get_block_cumulative_difficulty(index));
 
-   while (m_timestamps.size() > difficulty_blocks_count)
-     m_timestamps.erase(m_timestamps.begin());
-   while (m_difficulties.size() > difficulty_blocks_count)
-     m_difficulties.erase(m_difficulties.begin());
+    while (m_timestamps.size() > difficulty_blocks_count)
+      m_timestamps.erase(m_timestamps.begin());
+    while (m_difficulties.size() > difficulty_blocks_count)
+      m_difficulties.erase(m_difficulties.begin());
 
-   m_timestamps_and_difficulties_height = height;
-   timestamps = m_timestamps;
-   difficulties = m_difficulties;
+    m_timestamps_and_difficulties_height = height;
+    timestamps = m_timestamps;
+    difficulties = m_difficulties;
   }
   else
   {
     size_t offset = height - std::min < size_t > (height, static_cast<size_t>(difficulty_blocks_count));
-      if (offset == 0){
-        ++offset;
-      }
+    if (offset == 0)
+      ++offset;
 
-      timestamps.clear();
-      difficulties.clear();
-      if (height > offset)
-      {
-        timestamps.reserve(height - offset);
-        difficulties.reserve(height - offset);
-      }
-      for (; offset < height; offset++)
-      {
-        timestamps.push_back(m_db->get_block_timestamp(offset));
-        difficulties.push_back(m_db->get_block_cumulative_difficulty(offset));
-      }
+    timestamps.clear();
+    difficulties.clear();
+    if (height > offset)
+    {
+      timestamps.reserve(height - offset);
+      difficulties.reserve(height - offset);
+    }
+    for (; offset < height; offset++)
+    {
+      timestamps.push_back(m_db->get_block_timestamp(offset));
+      difficulties.push_back(m_db->get_block_cumulative_difficulty(offset));
+    }
 
-      m_timestamps_and_difficulties_height = height;
-      m_timestamps = timestamps;
-      m_difficulties = difficulties;
+    m_timestamps_and_difficulties_height = height;
+    m_timestamps = timestamps;
+    m_difficulties = difficulties;
   }
-  size_t target = get_difficulty_target();
-  difficulty_type diff;
+  difficulty_type diff = 0;
+
   //IF FORKING THIS PLEASE CHANGE IT TO YOUR LIKINGS
   //TRITON HAD A MISHAP ON BLOCK VERSION 4
   if(version <= 3){
