@@ -832,14 +832,14 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
     m_difficulties = difficulties;
   }
   uint64_t target = 180;
-  difficulty_type diff = 0;
+  difficulty_type diff;
 
   //IF FORKING THIS PLEASE CHANGE IT TO YOUR LIKINGS
   //TRITON HAD A MISHAP ON BLOCK VERSION 4
   if(version <= 3){
 
      diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height - 1);
-   
+
   }else if(version == 4){
     //HARDCODE VERSION 4 DIFFICULTIES
     int startHeight = 24831;
