@@ -785,7 +785,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   CRITICAL_REGION_LOCAL(m_blockchain_lock);
   std::vector<uint64_t> timestamps;
   std::vector<difficulty_type> difficulties;
-  auto height = m_db->height();
+  auto height = m_db->height() - 1;
   uint8_t version = get_current_hard_fork_version();
   size_t difficulty_blocks_count = version < BLOCK_MAJOR_VERSION_2 ? DIFFICULTY_BLOCKS_COUNT : DIFFICULTY_BLOCKS_COUNT_V2;
   // ND: Speedup
