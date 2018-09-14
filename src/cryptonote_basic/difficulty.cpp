@@ -165,9 +165,9 @@ namespace cryptonote {
 
 
          uint64_t nextDiffZ = low / timeSpan;
-           printf("Low:%lu   timeSpan:%lu     NextDiff:%lu    height:%lu\n",low,timeSpan,nextDiffZ,height);
+        //   printf("Low:%lu   timeSpan:%lu     NextDiff:%lu    height:%lu\n",low,timeSpan,nextDiffZ,height);
 
-         
+
          if (height >= 2) {
            if (high != 0) {
              return 0;
