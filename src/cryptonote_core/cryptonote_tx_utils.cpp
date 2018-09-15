@@ -96,8 +96,7 @@ namespace cryptonote
     }
 
 #if defined(DEBUG_CREATE_BLOCK_TEMPLATE)
-    LOG_PRINT_L1("Creating block template: reward " << block_reward <<
-      ", fee " << fee);
+    
 #endif
     block_reward += fee;
 
