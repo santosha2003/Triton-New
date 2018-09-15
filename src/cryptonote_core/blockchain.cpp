@@ -3707,7 +3707,7 @@ leave:
    }
    else
    {
-     if (!check_proof_of_work(bl, current_diffic, proof_of_work) && version >= 6)
+     if (!check_proof_of_work(bl, current_diffic, proof_of_work) && m_hardfork->get_ideal_version() >= 6)
      {
        MERROR_VER("Block with id: " << id << std::endl << "does not have enough proof of work: " << proof_of_work << std::endl << "unexpected difficulty: " << current_diffic);
        bvc.m_verifivation_failed = true;
