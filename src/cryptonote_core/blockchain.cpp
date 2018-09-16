@@ -841,10 +841,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
 
   //IF FORKING THIS PLEASE CHANGE IT TO YOUR LIKINGS
   //TRITON HAD A MISHAP ON BLOCK VERSION 4
-  if(version == 1){
-    diff = 1;
-
-}else if(version <= 3 && version != 1){
+  if(version <= 3 &&){
 
      diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height - 1);
 
@@ -3698,7 +3695,7 @@ leave:
      precomputed = true;
      proof_of_work = it->second;
      // validate proof_of_work versus difficulty target
-     if(!check_hash(proof_of_work, current_diffic) && m_hardfork->get_ideal_version() >= 6)
+     if(!check_hash(proof_of_work, current_diffic) && m_hardfork->get_current_version() >= 6)
      {
        MERROR_VER("Block with id: " << id << std::endl << "does not have enough proof of work: " << proof_of_work << std::endl << "unexpected difficulty: " << current_diffic);
        bvc.m_verifivation_failed = true;
@@ -3707,7 +3704,7 @@ leave:
    }
    else
    {
-     if (!check_proof_of_work(bl, current_diffic, proof_of_work) && m_hardfork->get_ideal_version() >= 6)
+     if (!check_proof_of_work(bl, current_diffic, proof_of_work) && m_hardfork->get_current_version() >= 6)
      {
        MERROR_VER("Block with id: " << id << std::endl << "does not have enough proof of work: " << proof_of_work << std::endl << "unexpected difficulty: " << current_diffic);
        bvc.m_verifivation_failed = true;
