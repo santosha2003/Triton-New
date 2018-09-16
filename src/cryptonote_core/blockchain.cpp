@@ -841,7 +841,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
 
   //IF FORKING THIS PLEASE CHANGE IT TO YOUR LIKINGS
   //TRITON HAD A MISHAP ON BLOCK VERSION 4
-  if(version <= 3 &&){
+  if(version <= 3){
 
      diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height - 1);
 
