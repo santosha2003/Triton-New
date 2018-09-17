@@ -91,6 +91,7 @@
 #define DIFFICULTY_TARGET_V1                            60  // seconds - before first fork
 #define DIFFICULTY_WINDOW                               24 * 60 * 60 / DIFFICULTY_TARGET_V2 // blocks
 #define DIFFICULTY_WINDOW_V3                            60
+#define DIFFICULTY_WINDOW_V5                            60
 
 #define DIFFICULTY_LAG                                  15  // !!!
 #define DIFFICULTY_CUT                                  60  // timestamps to cut after sorting
