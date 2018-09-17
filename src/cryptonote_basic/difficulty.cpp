@@ -121,16 +121,17 @@ namespace cryptonote {
   }
 
   difficulty_type next_difficulty(std::vector<std::uint64_t> timestamps, std::vector<difficulty_type> cumulative_difficulties, size_t target_seconds, size_t height) {
-       assert(DIFFICULTY_WINDOW_V5 >= 2);
+       size_t diff_window_v5 = DIFFICULTY_WINDOW_V5;
+       assert(diff_window_v5 >= 2);
 
-       if (timestamps.size() > DIFFICULTY_WINDOW_V5) {
-         timestamps.resize(DIFFICULTY_WINDOW_V5);
-         cumulative_difficulties.resize(DIFFICULTY_WINDOW_V5);
+       if (timestamps.size() > diff_window_v5) {
+         timestamps.resize(diff_window_v5);
+         cumulative_difficulties.resize(diff_window_v5);
        }
 
        size_t length = timestamps.size();
        assert(length == cumulative_difficulties.size());
-       assert(length <= DIFFICULTY_WINDOW_V5);
+       assert(length <= diff_window_v5);
        if (length <= 1) {
          return 1;
        }
@@ -138,13 +139,13 @@ namespace cryptonote {
        sort(timestamps.begin(), timestamps.end());
 
        size_t cutBegin, cutEnd;
-       assert(2 * DIFFICULTY_CUT <= DIFFICULTY_WINDOW _V5- 2);
-       if (length <= DIFFICULTY_WINDOW_V5 - 2 * DIFFICULTY_CUT) {
+       assert(2 * DIFFICULTY_CUT <= diff_window_v5- 2);
+       if (length <= diff_window_v5 - 2 * DIFFICULTY_CUT) {
          cutBegin = 0;
          cutEnd = length;
        } else {
-         cutBegin = (length - (DIFFICULTY_WINDOW_V5 - 2 * DIFFICULTY_CUT) + 1) / 2;
-         cutEnd = cutBegin + (DIFFICULTY_WINDOW_V5 - 2 * DIFFICULTY_CUT);
+         cutBegin = (length - (diff_window_v5 - 2 * DIFFICULTY_CUT) + 1) / 2;
+         cutEnd = cutBegin + (diff_window_v5 - 2 * DIFFICULTY_CUT);
        }
 
        assert(/*cut_begin >= 0 &&*/ cutBegin + 2 <= cutEnd && cutEnd <= length);
