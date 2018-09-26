@@ -1000,6 +1000,9 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
 }
 
   }else if(version >= 7){
+    if(height >= 90810 && <= 90810 + DIFFICULTY_WINDOW_V3){
+      diff = 10000;
+    }
      diff = next_difficulty_v3(std::move(timestamps), std::move(difficulties), target,height - 1);
   }
   m_difficulty_for_next_block_top_hash = top_hash;
