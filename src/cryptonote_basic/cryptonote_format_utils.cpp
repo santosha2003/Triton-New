@@ -1149,6 +1149,8 @@ namespace cryptonote
     return check_proof_of_work_v2( bl, current_diffic,proof_of_work);
   case BLOCK_MAJOR_VERSION_5:
     return check_proof_of_work_v2( bl, current_diffic,proof_of_work);
+  case BLOCK_MAJOR_VERSION_7:
+    return check_proof_of_work_v1( bl, current_diffic,proof_of_work);
   }
 
 	  CHECK_AND_ASSERT_MES(false, false, "unknown block major version: " << bl.major_version << "." << bl.minor_version);
