@@ -92,7 +92,7 @@ static const struct {
   { 3, 3, 0, 1519744923},
   { 4, 24831, 0, 1524668700},
   { 5, 24861, 0, 1524968340},
-  { 7, 90835, 0, 1534378192},
+  { 7, 90839, 0, 1534378192},
 };
 static const uint64_t mainnet_hard_fork_version_1_till = 0;
 
@@ -1000,7 +1000,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
 }
 
   }else if(version >= 7){
-    if(height >= 90835-1 && height < 90835 + DIFFICULTY_WINDOW_V3){
+    if(height >= 90839-1 && height < 90839 + DIFFICULTY_WINDOW_V3){
       diff = 10000;
     }else {
      diff = next_difficulty_v3(std::move(timestamps), std::move(difficulties), target,height - 1);
