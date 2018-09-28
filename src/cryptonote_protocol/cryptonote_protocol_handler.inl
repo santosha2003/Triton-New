@@ -273,7 +273,7 @@ namespace cryptonote
     if (hshd.current_height > 0)
     {
       const uint8_t version = m_core.get_ideal_hard_fork_version(hshd.current_height - 1);
-      if (version >= 4 && version != hshd.top_version)
+      if (version >= 7 && version != hshd.top_version)
       {
         if (version < hshd.top_version && version == m_core.get_ideal_hard_fork_version()){
           MCLOG(el::Level::Info, "global", context << " peer claims higher version that we think (" <<
