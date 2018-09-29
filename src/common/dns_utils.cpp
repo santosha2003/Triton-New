@@ -358,9 +358,9 @@ std::string address_from_txt_record(const std::string& s)
   if (pos2 != std::string::npos)
   {
     // length of address == 95, we can at least validate that much here
-    if (pos2 - pos == 95)
+    if (pos2 - pos == 97)
     {
-      return s.substr(pos, 95);
+      return s.substr(pos, 97);
     }
     else if (pos2 - pos == 106) // length of address == 106 --> integrated address
     {
@@ -465,7 +465,7 @@ bool load_txt_records_from_dns(std::vector<std::string> &good_records, const std
   for (size_t n = 0; n < dns_urls.size(); ++n)
   {
     threads[n] = boost::thread([n, dns_urls, &records, &avail, &valid](){
-      records[n] = tools::DNSResolver::instance().get_txt_record(dns_urls[n], avail[n], valid[n]); 
+      records[n] = tools::DNSResolver::instance().get_txt_record(dns_urls[n], avail[n], valid[n]);
     });
   }
   for (size_t n = 0; n < dns_urls.size(); ++n)
