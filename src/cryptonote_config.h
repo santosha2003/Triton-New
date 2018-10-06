@@ -50,9 +50,9 @@
 #define BLOCK_MAJOR_VERSION_1                           1
 #define BLOCK_MAJOR_VERSION_2                           2
 #define BLOCK_MAJOR_VERSION_3                           3
-#define BLOCK_MAJOR_VERSION_4							              4
-#define BLOCK_MAJOR_VERSION_5							              5
-#define BLOCK_MAJOR_VERSION_7							              7
+#define BLOCK_MAJOR_VERSION_4							4
+#define BLOCK_MAJOR_VERSION_5					        5
+#define BLOCK_MAJOR_VERSION_7							7
 
 #define CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT              500
 #define CRYPTONOTE_DEFAULT_TX_SPENDABLE_AGE             0
@@ -77,7 +77,7 @@
 #define CRYPTONOTE_DISPLAY_DECIMAL_POINT                12
 // COIN - number of smallest units in one coin
 #define COIN                                            ((uint64_t)1000000000000) // pow(10, 2)
-#define LEGACY_MINIMUM_FEE								              ((uint64_t)1000000)
+#define LEGACY_MINIMUM_FEE								((uint64_t)10000000000)
 #define FEE_PER_KB_OLD                                  ((uint64_t)10000000000) // pow(10, 10)
 #define FEE_PER_KB                                      ((uint64_t)2000000000) // 2 * pow(10, 9)
 #define DYNAMIC_FEE_PER_KB_BASE_FEE                     ((uint64_t)2000000000) // 2 * pow(10,9)
