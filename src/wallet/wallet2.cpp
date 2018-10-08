@@ -7880,7 +7880,7 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_all(uint64_t below
 {
   std::vector<size_t> unused_transfers_indices;
   std::vector<size_t> unused_dust_indices;
-  const bool use_rct = use_fork_rules(4, 0);
+  const bool use_rct = use_fork_rules(7, 0);
 
   THROW_WALLET_EXCEPTION_IF(unlocked_balance(subaddr_account) == 0, error::wallet_internal_error, "No unlocked balance in the entire wallet");
 
