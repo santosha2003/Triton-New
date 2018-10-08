@@ -3855,10 +3855,7 @@ leave:
 
     TIME_MEASURE_FINISH(cc);
     t_checktx += cc;
-    if(m_db->height()  == 1158){
-      MERROR("Transaction(" << tx_id << ") Fee: " << print_money(fee));
 
-    }
     fee_summary += fee;
     cumulative_block_size += blob_size;
   }
@@ -3874,7 +3871,6 @@ leave:
 } else{
   already_generated_coins = 0;
 }
-  MERROR(fee_summary);
   if(!validate_miner_transaction(bl, cumulative_block_size, fee_summary, base_reward, already_generated_coins, bvc.m_partial_block_reward, m_hardfork->get_current_version() >= 6))
   {
     MERROR_VER("Block with id: " << id << " has incorrect miner transaction");
