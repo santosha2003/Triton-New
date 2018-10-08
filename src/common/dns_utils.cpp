@@ -98,7 +98,7 @@ get_builtin_cert(void)
 */
 
 /** return the built in root DS trust anchor */
-static const char*
+static const char* const*
 get_builtin_ds(void)
 {
    static const char * const ds[] =
@@ -247,7 +247,12 @@ DNSResolver::DNSResolver() : m_data(new DNSResolverData())
     ub_ctx_hosts(m_data->m_ub_context, NULL);
   }
 
-  ub_ctx_add_ta(m_data->m_ub_context, string_copy(::get_builtin_ds()));
+  const char * const *ds = ::get_builtin_ds();
+  while (*ds)
+  {
+    MINFO("adding trust anchor: " << *ds);
+    ub_ctx_add_ta(m_data->m_ub_context, string_copy(*ds++));
+  }
 }
 
 DNSResolver::~DNSResolver()
