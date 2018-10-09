@@ -253,6 +253,7 @@ DNSResolver::DNSResolver() : m_data(new DNSResolverData())
    MINFO("adding trust anchor: " << *ds);
    ub_ctx_add_ta(m_data->m_ub_context, string_copy(*ds++));
  }
+
 }
 
 DNSResolver::~DNSResolver()
