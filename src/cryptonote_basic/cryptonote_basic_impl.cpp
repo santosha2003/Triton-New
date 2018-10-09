@@ -125,17 +125,13 @@ namespace cryptonote {
     const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE ;
     if(height == 0){
       reward = 0000000000000;
-      MERROR("Already Generated:" << print_money(already_generated_coins));
-      MERROR("Supply:" << print_money(MONEY_SUPPLY));
-      MERROR("Reward:" << print_money(reward));
+
       return true;
     }
     if (already_generated_coins == 0)
    {
      reward = 3000000000000000000;
-     MERROR("Already Generated:" << print_money(already_generated_coins));
-     MERROR("Supply:" << print_money(MONEY_SUPPLY));
-     MERROR("Reward:" << print_money(reward));
+
      return true;
    }
    if(version >= 7){

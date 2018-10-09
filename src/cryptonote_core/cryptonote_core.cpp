@@ -810,9 +810,8 @@ namespace cryptonote
       get_inputs_money_amount(tx, amount_in);
       uint64_t amount_out = get_outs_money_amount(tx);
 
-      if(amount_in <= amount_out && m_blockchain_storage.get_current_hard_fork_version() >= 7)
-      {
-        MERROR_VER("tx with wrong amounts: ins " << amount_in << ", outs " << amount_out << ", rejected for tx id= " << get_transaction_hash(tx));
+if((amount_in <= amount_out && tx.version >= 2) || (amount_in < amount_out && tx.version == 1))      {
+  MERROR_VER("tx with wrong amounts: ins " << amount_in << ", outs " << amount_out << ", rejected for tx v" << tx.version << " ; id= " << get_transaction_hash(tx));
         return false;
       }
     }

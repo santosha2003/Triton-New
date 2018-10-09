@@ -2909,7 +2909,7 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
   {
     size_t n_unmixable = 0, n_mixable = 0;
     size_t mixin = std::numeric_limits<size_t>::max();
-    const size_t min_mixin = hf_version >= HF_VERSION_MIN_MIXIN_6 ? 6 : hf_version >= HF_VERSION_MIN_MIXIN_4 ? 4 : 2;
+    const size_t min_mixin = hf_version >= HF_VERSION_MIN_MIXIN_6 ? 6 : 1;
     for (const auto& txin : tx.vin)
     {
       // non txin_to_key inputs will be rejected below
@@ -2955,7 +2955,7 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
     }
 
     // min/max tx version based on HF, and we accept v1 txes if having a non mixable
-    const size_t max_tx_version = (hf_version <= 3) ? 1 : 2;
+    const size_t max_tx_version = (hf_version <= 7) ? 1 : 2;
     if (tx.version > max_tx_version)
     {
       MERROR_VER("transaction version " << (unsigned)tx.version << " is higher than max accepted version " << max_tx_version);
@@ -3855,10 +3855,7 @@ leave:
 
     TIME_MEASURE_FINISH(cc);
     t_checktx += cc;
-    if(m_db->height()  == 1158){
-      MERROR("Transaction(" << tx_id << ") Fee: " << print_money(fee));
 
-    }
     fee_summary += fee;
     cumulative_block_size += blob_size;
   }
@@ -3874,7 +3871,6 @@ leave:
 } else{
   already_generated_coins = 0;
 }
-  MERROR(fee_summary);
   if(!validate_miner_transaction(bl, cumulative_block_size, fee_summary, base_reward, already_generated_coins, bvc.m_partial_block_reward, m_hardfork->get_current_version() >= 6))
   {
     MERROR_VER("Block with id: " << id << " has incorrect miner transaction");
