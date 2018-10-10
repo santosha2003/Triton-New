@@ -7768,7 +7768,7 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_2(std::vector<cryp
             transfer_selected(tx.dsts, tx.selected_transfers, fake_outs_count, outs, unlock_time, needed_fee, extra,
               detail::digit_split_strategy, tx_dust_policy(::config::DEFAULT_DUST_THRESHOLD), test_tx, test_ptx);
           txBlob = t_serializable_object_to_blob(test_ptx.tx);
-          needed_fee = use_fork_rules(7,10) ? calculate_fee(fee_per_kb, txBlob, fee_multiplier) LEGACY_MINIMUM_FEE;
+          needed_fee = use_fork_rules(7,10) ? calculate_fee(fee_per_kb, txBlob, fee_multiplier) : LEGACY_MINIMUM_FEE;
           LOG_PRINT_L2("Made an attempt at a  final " << get_size_string(txBlob) << " tx, with " << print_money(test_ptx.fee) <<
             " fee  and " << print_money(test_ptx.change_dts.amount) << " change");
         }
