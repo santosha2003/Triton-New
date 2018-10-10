@@ -169,7 +169,8 @@ void do_prepare_file_names(const std::string& file_path, std::string& keys_file,
 
 uint64_t calculate_fee(uint64_t fee_per_kb, size_t bytes, uint64_t fee_multiplier)
 {
-  uint64_t fee = use_fork_rules(7,10) ? uint64_t kB = (bytes + 1023) / 1024; : LEGACY_MINIMUM_FEE;
+  uint64_t kB = (bytes + 1023) / 1024
+  uint64_t fee = use_fork_rules(7,10) ? kB * fee_per_kb * fee_multiplier : LEGACY_MINIMUM_FEE;
 
 
   return fee;
