@@ -5356,7 +5356,7 @@ uint64_t wallet2::get_per_kb_fee() const
 {
   if(m_light_wallet)
     return m_light_wallet_per_kb_fee;
-  bool use_dyn_fee = use_fork_rules(HF_VERSION_DYNAMIC_FEE, -720 * 1);
+  bool use_dyn_fee = use_fork_rules(HF_VERSION_DYNAMIC_FEE,1);
   if (!use_dyn_fee)
     return FEE_PER_KB;
 
@@ -5366,10 +5366,11 @@ uint64_t wallet2::get_per_kb_fee() const
 int wallet2::get_fee_algorithm() const
 {
   // changes at v3 and v5
-  if (use_fork_rules(5, 0))
+  if (use_fork_rules(7, 0))
     return 2;
-  if (use_fork_rules(3, -720 * 14))
+  /*if (use_fork_rules(3, -720 * 14))
    return 1;
+   */
   return 0;
 }
 //------------------------------------------------------------------------------------------------------------------------------
