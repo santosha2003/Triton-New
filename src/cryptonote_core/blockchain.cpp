@@ -1010,7 +1010,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   }
 
      diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height-1);
-}
+
 
   }else if(version >= 7){
     if(height >= 90839-1 && height < 90839 + DIFFICULTY_WINDOW_V3){
@@ -1019,6 +1019,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
      diff = next_difficulty_v3(std::move(timestamps), std::move(difficulties), target,height - 1);
    }
   }
+}
   m_difficulty_for_next_block_top_hash = top_hash;
   m_difficulty_for_next_block = diff;
   return diff;
