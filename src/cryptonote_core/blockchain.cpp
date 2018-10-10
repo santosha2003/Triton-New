@@ -846,11 +846,21 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
 
   //IF FORKING THIS PLEASE CHANGE IT TO YOUR LIKINGS
   //TRITON HAD A MISHAP ON BLOCK VERSION 4
+  if(m_nettype == TESTNET){
+    if(version < 7){
+      diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height - 1);
+
+    }else{
+      diff = next_difficulty_v3(std::move(timestamps), std::move(difficulties), target,height - 1);
+
+    }
+  }else{
   if(version <= 3){
 
      diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height - 1);
 
   }else if(version == 4){
+
     //HARDCODE VERSION 4 DIFFICULTIES
     int startHeight = 24831;
     int difficultiesforv4 [32] = {334548400,330009535,330209072,330252077,330298610,331947716,332574156,331515192,332574156,331515192,331120332,330840255,331866703,332366852,329906693,330494043,330699033,330858012,331210050,331142467,332613428,333252897,334161767,334594058,334764297,335859071,336394300,337546011,336886799,336147226,10000000};
@@ -997,12 +1007,10 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
       42710748,42741920,42718018,42771351,42892592,43154536,43149426,42936760,42956368,42797786,42896541,42941937,42812142,43062240,43023589,42982933,42960669,43025967,42971972,43422527,43454206,43588773,43761113,43944767,44014951,43973590,44129372,43996963,44179606,44394463,44257766,44058764,44056845,43964966,43834176,43741629,43777937,43811883,43873000,43971058,44113822,44418716,44008146,44033881,44036472,44011981,44065167,44061294,44027949,
       44150801,44197742,44328488,44582656,44639015,44740066,44837768,44979805,45021655,44723643,44707390,44724935,44442938,44472925,44404347,44227167,43825534,43752062,43792289,43797621,43748247,44159779,44272005,44391480,44228173,44024581,44087639,44370252,44257159,44262822,44443566,44522737,44573394,};
     diff = difficultiesforv5_9[(height) - 28082];
-  }else{
-
-
+  }
 
      diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height-1);
-}
+
 
   }else if(version >= 7){
     if(height >= 90839-1 && height < 90839 + DIFFICULTY_WINDOW_V3){
@@ -1011,6 +1019,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
      diff = next_difficulty_v3(std::move(timestamps), std::move(difficulties), target,height - 1);
    }
   }
+}
   m_difficulty_for_next_block_top_hash = top_hash;
   m_difficulty_for_next_block = diff;
   return diff;
