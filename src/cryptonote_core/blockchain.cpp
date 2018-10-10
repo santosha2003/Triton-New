@@ -102,9 +102,14 @@ static const struct {
   uint8_t threshold;
   time_t time;
 } testnet_hard_forks[] = {
-
+  { 1, 1, 0, 1519744920},
+  { 2, 2, 0, 1519744922},
+  { 3, 3, 0, 1519744923},
+  { 4, 50, 0, 1524668700},
+  { 5, 75, 0, 1524968340},
+  { 7, 150, 0, 1534378192},
 };
-static const uint64_t testnet_hard_fork_version_1_till = 624633;
+static const uint64_t testnet_hard_fork_version_1_till = 0;
 
 static const struct {
   uint8_t version;
