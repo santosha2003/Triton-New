@@ -851,6 +851,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
      diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height - 1);
 
   }else if(version == 4){
+    if(m_nettype == TESTNET){
     //HARDCODE VERSION 4 DIFFICULTIES
     int startHeight = 24831;
     int difficultiesforv4 [32] = {334548400,330009535,330209072,330252077,330298610,331947716,332574156,331515192,332574156,331515192,331120332,330840255,331866703,332366852,329906693,330494043,330699033,330858012,331210050,331142467,332613428,333252897,334161767,334594058,334764297,335859071,336394300,337546011,336886799,336147226,10000000};
@@ -999,7 +1000,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
     diff = difficultiesforv5_9[(height) - 28082];
   }else{
 
-
+  }
 
      diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height-1);
 }
