@@ -7381,8 +7381,10 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_2(std::vector<cryp
     cryptonote::transaction tx;
     pending_tx ptx;
     size_t bytes;
-    std::vector<std::vector<tools::wallet2::get_outs_entry>> outs;
+    uint64_t needed_fee;
 
+    std::vector<std::vector<tools::wallet2::get_outs_entry>> outs;
+    TX() : bytes(0), needed_fee(0) {}
     void add(const account_public_address &addr, bool is_subaddress, uint64_t amount, unsigned int original_output_index, bool merge_destinations) {
       if (merge_destinations)
       {
@@ -7767,15 +7769,15 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_2(std::vector<cryp
           LOG_PRINT_L2("Made an attempt at a  final " << get_size_string(txBlob) << " tx, with " << print_money(test_ptx.fee) <<
             " fee  and " << print_money(test_ptx.change_dts.amount) << " change");
         }
-
-        LOG_PRINT_L2("Made a final " << get_size_string(txBlob) << " tx, with " << print_money(test_ptx.fee) <<
-          " fee  and " << print_money(test_ptx.change_dts.amount) << " change");
+         tx.needed_fee = needed_fee;
+         LOG_PRINT_L2("Made a final " << get_size_string(txBlob) << " tx, with " << print_money(tx.needed_fee) <<
+           " fee  and " << print_money(test_ptx.change_dts.amount) << " change");
 
         tx.tx = test_tx;
         tx.ptx = test_ptx;
         tx.bytes = txBlob.size();
         tx.outs = outs;
-        accumulated_fee += test_ptx.fee;
+        accumulated_fee += tx.needed_fee;
         accumulated_change += test_ptx.change_dts.amount;
         adding_fee = false;
         if (!dsts.empty())
@@ -7826,7 +7828,7 @@ skip_tx:
                             fake_outs_count,            /* CONST size_t fake_outputs_count, */
                             tx.outs,                    /* MOD   std::vector<std::vector<tools::wallet2::get_outs_entry>> &outs, */
                             unlock_time,                /* CONST uint64_t unlock_time,  */
-                            needed_fee,                 /* CONST uint64_t fee, */
+                            tx.needed_fee,                 /* CONST uint64_t fee, */
                             extra,                      /* const std::vector<uint8_t>& extra, */
                             test_tx,                    /* OUT   cryptonote::transaction& tx, */
                             test_ptx,                   /* OUT   cryptonote::transaction& tx, */
@@ -7858,7 +7860,7 @@ skip_tx:
     for (size_t idx: tx.selected_transfers)
       tx_money += m_transfers[idx].amount();
     LOG_PRINT_L1("  Transaction " << (1+std::distance(txes.begin(), i)) << "/" << txes.size() <<
-      ": " << get_size_string(tx.bytes) << ", sending " << print_money(tx_money) << " in " << tx.selected_transfers.size() <<
+    " " << get_transaction_hash(tx.ptx.tx) << ": " << get_size_string(tx.bytes) << ", sending " << print_money(tx_money) << " in " << tx.selected_transfers.size() <<
       " outputs to " << tx.dsts.size() << " destination(s), including " <<
       print_money(tx.ptx.fee) << " fee, " << print_money(tx.ptx.change_dts.amount) << " change");
     ptx_vector.push_back(tx.ptx);
@@ -7957,7 +7959,11 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_from(const crypton
     cryptonote::transaction tx;
     pending_tx ptx;
     size_t bytes;
+    uint64_t needed_fee;
+
     std::vector<std::vector<get_outs_entry>> outs;
+    TX() : bytes(0), needed_fee(0) {}
+
   };
   std::vector<TX> txes;
   uint64_t needed_fee, available_for_fee = 0;
@@ -8047,15 +8053,16 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_from(const crypton
         LOG_PRINT_L2("Made an attempt at a final " << get_size_string(txBlob) << " tx, with " << print_money(test_ptx.fee) <<
           " fee  and " << print_money(test_ptx.change_dts.amount) << " change");
       } while (needed_fee > test_ptx.fee);
+      tx.needed_fee = needed_fee;
 
-      LOG_PRINT_L2("Made a final " << get_size_string(txBlob) << " tx, with " << print_money(test_ptx.fee) <<
-        " fee  and " << print_money(test_ptx.change_dts.amount) << " change");
+      LOG_PRINT_L2("Made a final " << get_size_string(txBlob) << " tx, with " << print_money(tx.needed_fee) <<
+       " fee  and " << print_money(test_ptx.change_dts.amount) << " change");
 
       tx.tx = test_tx;
       tx.ptx = test_ptx;
       tx.bytes = txBlob.size();
       tx.outs = outs;
-      accumulated_fee += test_ptx.fee;
+      accumulated_fee += tx.needed_fee;;
       accumulated_change += test_ptx.change_dts.amount;
       if (!unused_transfers_indices.empty() || !unused_dust_indices.empty())
       {
@@ -8075,10 +8082,10 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_from(const crypton
     cryptonote::transaction test_tx;
     pending_tx test_ptx;
     if (use_rct) {
-      transfer_selected_rct(tx.dsts, tx.selected_transfers, fake_outs_count, tx.outs, unlock_time, needed_fee, extra,
+      transfer_selected_rct(tx.dsts, tx.selected_transfers, fake_outs_count, tx.outs, unlock_time, tx.needed_fee, extra,
         test_tx, test_ptx, bulletproof);
     } else {
-      transfer_selected(tx.dsts, tx.selected_transfers, fake_outs_count, tx.outs, unlock_time, needed_fee, extra,
+      transfer_selected(tx.dsts, tx.selected_transfers, fake_outs_count, tx.outs, unlock_time, tx.needed_fee, extra,
         detail::digit_split_strategy, tx_dust_policy(::config::DEFAULT_DUST_THRESHOLD), test_tx, test_ptx);
     }
     auto txBlob = t_serializable_object_to_blob(test_ptx.tx);
@@ -8095,7 +8102,7 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_from(const crypton
     for (size_t idx: tx.selected_transfers)
       tx_money += m_transfers[idx].amount();
     LOG_PRINT_L1("  Transaction " << (1+std::distance(txes.begin(), i)) << "/" << txes.size() <<
-      ": " << get_size_string(tx.bytes) << ", sending " << print_money(tx_money) << " in " << tx.selected_transfers.size() <<
+    " " << get_transaction_hash(tx.ptx.tx) << ": " << get_size_string(tx.bytes) << ", sending " << print_money(tx_money) << " in " << tx.selected_transfers.size() <<
       " outputs to " << tx.dsts.size() << " destination(s), including " <<
       print_money(tx.ptx.fee) << " fee, " << print_money(tx.ptx.change_dts.amount) << " change");
     ptx_vector.push_back(tx.ptx);
