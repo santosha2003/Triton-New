@@ -102,9 +102,14 @@ static const struct {
   uint8_t threshold;
   time_t time;
 } testnet_hard_forks[] = {
-
+  { 1, 1, 0, 1519744920},
+  { 2, 2, 0, 1519744922},
+  { 3, 3, 0, 1519744923},
+  { 4, 50, 0, 1524668700},
+  { 5, 75, 0, 1524968340},
+  { 7, 150, 0, 1534378192},
 };
-static const uint64_t testnet_hard_fork_version_1_till = 624633;
+static const uint64_t testnet_hard_fork_version_1_till = 0;
 
 static const struct {
   uint8_t version;
@@ -841,11 +846,21 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
 
   //IF FORKING THIS PLEASE CHANGE IT TO YOUR LIKINGS
   //TRITON HAD A MISHAP ON BLOCK VERSION 4
+  if(m_nettype == TESTNET){
+    if(version < 7){
+      diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height - 1);
+
+    }else{
+      diff = next_difficulty_v3(std::move(timestamps), std::move(difficulties), target,height - 1);
+
+    }
+  }else{
   if(version <= 3){
 
      diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height - 1);
 
   }else if(version == 4){
+
     //HARDCODE VERSION 4 DIFFICULTIES
     int startHeight = 24831;
     int difficultiesforv4 [32] = {334548400,330009535,330209072,330252077,330298610,331947716,332574156,331515192,332574156,331515192,331120332,330840255,331866703,332366852,329906693,330494043,330699033,330858012,331210050,331142467,332613428,333252897,334161767,334594058,334764297,335859071,336394300,337546011,336886799,336147226,10000000};
@@ -994,11 +1009,9 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
     diff = difficultiesforv5_9[(height) - 28082];
   }else{
 
-
-
      diff = next_difficulty(std::move(timestamps), std::move(difficulties), target,height-1);
-}
 
+   }
   }else if(version >= 7){
     if(height >= 90839-1 && height < 90839 + DIFFICULTY_WINDOW_V3){
       diff = 10000;
@@ -1006,6 +1019,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
      diff = next_difficulty_v3(std::move(timestamps), std::move(difficulties), target,height - 1);
    }
   }
+}
   m_difficulty_for_next_block_top_hash = top_hash;
   m_difficulty_for_next_block = diff;
   return diff;
@@ -2791,7 +2805,7 @@ bool Blockchain::check_tx_outputs(const transaction& tx, tx_verification_context
   }
 
   // from v8, allow bulletproofs
-  if (hf_version < 8) {
+  if (hf_version >= 8) {
     const bool bulletproof = tx.rct_signatures.type == rct::RCTTypeFullBulletproof || tx.rct_signatures.type == rct::RCTTypeSimpleBulletproof;
     if (bulletproof || !tx.rct_signatures.p.bulletproofs.empty())
     {
@@ -2955,7 +2969,7 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
     }
 
     // min/max tx version based on HF, and we accept v1 txes if having a non mixable
-    const size_t max_tx_version = (hf_version <= 7) ? 1 : 2;
+    const size_t max_tx_version = (hf_version < 7) ? 1 : 2;
     if (tx.version > max_tx_version)
     {
       MERROR_VER("transaction version " << (unsigned)tx.version << " is higher than max accepted version " << max_tx_version);
@@ -3048,7 +3062,6 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
 
     // make sure that output being spent matches up correctly with the
     // signature spending it.
-    if(hf_version >= 7){
     if (!check_tx_input(tx.version, in_to_key, tx_prefix_hash, tx.version == 1 ? tx.signatures[sig_index] : std::vector<crypto::signature>(), tx.rct_signatures, pubkeys[sig_index], pmax_used_block_height) && get_current_hard_fork_version() >= 6)
 
     {
@@ -3061,7 +3074,7 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
 
       return false;
     }
-    }
+
     if (tx.version == 1)
     {
       if (threads > 1)
@@ -3072,7 +3085,6 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
       }
       else
       {
-        if(hf_version >= 7){
 
         check_ring_signature(tx_prefix_hash, in_to_key.k_image, pubkeys[sig_index], tx.signatures[sig_index], results[sig_index]);
         if (!results[sig_index])
@@ -3088,7 +3100,7 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
           return false;
         }
         it->second[in_to_key.k_image] = true;
-      }
+
     }
     }
 
