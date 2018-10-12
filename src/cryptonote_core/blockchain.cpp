@@ -3447,7 +3447,7 @@ bool Blockchain::check_tx_input(size_t tx_version, const txin_to_key& txin, cons
     bool handle_output(uint64_t unlock_time, const crypto::public_key &pubkey, const rct::key &commitment)
     {
       //check tx unlock time
-      if (!m_bch.is_tx_spendtime_unlocked(unlock_time))
+      if (!m_bch.is_tx_spendtime_unlocked(unlock_time) && get_current_hard_fork_version >= 7)
       {
         MERROR_VER("One of outputs for one of inputs has wrong tx.unlock_time = " << unlock_time);
         return false;
