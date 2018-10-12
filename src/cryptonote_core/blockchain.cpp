@@ -214,7 +214,7 @@ bool Blockchain::scan_outputkeys_for_indexes(size_t tx_version, const txin_to_ke
       try
       {
         m_db->get_output_key(tx_in_to_key.amount, add_offsets, add_outputs, true);
-        if (add_offsets.size() != add_outputs.size())
+         if (add_offsets.size() != add_outputs.size() && get_current_hard_fork_version() >=7)
         {
           MERROR_VER("Output does not exist! amount = " << tx_in_to_key.amount);
           return false;
