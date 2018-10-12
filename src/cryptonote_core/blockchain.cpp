@@ -3447,13 +3447,12 @@ bool Blockchain::check_tx_input(size_t tx_version, const txin_to_key& txin, cons
     bool handle_output(uint64_t unlock_time, const crypto::public_key &pubkey, const rct::key &commitment)
     {
       //check tx unlock time
-      if(get_current_hard_fork_version() >= 7){
       if (!m_bch.is_tx_spendtime_unlocked(unlock_time))
       {
         MERROR_VER("One of outputs for one of inputs has wrong tx.unlock_time = " << unlock_time);
         return false;
       }
-    }
+
       // The original code includes a check for the output corresponding to this input
       // to be a txout_to_key. This is removed, as the database does not store this info,
       // but only txout_to_key outputs are stored in the DB in the first place, done in
