@@ -1239,7 +1239,7 @@ difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std:
 
     diff = difficultiesforv4[(height + 1) - startHeight];
   }else if(m_hardfork->get_current_version() >= 5 && m_hardfork->get_current_version()  < 7){
-  /**  if(height >= 24861 && height <= 24921){
+  if(height >= 24861 && height <= 24921){
      diff = 10000000;
    }else if(height == 24922){
 
@@ -1390,10 +1390,10 @@ difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std:
     diff = difficultiesforv5_9[(height) - 28082];
 
   }else{
-**/
+
      diff = next_difficulty(std::move(timestamps), std::move(cumulative_difficulties), target,height - 1);
 
-  // }
+  }
   }else if(m_hardfork->get_current_version() >= 7){
      diff = next_difficulty_v3(std::move(timestamps), std::move(cumulative_difficulties), target,height - 1);
   }
@@ -3085,7 +3085,7 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
       }
       else
       {
-
+        if(get_current_hard_fork_version( ) >= 7){
         check_ring_signature(tx_prefix_hash, in_to_key.k_image, pubkeys[sig_index], tx.signatures[sig_index], results[sig_index]);
         if (!results[sig_index])
         {
@@ -3100,6 +3100,7 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
           return false;
         }
         it->second[in_to_key.k_image] = true;
+      }
 
     }
     }
