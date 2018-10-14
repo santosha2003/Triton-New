@@ -3778,7 +3778,7 @@ leave:
     TIME_MEASURE_START(aa);
 
 // XXX old code does not check whether tx exists
-    if (m_db->tx_exists(tx_id))
+    if (m_db->tx_exists(tx_id) && tx.version > 1)
     {
       MERROR("Block with id: " << id << " attempting to add transaction already in blockchain with id: " << tx_id);
       bvc.m_verifivation_failed = true;
