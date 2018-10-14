@@ -3064,7 +3064,7 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
 
     // make sure that output being spent matches up correctly with the
     // signature spending it.
-    if (!check_tx_input(tx.version, in_to_key, tx_prefix_hash, tx.version == 1 ? tx.signatures[sig_index] : std::vector<crypto::signature>(), tx.rct_signatures, pubkeys[sig_index], pmax_used_block_height) && get_current_hard_fork_version() >= 6)
+    if (!check_tx_input(tx.version, in_to_key, tx_prefix_hash, tx.version == 1 ? tx.signatures[sig_index] : std::vector<crypto::signature>(), tx.rct_signatures, pubkeys[sig_index], pmax_used_block_height))
 
     {
       it->second[in_to_key.k_image] = false;
@@ -3714,7 +3714,7 @@ leave:
      precomputed = true;
      proof_of_work = it->second;
      // validate proof_of_work versus difficulty target
-     if(!check_hash(proof_of_work, current_diffic) && m_hardfork->get_current_version() >= 6)
+     if(!check_hash(proof_of_work, current_diffic))
      {
        MERROR_VER("Block with id: " << id << std::endl << "does not have enough proof of work: " << proof_of_work << std::endl << "unexpected difficulty: " << current_diffic);
        bvc.m_verifivation_failed = true;
@@ -3723,7 +3723,7 @@ leave:
    }
    else
    {
-     if (!check_proof_of_work(bl, current_diffic, proof_of_work) && m_hardfork->get_current_version() >= 6)
+     if (!check_proof_of_work(bl, current_diffic, proof_of_work))
      {
        MERROR_VER("Block with id: " << id << std::endl << "does not have enough proof of work: " << proof_of_work << std::endl << "unexpected difficulty: " << current_diffic);
        bvc.m_verifivation_failed = true;
