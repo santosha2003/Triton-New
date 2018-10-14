@@ -1919,14 +1919,15 @@ bool Blockchain::handle_get_objects(NOTIFY_REQUEST_GET_OBJECTS::request& arg, NO
   std::list<std::pair<cryptonote::blobdata,block>> blocks;
   get_blocks(arg.blocks, blocks, rsp.missed_ids);
 
-  for (const auto& bl: blocks)
+  for (auto& bl: blocks)
   {
     std::list<crypto::hash> missed_tx_ids;
     std::list<cryptonote::blobdata> txs;
-
+    rsp.blocks.push_back(block_complete_entry());
+    block_complete_entry& e = rsp.blocks.back();
     // FIXME: s/rsp.missed_ids/missed_tx_id/ ?  Seems like rsp.missed_ids
     //        is for missed blocks, not missed transactions as well.
-    get_transactions_blobs(bl.second.tx_hashes, txs, missed_tx_ids);
+    get_transactions_blobs(bl.second.tx_hashes, e.txs, missed_tx_ids);
 
     if (missed_tx_ids.size() != 0)
     {
@@ -1943,21 +1944,10 @@ bool Blockchain::handle_get_objects(NOTIFY_REQUEST_GET_OBJECTS::request& arg, NO
       return false;
     }
 
-    rsp.blocks.push_back(block_complete_entry());
-    block_complete_entry& e = rsp.blocks.back();
-    //pack block
-    e.block = bl.first;
-    //pack transactions
-    for (const cryptonote::blobdata& tx: txs)
-      e.txs.push_back(tx);
+    e.block = std::move(bl.first);
   }
-  //get another transactions, if need
-  std::list<cryptonote::blobdata> txs;
-  get_transactions_blobs(arg.txs, txs, rsp.missed_ids);
-  //pack aside transactions
-  for (const auto& tx: txs)
-    rsp.txs.push_back(tx);
-
+  //get and pack other transactions, if needed
+  get_transactions_blobs(arg.txs, rsp.txs, rsp.missed_ids);
   m_db->block_txn_stop();
   return true;
 }
@@ -2391,16 +2381,19 @@ bool Blockchain::get_blocks(const t_ids_container& block_ids, t_blocks_container
   {
     try
     {
-      blocks.push_back(std::make_pair(m_db->get_block_blob(block_hash), block()));
-      if (!parse_and_validate_block_from_blob(blocks.back().first, blocks.back().second))
+      uint64_t height = 0;
+     if (m_db->block_exists(block_hash, &height))
       {
-        LOG_ERROR("Invalid block");
-        return false;
+        blocks.push_back(std::make_pair(m_db->get_block_blob_from_height(height), block()));
+          if (!parse_and_validate_block_from_blob(blocks.back().first, blocks.back().second))
+          {
+            LOG_ERROR("Invalid block: " << block_hash);
+            blocks.pop_back();
+            missed_bs.push_back(block_hash);
+          }
       }
-    }
-    catch (const BLOCK_DNE& e)
-    {
-      missed_bs.push_back(block_hash);
+      else
+         missed_bs.push_back(block_hash);
     }
     catch (const std::exception& e)
     {
@@ -2501,7 +2494,7 @@ bool Blockchain::find_blockchain_supplement(const std::list<crypto::hash>& qbloc
   CRITICAL_REGION_LOCAL(m_blockchain_lock);
 
   bool result = find_blockchain_supplement(qblock_ids, resp.m_block_ids, resp.start_height, resp.total_height);
-  resp.cumulative_difficulty = m_db->get_block_cumulative_difficulty(m_db->height() - 1);
+  resp.cumulative_difficulty = m_db->get_block_cumulative_difficulty(resp.total_height - 1);
 
   return result;
 }
