@@ -3707,7 +3707,7 @@ leave:
      precomputed = true;
      proof_of_work = it->second;
      // validate proof_of_work versus difficulty target
-     if(!check_hash(proof_of_work, current_diffic))
+     if(!check_hash(proof_of_work, current_diffic)&& version >=7)
      {
        MERROR_VER("Block with id: " << id << std::endl << "does not have enough proof of work: " << proof_of_work << std::endl << "unexpected difficulty: " << current_diffic);
        bvc.m_verifivation_failed = true;
@@ -3716,7 +3716,7 @@ leave:
    }
    else
    {
-     if (!check_proof_of_work(bl, current_diffic, proof_of_work))
+     if (!check_proof_of_work(bl, current_diffic, proof_of_work) && version >=7)
      {
        MERROR_VER("Block with id: " << id << std::endl << "does not have enough proof of work: " << proof_of_work << std::endl << "unexpected difficulty: " << current_diffic);
        bvc.m_verifivation_failed = true;
