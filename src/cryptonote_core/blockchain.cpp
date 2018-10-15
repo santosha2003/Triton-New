@@ -216,6 +216,7 @@ bool Blockchain::scan_outputkeys_for_indexes(size_t tx_version, const txin_to_ke
       try
       {
         m_db->get_output_key(tx_in_to_key.amount, add_offsets, add_outputs, true);
+
         if (add_offsets.size() != add_outputs.size() && get_current_hard_fork_version() >= 7)
         {
           MERROR_VER("Output does not exist! amount = " << tx_in_to_key.amount);
@@ -1241,7 +1242,7 @@ difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std:
 
     diff = difficultiesforv4[(height + 1) - startHeight];
   }else if(m_hardfork->get_current_version() >= 5 && m_hardfork->get_current_version()  < 7){
-  /**  if(height >= 24861 && height <= 24921){
+  if(height >= 24861 && height <= 24921){
      diff = 10000000;
    }else if(height == 24922){
 
@@ -1392,10 +1393,10 @@ difficulty_type Blockchain::get_next_difficulty_for_alternative_chain(const std:
     diff = difficultiesforv5_9[(height) - 28082];
 
   }else{
-**/
+
      diff = next_difficulty(std::move(timestamps), std::move(cumulative_difficulties), target,height - 1);
 
-  // }
+  }
   }else if(m_hardfork->get_current_version() >= 7){
      diff = next_difficulty_v3(std::move(timestamps), std::move(cumulative_difficulties), target,height - 1);
   }
@@ -1919,14 +1920,15 @@ bool Blockchain::handle_get_objects(NOTIFY_REQUEST_GET_OBJECTS::request& arg, NO
   std::list<std::pair<cryptonote::blobdata,block>> blocks;
   get_blocks(arg.blocks, blocks, rsp.missed_ids);
 
-  for (const auto& bl: blocks)
+  for (auto& bl: blocks)
   {
     std::list<crypto::hash> missed_tx_ids;
     std::list<cryptonote::blobdata> txs;
-
+    rsp.blocks.push_back(block_complete_entry());
+    block_complete_entry& e = rsp.blocks.back();
     // FIXME: s/rsp.missed_ids/missed_tx_id/ ?  Seems like rsp.missed_ids
     //        is for missed blocks, not missed transactions as well.
-    get_transactions_blobs(bl.second.tx_hashes, txs, missed_tx_ids);
+    get_transactions_blobs(bl.second.tx_hashes, e.txs, missed_tx_ids);
 
     if (missed_tx_ids.size() != 0)
     {
@@ -1943,21 +1945,10 @@ bool Blockchain::handle_get_objects(NOTIFY_REQUEST_GET_OBJECTS::request& arg, NO
       return false;
     }
 
-    rsp.blocks.push_back(block_complete_entry());
-    block_complete_entry& e = rsp.blocks.back();
-    //pack block
-    e.block = bl.first;
-    //pack transactions
-    for (const cryptonote::blobdata& tx: txs)
-      e.txs.push_back(tx);
+    e.block = std::move(bl.first);
   }
-  //get another transactions, if need
-  std::list<cryptonote::blobdata> txs;
-  get_transactions_blobs(arg.txs, txs, rsp.missed_ids);
-  //pack aside transactions
-  for (const auto& tx: txs)
-    rsp.txs.push_back(tx);
-
+  //get and pack other transactions, if needed
+  get_transactions_blobs(arg.txs, rsp.txs, rsp.missed_ids);
   m_db->block_txn_stop();
   return true;
 }
@@ -2391,16 +2382,19 @@ bool Blockchain::get_blocks(const t_ids_container& block_ids, t_blocks_container
   {
     try
     {
-      blocks.push_back(std::make_pair(m_db->get_block_blob(block_hash), block()));
-      if (!parse_and_validate_block_from_blob(blocks.back().first, blocks.back().second))
+      uint64_t height = 0;
+     if (m_db->block_exists(block_hash, &height))
       {
-        LOG_ERROR("Invalid block");
-        return false;
+        blocks.push_back(std::make_pair(m_db->get_block_blob_from_height(height), block()));
+          if (!parse_and_validate_block_from_blob(blocks.back().first, blocks.back().second))
+          {
+            LOG_ERROR("Invalid block: " << block_hash);
+            blocks.pop_back();
+            missed_bs.push_back(block_hash);
+          }
       }
-    }
-    catch (const BLOCK_DNE& e)
-    {
-      missed_bs.push_back(block_hash);
+      else
+         missed_bs.push_back(block_hash);
     }
     catch (const std::exception& e)
     {
@@ -2501,7 +2495,7 @@ bool Blockchain::find_blockchain_supplement(const std::list<crypto::hash>& qbloc
   CRITICAL_REGION_LOCAL(m_blockchain_lock);
 
   bool result = find_blockchain_supplement(qblock_ids, resp.m_block_ids, resp.start_height, resp.total_height);
-  resp.cumulative_difficulty = m_db->get_block_cumulative_difficulty(m_db->height() - 1);
+  resp.cumulative_difficulty = m_db->get_block_cumulative_difficulty(resp.total_height - 1);
 
   return result;
 }
@@ -2925,7 +2919,7 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
   {
     size_t n_unmixable = 0, n_mixable = 0;
     size_t mixin = std::numeric_limits<size_t>::max();
-    const size_t min_mixin = hf_version >= HF_VERSION_MIN_MIXIN_6 ? 6 : 1;
+    const size_t min_mixin = hf_version >= HF_VERSION_MIN_MIXIN_6 ? 2 : 1;
     for (const auto& txin : tx.vin)
     {
       // non txin_to_key inputs will be rejected below
@@ -3064,7 +3058,7 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
 
     // make sure that output being spent matches up correctly with the
     // signature spending it.
-    if (!check_tx_input(tx.version, in_to_key, tx_prefix_hash, tx.version == 1 ? tx.signatures[sig_index] : std::vector<crypto::signature>(), tx.rct_signatures, pubkeys[sig_index], pmax_used_block_height) && get_current_hard_fork_version() >= 6)
+    if (!check_tx_input(tx.version, in_to_key, tx_prefix_hash, tx.version == 1 ? tx.signatures[sig_index] : std::vector<crypto::signature>(), tx.rct_signatures, pubkeys[sig_index], pmax_used_block_height))
 
     {
       it->second[in_to_key.k_image] = false;
@@ -3087,7 +3081,7 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
       }
       else
       {
-
+        if(get_current_hard_fork_version( ) >= 7){
         check_ring_signature(tx_prefix_hash, in_to_key.k_image, pubkeys[sig_index], tx.signatures[sig_index], results[sig_index]);
         if (!results[sig_index])
         {
@@ -3102,6 +3096,7 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
           return false;
         }
         it->second[in_to_key.k_image] = true;
+      }
 
     }
     }
@@ -3307,27 +3302,27 @@ static uint64_t get_fee_quantization_mask()
 uint64_t Blockchain::get_dynamic_per_kb_fee(uint64_t block_reward, size_t median_block_size, uint8_t version)
 {
   const uint64_t min_block_size = get_min_block_size(version);
-  const uint64_t fee_per_kb_base = version >= 5 ? DYNAMIC_FEE_PER_KB_BASE_FEE_V5 : DYNAMIC_FEE_PER_KB_BASE_FEE;
+ const uint64_t fee_per_kb_base = version >= 8 ? DYNAMIC_FEE_PER_KB_BASE_FEE_V5 : DYNAMIC_FEE_PER_KB_BASE_FEE;
 
-  if (median_block_size < min_block_size)
-    median_block_size = min_block_size;
+ if (median_block_size < min_block_size)
+   median_block_size = min_block_size;
 
-  uint64_t unscaled_fee_per_kb = (fee_per_kb_base * min_block_size / median_block_size);
-  uint64_t hi, lo = mul128(unscaled_fee_per_kb, block_reward, &hi);
-  static_assert(DYNAMIC_FEE_PER_KB_BASE_BLOCK_REWARD % 1000000 == 0, "DYNAMIC_FEE_PER_KB_BASE_BLOCK_REWARD must be divisible by 1000000");
-  static_assert(DYNAMIC_FEE_PER_KB_BASE_BLOCK_REWARD / 1000000 <= std::numeric_limits<uint32_t>::max(), "DYNAMIC_FEE_PER_KB_BASE_BLOCK_REWARD is too large");
+ uint64_t unscaled_fee_per_kb = (fee_per_kb_base * min_block_size / median_block_size);
+ uint64_t hi, lo = mul128(unscaled_fee_per_kb, block_reward, &hi);
+ static_assert(DYNAMIC_FEE_PER_KB_BASE_BLOCK_REWARD % 1000000 == 0, "DYNAMIC_FEE_PER_KB_BASE_BLOCK_REWARD must be divisible by 1000000");
+ static_assert(DYNAMIC_FEE_PER_KB_BASE_BLOCK_REWARD / 1000000 <= std::numeric_limits<uint32_t>::max(), "DYNAMIC_FEE_PER_KB_BASE_BLOCK_REWARD is too large");
 
-  // divide in two steps, since the divisor must be 32 bits, but DYNAMIC_FEE_PER_KB_BASE_BLOCK_REWARD isn't
-  div128_32(hi, lo, DYNAMIC_FEE_PER_KB_BASE_BLOCK_REWARD / 1000000, &hi, &lo);
-  div128_32(hi, lo, 1000000, &hi, &lo);
-  assert(hi == 0);
+ // divide in two steps, since the divisor must be 32 bits, but DYNAMIC_FEE_PER_KB_BASE_BLOCK_REWARD isn't
+ div128_32(hi, lo, DYNAMIC_FEE_PER_KB_BASE_BLOCK_REWARD / 1000000, &hi, &lo);
+ div128_32(hi, lo, 1000000, &hi, &lo);
+ assert(hi == 0);
 
-  // quantize fee up to 8 decimals
-  uint64_t mask = get_fee_quantization_mask();
-  uint64_t qlo = (lo + mask - 1) / mask * mask;
-  MDEBUG("lo " << print_money(lo) << ", qlo " << print_money(qlo) << ", mask " << mask);
+ // quantize fee up to 8 decimals
+ uint64_t mask = get_fee_quantization_mask();
+ uint64_t qlo = (lo + mask - 1) / mask * mask;
+ MDEBUG("lo " << print_money(lo) << ", qlo " << print_money(qlo) << ", mask " << mask);
 
-  return qlo;
+ return qlo;
 }
 
 //------------------------------------------------------------------
@@ -3335,32 +3330,33 @@ bool Blockchain::check_fee(size_t blob_size, uint64_t fee) const
 {
   const uint8_t version = get_current_hard_fork_version();
 
-  uint64_t fee_per_kb;
-  if (version < 7)
-  {
-	  return fee >= LEGACY_MINIMUM_FEE;
-  }
-  else
-  {
-    uint64_t median = m_current_block_cumul_sz_limit / 2;
-    uint64_t already_generated_coins = m_db->height() ? m_db->get_block_already_generated_coins(m_db->height() - 1) : 0;
-    uint64_t base_reward;
-    if (!get_block_reward(median, 1, already_generated_coins, 0,base_reward, version,m_db->height()))
-      return false;
-    fee_per_kb = get_dynamic_per_kb_fee(base_reward, median, version);
-  }
-  MDEBUG("Using " << print_money(fee_per_kb) << "/kB fee");
+ uint64_t fee_per_kb;
+ if (version < HF_VERSION_DYNAMIC_FEE)
+ {
+ return fee >= LEGACY_MINIMUM_FEE;
+   fee_per_kb = FEE_PER_KB;
+ }
+ else
+ {
+   uint64_t median = m_current_block_cumul_sz_limit / 2;
+   uint64_t already_generated_coins = m_db->height() ? m_db->get_block_already_generated_coins(m_db->height() - 1) : 0;
+   uint64_t base_reward;
+   if (!get_block_reward(median, 1, already_generated_coins, 0,base_reward, version,m_db->height()))
+     return false;
+   fee_per_kb = get_dynamic_per_kb_fee(base_reward, median, version);
+ }
+ MDEBUG("Using " << print_money(fee_per_kb) << "/kB fee");
 
-  uint64_t needed_fee = blob_size / 1024;
-  needed_fee += (blob_size % 1024) ? 1 : 0;
-  needed_fee *= fee_per_kb;
+ uint64_t needed_fee = blob_size / 1024;
+ needed_fee += (blob_size % 1024) ? 1 : 0;
+ needed_fee *= fee_per_kb;
 
-  if (fee < needed_fee - needed_fee / 50) // keep a little 2% buffer on acceptance - no integer overflow
-  {
-    MERROR_VER("transaction fee is not enough: " << print_money(fee) << ", minimum fee: " << print_money(needed_fee));
-    return false;
-  }
-  return true;
+ if (fee < needed_fee - needed_fee / 50) // keep a little 2% buffer on acceptance - no integer overflow
+ {
+   MERROR_VER("transaction fee is not enough: " << print_money(fee) << ", minimum fee: " << print_money(needed_fee));
+   return false;
+ }
+ return true;
 }
 
 //------------------------------------------------------------------
@@ -3368,34 +3364,34 @@ uint64_t Blockchain::get_dynamic_per_kb_fee_estimate(uint64_t grace_blocks) cons
 {
   const uint8_t version = get_current_hard_fork_version();
 
-  if (version < HF_VERSION_DYNAMIC_FEE)
-    return FEE_PER_KB;
+ if (version < HF_VERSION_DYNAMIC_FEE)
+   return FEE_PER_KB;
 
-  if (grace_blocks >= CRYPTONOTE_REWARD_BLOCKS_WINDOW)
-    grace_blocks = CRYPTONOTE_REWARD_BLOCKS_WINDOW - 1;
+ if (grace_blocks >= CRYPTONOTE_REWARD_BLOCKS_WINDOW)
+   grace_blocks = CRYPTONOTE_REWARD_BLOCKS_WINDOW - 1;
 
-  const uint64_t min_block_size = get_min_block_size(version);
-  std::vector<size_t> sz;
-  get_last_n_blocks_sizes(sz, CRYPTONOTE_REWARD_BLOCKS_WINDOW - grace_blocks);
-  for (size_t i = 0; i < grace_blocks; ++i)
-    sz.push_back(min_block_size);
+ const uint64_t min_block_size = get_min_block_size(version);
+ std::vector<size_t> sz;
+ get_last_n_blocks_sizes(sz, CRYPTONOTE_REWARD_BLOCKS_WINDOW - grace_blocks);
+ sz.reserve(grace_blocks);
+ for (size_t i = 0; i < grace_blocks; ++i)
+   sz.push_back(min_block_size);
 
-  uint64_t median = epee::misc_utils::median(sz);
-  if(median <= min_block_size)
-    median = min_block_size;
+ uint64_t median = epee::misc_utils::median(sz);
+ if(median <= min_block_size)
+   median = min_block_size;
 
-  uint64_t already_generated_coins = m_db->height() ? m_db->get_block_already_generated_coins(m_db->height() - 1) : 0;
-  uint64_t base_reward;
-  uint64_t fee = get_dynamic_per_kb_fee(base_reward, median, version);
-  MDEBUG("Estimating " << grace_blocks << "-block fee at " << print_money(fee) << "/kB");
-  if (!get_block_reward(median, 1, already_generated_coins,fee, base_reward, version,m_db->height()))
-  {
-    MERROR("Failed to determine block reward, using placeholder " << print_money(BLOCK_REWARD_OVERESTIMATE) << " as a high bound");
-    base_reward = BLOCK_REWARD_OVERESTIMATE;
-  }
+ uint64_t already_generated_coins = m_db->height() ? m_db->get_block_already_generated_coins(m_db->height() - 1) : 0;
+ uint64_t base_reward;
+ if (!get_block_reward(median, 1, already_generated_coins, 0,base_reward, version,m_db->height()))
+ {
+   MERROR("Failed to determine block reward, using placeholder " << print_money(BLOCK_REWARD_OVERESTIMATE) << " as a high bound");
+   base_reward = BLOCK_REWARD_OVERESTIMATE;
+ }
 
-
-  return fee;
+ uint64_t fee = get_dynamic_per_kb_fee(base_reward, median, version);
+ MDEBUG("Estimating " << grace_blocks << "-block fee at " << print_money(fee) << "/kB");
+ return fee;
 }
 
 //------------------------------------------------------------------
@@ -3713,7 +3709,7 @@ leave:
      precomputed = true;
      proof_of_work = it->second;
      // validate proof_of_work versus difficulty target
-     if(!check_hash(proof_of_work, current_diffic) && m_hardfork->get_current_version() >= 6)
+     if(!check_hash(proof_of_work, current_diffic)&& get_current_hard_fork_version() >=7)
      {
        MERROR_VER("Block with id: " << id << std::endl << "does not have enough proof of work: " << proof_of_work << std::endl << "unexpected difficulty: " << current_diffic);
        bvc.m_verifivation_failed = true;
@@ -3722,7 +3718,7 @@ leave:
    }
    else
    {
-     if (!check_proof_of_work(bl, current_diffic, proof_of_work) && m_hardfork->get_current_version() >= 6)
+     if (!check_proof_of_work(bl, current_diffic, proof_of_work) && get_current_hard_fork_version() >=7)
      {
        MERROR_VER("Block with id: " << id << std::endl << "does not have enough proof of work: " << proof_of_work << std::endl << "unexpected difficulty: " << current_diffic);
        bvc.m_verifivation_failed = true;
@@ -3784,7 +3780,7 @@ leave:
     TIME_MEASURE_START(aa);
 
 // XXX old code does not check whether tx exists
-    if (m_db->tx_exists(tx_id))
+    if (m_db->tx_exists(tx_id) && tx.version > 1)
     {
       MERROR("Block with id: " << id << " attempting to add transaction already in blockchain with id: " << tx_id);
       bvc.m_verifivation_failed = true;
@@ -3797,7 +3793,7 @@ leave:
     TIME_MEASURE_START(bb);
 
     // get transaction with hash <tx_id> from tx_pool
-    if(!m_tx_pool.take_tx(tx_id, tx, blob_size, fee, relayed, do_not_relay, double_spend_seen) && get_current_hard_fork_version() >= 6)
+    if(!m_tx_pool.take_tx(tx_id, tx, blob_size, fee, relayed, do_not_relay, double_spend_seen) && tx.version > 1)
 
     {
       MERROR_VER("Block with id: " << id  << " has at least one unknown transaction with id: " << tx_id);

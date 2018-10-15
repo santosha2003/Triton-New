@@ -170,10 +170,7 @@ void do_prepare_file_names(const std::string& file_path, std::string& keys_file,
 uint64_t calculate_fee(uint64_t fee_per_kb, size_t bytes, uint64_t fee_multiplier)
 {
   uint64_t kB = (bytes + 1023) / 1024;
-  uint64_t cal_fee = kB * fee_per_kb * fee_multiplier;
-
-
-  return cal_fee;
+  return kB * fee_per_kb * fee_multiplier;;
 }
 
 uint64_t calculate_fee(uint64_t fee_per_kb, const cryptonote::blobdata &blob, uint64_t fee_multiplier)
@@ -5356,7 +5353,9 @@ uint64_t wallet2::get_per_kb_fee() const
 {
   if(m_light_wallet)
     return m_light_wallet_per_kb_fee;
-  bool use_dyn_fee = use_fork_rules(HF_VERSION_DYNAMIC_FEE,1);
+  bool use_dyn_fee = use_fork_rules(7,0);
+  LOG_PRINT_L1(use_dyn_fee <<" Failed to query per kB fee, using " << print_money(FEE_PER_KB));
+
   if (!use_dyn_fee)
     return FEE_PER_KB;
 
@@ -5376,7 +5375,7 @@ int wallet2::get_fee_algorithm() const
 //------------------------------------------------------------------------------------------------------------------------------
 uint64_t wallet2::adjust_mixin(uint64_t mixin) const
 {
-  if (mixin < 6 && use_fork_rules(7, 10)) {
+  if (mixin < 6 && use_fork_rules(7, 0)) {
     MWARNING("Requested ring size " << (mixin + 1) << " too low for hard fork 7, using 7");
     mixin = 6;
   }
@@ -5498,12 +5497,23 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions(std::vector<crypto
 
 	// loop until fee is met without increasing tx size to next KB boundary.
 	const size_t estimated_tx_size = estimate_tx_size(false, unused_transfers_indices.size(), fake_outs_count, dst_vector.size(), extra.size(), false);
-	uint64_t needed_fee = use_fork_rules(7,10) ? calculate_fee(fee_per_kb, estimated_tx_size, fee_multiplier) : LEGACY_MINIMUM_FEE;
+	uint64_t needed_fee = 0;
+  if(use_fork_rules(7,0)){
+      needed_fee = calculate_fee(fee_per_kb, estimated_tx_size, fee_multiplier);
+  }else{
+  needed_fee =  LEGACY_MINIMUM_FEE;
+ }
+
 	do
 	{
 	  transfer(dst_vector, fake_outs_count, unused_transfers_indices, unlock_time, needed_fee, extra, tx, ptx, trusted_daemon);
 	  auto txBlob = t_serializable_object_to_blob(ptx.tx);
-          needed_fee = use_fork_rules(7,10) ? calculate_fee(fee_per_kb, txBlob, fee_multiplier) : LEGACY_MINIMUM_FEE;;
+    if(use_fork_rules(7,0)){
+        needed_fee = calculate_fee(fee_per_kb, txBlob, fee_multiplier);
+    }else{
+    needed_fee =  LEGACY_MINIMUM_FEE;
+   }
+
 	} while (ptx.fee < needed_fee);
 
         ptx_vector.push_back(ptx);
@@ -7554,6 +7564,8 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_2(std::vector<cryp
     // this is used to build a tx that's 1 or 2 inputs, and 2 outputs, which
     // will get us a known fee.
     uint64_t estimated_fee = calculate_fee(fee_per_kb, estimate_rct_tx_size(2, fake_outs_count, 2, extra.size(), bulletproof), fee_multiplier);
+    MDEBUG("fee_per_kb: " << fee_per_kb);
+
     preferred_inputs = pick_preferred_rct_inputs(needed_money + estimated_fee, subaddr_account, subaddr_indices);
     if (!preferred_inputs.empty())
     {
@@ -7704,7 +7716,11 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_2(std::vector<cryp
       pending_tx test_ptx;
 
       const size_t estimated_tx_size = estimate_tx_size(use_rct, tx.selected_transfers.size(), fake_outs_count, tx.dsts.size(), extra.size(), bulletproof);
-      needed_fee = use_fork_rules(7,10) ? calculate_fee(fee_per_kb, estimated_tx_size, fee_multiplier) : LEGACY_MINIMUM_FEE;
+      if(use_fork_rules(7,0)){
+          needed_fee = calculate_fee(fee_per_kb, estimated_tx_size, fee_multiplier);
+      }else{
+      needed_fee =  LEGACY_MINIMUM_FEE;
+     }
 
       uint64_t inputs = 0, outputs = needed_fee;
       for (size_t idx: tx.selected_transfers) inputs += m_transfers[idx].amount();
@@ -7726,7 +7742,11 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_2(std::vector<cryp
         transfer_selected(tx.dsts, tx.selected_transfers, fake_outs_count, outs, unlock_time, needed_fee, extra,
           detail::digit_split_strategy, tx_dust_policy(::config::DEFAULT_DUST_THRESHOLD), test_tx, test_ptx);
       auto txBlob = t_serializable_object_to_blob(test_ptx.tx);
-      needed_fee = use_fork_rules(7,10) ? calculate_fee(fee_per_kb, txBlob, fee_multiplier) : LEGACY_MINIMUM_FEE;
+            if(use_fork_rules(7,0)){
+                needed_fee = calculate_fee(fee_per_kb, txBlob, fee_multiplier);
+            }else{
+            needed_fee =  LEGACY_MINIMUM_FEE;
+           }
       available_for_fee = test_ptx.fee + test_ptx.change_dts.amount + (!test_ptx.dust_added_to_fee ? test_ptx.dust : 0);
       LOG_PRINT_L2("Made a " << get_size_string(txBlob) << " tx, with " << print_money(available_for_fee) << " available for fee (" <<
         print_money(needed_fee) << " needed)");
@@ -7769,7 +7789,11 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_2(std::vector<cryp
             transfer_selected(tx.dsts, tx.selected_transfers, fake_outs_count, outs, unlock_time, needed_fee, extra,
               detail::digit_split_strategy, tx_dust_policy(::config::DEFAULT_DUST_THRESHOLD), test_tx, test_ptx);
           txBlob = t_serializable_object_to_blob(test_ptx.tx);
-          needed_fee = use_fork_rules(7,10) ? calculate_fee(fee_per_kb, txBlob, fee_multiplier) : LEGACY_MINIMUM_FEE;
+          if(use_fork_rules(7,0)){
+              needed_fee = calculate_fee(fee_per_kb, txBlob, fee_multiplier);
+          }else{
+          needed_fee =  LEGACY_MINIMUM_FEE;
+         }
           LOG_PRINT_L2("Made an attempt at a  final " << get_size_string(txBlob) << " tx, with " << print_money(test_ptx.fee) <<
             " fee  and " << print_money(test_ptx.change_dts.amount) << " change");
         }
@@ -8023,7 +8047,11 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_from(const crypton
       pending_tx test_ptx;
 
       const size_t estimated_tx_size = estimate_tx_size(use_rct, tx.selected_transfers.size(), fake_outs_count, tx.dsts.size(), extra.size(), bulletproof);
-      needed_fee = use_fork_rules(7,10) ? calculate_fee(fee_per_kb, estimated_tx_size, fee_multiplier) : LEGACY_MINIMUM_FEE;
+      if(use_fork_rules(7,0)){
+          needed_fee = calculate_fee(fee_per_kb, estimated_tx_size, fee_multiplier);
+      }else{
+        needed_fee =  LEGACY_MINIMUM_FEE;
+     }
 
       tx.dsts.push_back(tx_destination_entry(1, address, is_subaddress));
 
@@ -8036,7 +8064,12 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_from(const crypton
         transfer_selected(tx.dsts, tx.selected_transfers, fake_outs_count, outs, unlock_time, needed_fee, extra,
           detail::digit_split_strategy, tx_dust_policy(::config::DEFAULT_DUST_THRESHOLD), test_tx, test_ptx);
       auto txBlob = t_serializable_object_to_blob(test_ptx.tx);
-      needed_fee = use_fork_rules(7,10) ? calculate_fee(fee_per_kb, txBlob, fee_multiplier) : LEGACY_MINIMUM_FEE;
+      if(use_fork_rules(7,0)){
+          needed_fee = calculate_fee(fee_per_kb, txBlob, fee_multiplier);
+      }else{
+        needed_fee =  LEGACY_MINIMUM_FEE;
+     }
+
       available_for_fee = test_ptx.fee + test_ptx.dests[0].amount + test_ptx.change_dts.amount;
       LOG_PRINT_L2("Made a " << get_size_string(txBlob) << " tx, with " << print_money(available_for_fee) << " available for fee (" <<
         print_money(needed_fee) << " needed)");
@@ -8053,7 +8086,11 @@ std::vector<wallet2::pending_tx> wallet2::create_transactions_from(const crypton
           transfer_selected(tx.dsts, tx.selected_transfers, fake_outs_count, outs, unlock_time, needed_fee, extra,
             detail::digit_split_strategy, tx_dust_policy(::config::DEFAULT_DUST_THRESHOLD), test_tx, test_ptx);
         txBlob = t_serializable_object_to_blob(test_ptx.tx);
-        needed_fee = use_fork_rules(7,10) ? calculate_fee(fee_per_kb, txBlob, fee_multiplier) : LEGACY_MINIMUM_FEE;
+        if(use_fork_rules(7,0)){
+            needed_fee = calculate_fee(fee_per_kb, txBlob, fee_multiplier);
+        }else{
+          needed_fee =  LEGACY_MINIMUM_FEE;
+       }
         LOG_PRINT_L2("Made an attempt at a final " << get_size_string(txBlob) << " tx, with " << print_money(test_ptx.fee) <<
           " fee  and " << print_money(test_ptx.change_dts.amount) << " change");
       } while (needed_fee > test_ptx.fee);
@@ -8253,21 +8290,21 @@ const wallet2::transfer_details &wallet2::get_transfer_details(size_t idx) const
 std::vector<size_t> wallet2::select_available_unmixable_outputs(bool trusted_daemon)
 {
   // request all outputs with less than 3 instances
-  const size_t min_mixin = use_fork_rules(7, 10) ? 2 : 1;// v6 increases min mixin from 2 to 4, v7 to 6
+  const size_t min_mixin = use_fork_rules(7, 0) ? 2 : 1;// v6 increases min mixin from 2 to 4, v7 to 6
   return select_available_outputs_from_histogram(min_mixin + 1, false, true, false, trusted_daemon);
 }
 //----------------------------------------------------------------------------------------------------
 std::vector<size_t> wallet2::select_available_mixable_outputs(bool trusted_daemon)
 {
   // request all outputs with at least 3 instances, so we can use mixin 2 with
-  const size_t min_mixin = use_fork_rules(7, 10) ? 2 : 1; // v6 increases min mixin from 2 to 4, v7 to 6
+  const size_t min_mixin = use_fork_rules(7, 0) ? 2 : 1; // v6 increases min mixin from 2 to 4, v7 to 6
   return select_available_outputs_from_histogram(min_mixin + 1, true, true, true, trusted_daemon);
 }
 //----------------------------------------------------------------------------------------------------
 std::vector<wallet2::pending_tx> wallet2::create_unmixable_sweep_transactions(bool trusted_daemon)
 {
   // From hard fork 1, we don't consider small amounts to be dust anymore
-  const bool hf1_rules = use_fork_rules(7, 10); // first hard fork has version 2
+  const bool hf1_rules = use_fork_rules(7, 0); // first hard fork has version 2
   tx_dust_policy dust_policy(hf1_rules ? 0 : ::config::DEFAULT_DUST_THRESHOLD);
 
   const uint64_t fee_per_kb  = get_per_kb_fee();
@@ -8293,7 +8330,16 @@ std::vector<wallet2::pending_tx> wallet2::create_unmixable_sweep_transactions(bo
 
   return create_transactions_from(m_account_public_address, false, unmixable_transfer_outputs, unmixable_dust_outputs, 0 /*fake_outs_count */, 0 /* unlock_time */, 1 /*priority */, std::vector<uint8_t>(), trusted_daemon);
 }
-
+//------------------------------------------------------------
+void wallet2::discard_unmixable_outputs(bool trusted_daemon)
+{
+  // may throw
+  std::vector<size_t> unmixable_outputs = select_available_unmixable_outputs(trusted_daemon);
+  for (size_t idx : unmixable_outputs)
+  {
+    m_transfers[idx].m_spent = true;
+  }
+}
 bool wallet2::get_tx_key(const crypto::hash &txid, crypto::secret_key &tx_key, std::vector<crypto::secret_key> &additional_tx_keys) const
 {
   additional_tx_keys.clear();
@@ -8466,8 +8512,9 @@ bool wallet2::check_spend_proof(const crypto::hash &txid, const std::string &mes
   }
   std::vector<std::vector<crypto::signature>> signatures = { std::vector<crypto::signature>(1) };
   const size_t sig_len = tools::base58::encode(std::string((const char *)&signatures[0][0], sizeof(crypto::signature))).size();
-  THROW_WALLET_EXCEPTION_IF(sig_str.size() != header_len + num_sigs * sig_len,
-    error::wallet_internal_error, "incorrect signature size");
+  if( sig_str.size() != header_len + num_sigs * sig_len ) {
+      return false;
+    }
 
   // decode base58
   signatures.clear();
