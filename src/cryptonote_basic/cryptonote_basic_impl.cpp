@@ -31,7 +31,6 @@
 #include "include_base_utils.h"
 using namespace epee;
 
-
 #include "cryptonote_basic_impl.h"
 #include "string_tools.h"
 #include "serialization/binary_utils.h"
@@ -68,13 +67,11 @@ namespace cryptonote {
   /* Cryptonote helper functions                                          */
   /************************************************************************/
   //-----------------------------------------------------------------------------------------------
-  size_t get_min_block_size(uint8_t version)
+  size_t get_min_block_weight(uint8_t version)
   {
     if (version < 2)
       return CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1;
-    if (version < 7)
-      return CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1;
-    return CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE;
+    return CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1;
   }
   //-----------------------------------------------------------------------------------------------
   size_t get_max_block_size()
@@ -87,101 +84,56 @@ namespace cryptonote {
     return CRYPTONOTE_MAX_TX_SIZE;
   }
   //-----------------------------------------------------------------------------------------------
-  //-----------------------------------------------------------------------------------------------
-  uint64_t get_penalized_amount(const uint64_t amount, const size_t median_size, const size_t current_block_size)
-{
-  static_assert(sizeof(size_t) >= sizeof(uint32_t), "size_t is too small");
-      assert(current_block_size <= 2 * median_size);
-      assert(median_size <= std::numeric_limits<uint32_t>::max());
-      assert(current_block_size <= std::numeric_limits<uint32_t>::max());
-
-      if (amount == 0) {
-        return 0;
-      }
-
-      if (current_block_size <= median_size) {
-        return amount;
-      }
-
-      uint64_t productHi;
-      uint64_t productLo = mul128(amount, current_block_size * (UINT64_C(2) * median_size - current_block_size), &productHi);
-
-      uint64_t penalizedAmountHi;
-      uint64_t penalizedAmountLo;
-      div128_32(productHi, productLo, static_cast<uint32_t>(median_size), &penalizedAmountHi, &penalizedAmountLo);
-      div128_32(penalizedAmountHi, penalizedAmountLo, static_cast<uint32_t>(median_size), &penalizedAmountHi, &penalizedAmountLo);
-
-      assert(0 == penalizedAmountHi);
-      assert(penalizedAmountLo < amount);
-
-      return penalizedAmountLo;
-}
-
-  //-----------------------------------------------------------------------------------------------
-  bool get_block_reward(size_t median_size, size_t current_block_size, uint64_t already_generated_coins, uint64_t fee, uint64_t &reward, uint8_t version,uint64_t height) {
-    static_assert(DIFFICULTY_TARGET_V2%60==0&&DIFFICULTY_TARGET_V2%60==0,"difficulty targets must be a multiple of 60");
+  bool get_block_reward(size_t median_weight, size_t current_block_weight, uint64_t already_generated_coins, uint64_t &reward, uint8_t version) {
+    static_assert(DIFFICULTY_TARGET_V2%60==0&&DIFFICULTY_TARGET_V1%60==0,"difficulty targets must be a multiple of 60");
     const int target = DIFFICULTY_TARGET_V2;
     const int target_minutes = target / 60;
-    const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE ;
-    if(height == 0){
-      reward = 0000000000000;
+    const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE - (target_minutes-1);
 
+    if(median_size > 0 && already_generated_coins < TRITON_SWAP_PREMINE){
+      reward = TRITON_SWAP_PREMINE;
+      return true;
+
+    }
+
+    uint64_t base_reward = (MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
+
+    uint64_t full_reward_zone = get_min_block_weight(version);
+
+    //make it soft
+    if (median_weight < full_reward_zone) {
+      median_weight = full_reward_zone;
+    }
+
+    if (current_block_weight <= median_weight) {
+      reward = base_reward;
       return true;
     }
-    if (already_generated_coins == 0)
-   {
-     reward = 3000000000000000000;
 
-     return true;
-   }
-   if(version >= 7){
+    if(current_block_weight > 2 * median_weight) {
+      MERROR("Block cumulative weight is too big: " << current_block_weight << ", expected less than " << 2 * median_weight);
+      return false;
+    }
 
-     uint64_t full_reward_zone = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1;
+    assert(median_weight < std::numeric_limits<uint32_t>::max());
+    assert(current_block_weight < std::numeric_limits<uint32_t>::max());
 
-      //make it soft
-      if (median_size < full_reward_zone) {
-        median_size = full_reward_zone;
-      }
+    uint64_t product_hi;
+    // BUGFIX: 32-bit saturation bug (e.g. ARM7), the result was being
+    // treated as 32-bit by default.
+    uint64_t multiplicand = 2 * median_weight - current_block_weight;
+    multiplicand *= current_block_weight;
+    uint64_t product_lo = mul128(base_reward, multiplicand, &product_hi);
 
+    uint64_t reward_hi;
+    uint64_t reward_lo;
+    div128_32(product_hi, product_lo, static_cast<uint32_t>(median_weight), &reward_hi, &reward_lo);
+    div128_32(reward_hi, reward_lo, static_cast<uint32_t>(median_weight), &reward_hi, &reward_lo);
+    assert(0 == reward_hi);
+    assert(reward_lo < base_reward);
 
-        if(current_block_size > 2 * median_size) {
-          MERROR("Block cumulative size is too big: " << current_block_size << ", expected less than " << 2 * median_size);
-          return false;
-        }
-        uint64_t agc = already_generated_coins / 1000000000000;
-        uint64_t base_reward = (84000000 - agc) >> emission_speed_factor;
-
-        size_t blockGrantedFullRewardZone = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE;
-
-
-        median_size = std::max(median_size, blockGrantedFullRewardZone);
-
-        uint64_t penalizedBaseReward = get_penalized_amount(base_reward, median_size, current_block_size);
-
-        reward = (penalizedBaseReward * 1000000000000) + get_penalized_amount(fee,median_size,current_block_size);
-
-        return true;
-
-   }else if(version == 2){
-     reward = 77 * 1000000000000;
-     return true;
-   }else{
-     uint64_t agc = already_generated_coins / 1000000000000;
-     uint64_t base_reward = (84000000 - agc) >> emission_speed_factor;
-
-     size_t blockGrantedFullRewardZone = CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE;
-
-
-     median_size = std::max(median_size, blockGrantedFullRewardZone);
-
-     uint64_t penalizedBaseReward = get_penalized_amount(base_reward, median_size, current_block_size);
-
-     reward = (penalizedBaseReward * 1000000000000) + get_penalized_amount(fee,median_size,current_block_size);
-
-     return true;
-
-   }
-
+    reward = reward_lo;
+    return true;
   }
   //------------------------------------------------------------------------------------
   uint8_t get_account_address_checksum(const public_address_outer_blob& bl)
@@ -210,10 +162,7 @@ namespace cryptonote {
     , account_public_address const & adr
     )
   {
-    uint64_t address_prefix = nettype == TESTNET ?
-      (subaddress ? config::testnet::CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX : config::testnet::CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX) : nettype == STAGENET ?
-      (subaddress ? config::stagenet::CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX : config::stagenet::CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX) :
-      (subaddress ? config::CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX : config::CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX);
+    uint64_t address_prefix = subaddress ? get_config(nettype).CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX : get_config(nettype).CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX;
 
     return tools::base58::encode_addr(address_prefix, t_serializable_object_to_blob(adr));
   }
@@ -224,7 +173,7 @@ namespace cryptonote {
     , crypto::hash8 const & payment_id
     )
   {
-    uint64_t integrated_address_prefix = nettype == TESTNET ? config::testnet::CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX : nettype == STAGENET ? config::stagenet::CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX : config::CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX;
+    uint64_t integrated_address_prefix = get_config(nettype).CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX;
 
     integrated_address iadr = {
       adr, payment_id
@@ -249,15 +198,9 @@ namespace cryptonote {
     , std::string const & str
     )
   {
-    uint64_t address_prefix = nettype == TESTNET ?
-      config::testnet::CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX : nettype == STAGENET ?
-      config::stagenet::CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX : config::CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX;
-    uint64_t integrated_address_prefix = nettype == TESTNET ?
-      config::testnet::CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX : nettype == STAGENET ?
-      config::stagenet::CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX : config::CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX;
-    uint64_t subaddress_prefix = nettype == TESTNET ?
-      config::testnet::CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX : nettype == STAGENET ?
-      config::stagenet::CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX : config::CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX;
+    uint64_t address_prefix = get_config(nettype).CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX;
+    uint64_t integrated_address_prefix = get_config(nettype).CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX;
+    uint64_t subaddress_prefix = get_config(nettype).CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX;
 
     if (2 * sizeof(public_address_outer_blob) != str.size())
     {

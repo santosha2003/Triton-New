@@ -85,12 +85,13 @@ monero_add_executable(wallet_rpc_server
 target_link_libraries(wallet_rpc_server
   PRIVATE
     wallet
-    epee
     rpc_base
     cryptonote_core
     cncrypto
     common
     version
+    daemonizer
+    ${EPEE_READLINE}
     ${Boost_CHRONO_LIBRARY}
     ${Boost_PROGRAM_OPTIONS_LIBRARY}
     ${Boost_FILESYSTEM_LIBRARY}
@@ -99,7 +100,7 @@ target_link_libraries(wallet_rpc_server
     ${EXTRA_LIBRARIES})
 set_property(TARGET wallet_rpc_server
   PROPERTY
-    OUTPUT_NAME "triton-wallet-rpc")
+    OUTPUT_NAME "Triton-wallet-rpc")
 install(TARGETS wallet_rpc_server DESTINATION bin)
 
 

@@ -32,8 +32,8 @@
 #include <atlutil.h>
 #pragma comment(lib, "Wininet.lib")
 
-#undef TRITON_DEFAULT_LOG_CATEGORY
-#define TRITON_DEFAULT_LOG_CATEGORY "net.http"
+#undef MONERO_DEFAULT_LOG_CATEGORY
+#define MONERO_DEFAULT_LOG_CATEGORY "net.http"
 
 namespace epee
 {

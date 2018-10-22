@@ -32,7 +32,6 @@
 
 #include <string>
 #include <boost/uuid/uuid.hpp>
-#include <boost/multiprecision/cpp_int.hpp>
 
 #define CRYPTONOTE_DNS_TIMEOUT_MS                       20000
 
@@ -42,71 +41,46 @@
 #define CRYPTONOTE_MAX_TX_SIZE                          1000000000
 #define CRYPTONOTE_PUBLIC_ADDRESS_TEXTBLOB_VER          0
 #define CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW            30
-#define CURRENT_TRANSACTION_VERSION                     1
+#define CURRENT_TRANSACTION_VERSION                     2
 #define CURRENT_BLOCK_MAJOR_VERSION                     1
 #define CURRENT_BLOCK_MINOR_VERSION                     0
-#define BLOCK_MINOR_VERSION_0                           0
+#define CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT              60*60*2
+#define CRYPTONOTE_DEFAULT_TX_SPENDABLE_AGE             10
 
-#define BLOCK_MAJOR_VERSION_1                           1
-#define BLOCK_MAJOR_VERSION_2                           2
-#define BLOCK_MAJOR_VERSION_3                           3
-#define BLOCK_MAJOR_VERSION_4							4
-#define BLOCK_MAJOR_VERSION_5					        5
-#define BLOCK_MAJOR_VERSION_7							7
-
-#define CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT              500
-#define CRYPTONOTE_DEFAULT_TX_SPENDABLE_AGE             0
-#define DEBUG_CREATE_BLOCK_TEMPLATE                     false
-
-#define BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW            60
-
+#define BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW               60
 
 // MONEY_SUPPLY - total number coins to be generated
-#define MONEY_SUPPLY                                   999999900000000000
-#define MONEY_SUPPLYv7                                 8400000000000000
-
-
+#define MONEY_SUPPLY                                    840000000000
+#define TRITON_SWAP_PREMINE
 #define EMISSION_SPEED_FACTOR_PER_MINUTE                (20)
 #define FINAL_SUBSIDY_PER_MINUTE                        ((uint64_t)300000000000) // 3 * pow(10, 11)
 
 #define CRYPTONOTE_REWARD_BLOCKS_WINDOW                 100
-#define CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1    80000
-#define CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2    90000
-#define CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE       1000000
+#define CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2    60000 //size of block (bytes) after which reward for block calculated using block size
+#define CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1    20000 //size of block (bytes) after which reward for block calculated using block size - before first fork
+#define CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V5    300000 //size of block (bytes) after which reward for block calculated using block size - second change, from v5
 #define CRYPTONOTE_COINBASE_BLOB_RESERVED_SIZE          600
-#define CRYPTONOTE_DISPLAY_DECIMAL_POINT                12
+#define CRYPTONOTE_DISPLAY_DECIMAL_POINT                4
 // COIN - number of smallest units in one coin
-#define COIN                                            ((uint64_t)1000000000000) // pow(10, 2)
-#define LEGACY_MINIMUM_FEE								              ((uint64_t)10000000000)
-#define FEE_PER_KB_OLD                                  ((uint64_t)10000000000) // pow(10, 10)
-#define FEE_PER_KB                                      ((uint64_t)200000000) // 2 * pow(10, 9)
-#define DYNAMIC_FEE_PER_KB_BASE_FEE                     ((uint64_t)200000000) // 2 * pow(10,5)
+#define COIN                                            ((uint64_t)100000) // pow(10, 4)
 
-#define DYNAMIC_FEE_PER_KB_BASE_BLOCK_REWARD            ((uint64_t)7700000000000) // 77* pow(10,12)
-#define DYNAMIC_FEE_PER_KB_BASE_FEE_V5                  ((uint64_t)200000000 * (uint64_t)CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 / CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE)
+#define FEE_PER_KB_OLD                                  ((uint64_t)10000000000) // pow(10, 10)
+#define FEE_PER_KB                                      ((uint64_t)2000000000) // 2 * pow(10, 9)
+#define FEE_PER_BYTE                                    ((uint64_t)300000)
+#define DYNAMIC_FEE_PER_KB_BASE_FEE                     ((uint64_t)2000000000) // 2 * pow(10,9)
+#define DYNAMIC_FEE_PER_KB_BASE_BLOCK_REWARD            ((uint64_t)10000000000000) // 10 * pow(10,12)
+#define DYNAMIC_FEE_PER_KB_BASE_FEE_V5                  ((uint64_t)2000000000 * (uint64_t)CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 / CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V5)
+#define DYNAMIC_FEE_REFERENCE_TRANSACTION_WEIGHT         ((uint64_t)3000)
 
 #define ORPHANED_BLOCKS_MAX_COUNT                       100
 
 
-#define DIFFICULTY_TARGET_V2                            180  // seconds
-#define DIFFICULTY_TARGET_V1                            60  // seconds - before first fork
-#define DIFFICULTY_WINDOW                               24 * 60 * 60 / DIFFICULTY_TARGET_V2 // blocks
-#define DIFFICULTY_WINDOW_V3                            60
-#define DIFFICULTY_WINDOW_V5                            480
-
-#define DIFFICULTY_LAG                                  15  // !!!
-#define DIFFICULTY_CUT                                  60  // timestamps to cut after sorting
-#define DIFFICULTY_CUT_V2                               6  // timestamps to cut after sorting
-
-#define DIFFICULTY_BLOCKS_COUNT                         DIFFICULTY_WINDOW + DIFFICULTY_LAG
-#define DIFFICULTY_BLOCKS_COUNT_V2                      60
-#define DIFFICULTY_BLOCKS_COUNT_V3                      DIFFICULTY_WINDOW_V3 + 1
+#define DIFFICULTY_TARGET_V2                            180  // seconds180
+#define DIFFICULTY_WINDOW_V1                           60
+#define DIFFICULTY_BLOCKS_COUNT_V1                     DIFFICULTY_WINDOW_V3 + 1
 
 
-
-
-#define CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_SECONDS_V1   DIFFICULTY_TARGET_V1 * CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_BLOCKS
-#define CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_SECONDS_V2   DIFFICULTY_TARGET_V2 * CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_BLOCKS
+#define CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_SECONDS_V1   DIFFICULTY_TARGET_V2 * CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_BLOCKS
 #define CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_BLOCKS       1
 
 
@@ -114,10 +88,10 @@
 
 
 #define BLOCKS_IDS_SYNCHRONIZING_DEFAULT_COUNT          10000  //by default, blocks ids count in synchronizing
-#define BLOCKS_SYNCHRONIZING_DEFAULT_COUNT_PRE_V4       20    //by default, blocks count in blocks downloading
+#define BLOCKS_SYNCHRONIZING_DEFAULT_COUNT_PRE_V4       100    //by default, blocks count in blocks downloading
 #define BLOCKS_SYNCHRONIZING_DEFAULT_COUNT              20     //by default, blocks count in blocks downloading
 
-#define CRYPTONOTE_MEMPOOL_TX_LIVETIME                    (86400) //seconds, three days
+#define CRYPTONOTE_MEMPOOL_TX_LIVETIME                    (86400*3) //seconds, three days
 #define CRYPTONOTE_MEMPOOL_TX_FROM_ALT_BLOCK_LIVETIME     604800 //seconds, one week
 
 #define COMMAND_RPC_GET_BLOCKS_FAST_MAX_COUNT           1000
@@ -155,36 +129,39 @@
 
 #define THREAD_STACK_SIZE                       5 * 1024 * 1024
 
-#define HF_VERSION_DYNAMIC_FEE                  7
-#define HF_VERSION_MIN_MIXIN_6                  7
-#define HF_VERSION_ENFORCE_RCT                  7
+#define HF_VERSION_DYNAMIC_FEE                  1
+#define HF_VERSION_MIN_MIXIN_10                 1
+#define HF_VERSION_ENFORCE_RCT                  1
+#define HF_VERSION_PER_BYTE_FEE                 1
 
 #define PER_KB_FEE_QUANTIZATION_DECIMALS        8
 
 #define HASH_OF_HASHES_STEP                     256
 
-#define DEFAULT_TXPOOL_MAX_SIZE                 648000000ull // 3 days at 300000, in bytes
+#define DEFAULT_TXPOOL_MAX_WEIGHT               648000000ull // 3 days at 300000, in bytes
+
+#define BULLETPROOF_MAX_OUTPUTS                 16
 
 // New constants are intended to go here
 namespace config
 {
- uint64_t const DEFAULT_FEE_ATOMIC_ITA_PER_KB = 500; // Just a placeholder!  Change me!
+  uint64_t const DEFAULT_FEE_ATOMIC_XMR_PER_KB = 500; // Just a placeholder!  Change me!
   uint8_t const FEE_CALCULATION_MAX_RETRIES = 10;
   uint64_t const DEFAULT_DUST_THRESHOLD = ((uint64_t)2000000000); // 2 * pow(10, 9)
   uint64_t const BASE_REWARD_CLAMP_THRESHOLD = ((uint64_t)100000000); // pow(10, 8)
-  std::string const P2P_REMOTE_DEBUG_TRUSTED_PUB_KEY = "8f80f23dsa434a9f15123dsfd133362423402f32312sad9c918ce505efe225d8c94d045fa115";
+  std::string const P2P_REMOTE_DEBUG_TRUSTED_PUB_KEY = "0000000000000000000000000000000000000000000000000000000000000000";
 
   uint64_t const CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX = 289;
   uint64_t const CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX = 0x629f;
   uint64_t const CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX = 0x59a0;
-  uint16_t const P2P_DEFAULT_PORT = 9130;
-  uint16_t const RPC_DEFAULT_PORT = 9131;
-  uint16_t const ZMQ_RPC_DEFAULT_PORT = 9132;
+  uint16_t const P2P_DEFAULT_PORT = 9230;
+  uint16_t const RPC_DEFAULT_PORT = 9231;
+  uint16_t const ZMQ_RPC_DEFAULT_PORT = 9232;
   boost::uuids::uuid const NETWORK_ID = { {
-      0x03, 0x0f, 0x1b, 0x4c, 0x5a, 0x3b, 0x03, 0xd3, 0x8b, 0x15, 0x03, 0x2f, 0x8a, 0x02, 0x3b, 0x7a
+      0x15 ,0x23, 0xF5, 0x71 , 0x35, 0x02 , 0x26, 0x31, 0x24, 0x24, 0x01, 0x52, 0x43, 0xA3, 0xA2, 0x20
     } }; // Bender's nightmare
-  std::string const GENESIS_TX = "011e01ff0001c08db7010230e5cf1935ea03354beeecdfd94b46d425d1e0b85333edd4f99cdfde6c65adea21012569ed651af1f16d3c49ecafb944db6a6f78ba5977f594678ff891f0bdb80354";
-  uint32_t const GENESIS_NONCE = 70;
+  std::string const GENESIS_TX = "013c01ff0001ffffffffffff03029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd08807121017767aafcde9be00dcfd098715ebcf7f410daebc582fda69d24a28e9d0bc890d1";
+  uint32_t const GENESIS_NONCE = 10000;
 
   namespace testnet
   {
@@ -204,16 +181,16 @@ namespace config
   namespace stagenet
   {
     uint64_t const CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX = 289;
-    uint64_t const CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX = 289;
-    uint64_t const CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX = 289;
-    uint16_t const P2P_DEFAULT_PORT = 9330;
-    uint16_t const RPC_DEFAULT_PORT = 9331;
-    uint16_t const ZMQ_RPC_DEFAULT_PORT = 9332;
-    boost::uuids::uuid const NETWORK_ID = { {
-        0x14 ,0x20, 0xF3, 0x71 , 0x60, 0x01 , 0x30, 0x62, 0x16, 0x35, 0x02, 0x82, 0x15, 0xA2, 0xA1, 0x14
-      } }; // Bender's daydream
-    std::string const GENESIS_TX = "013c01ff0001ffffffffffff0302df5d56da0c7d643ddd1ce61901c7bdc5fb1738bfe39fbe69c28a3a7032729c0f2101168d0c4ca86fb55a4cf6a36d31431be1c53a3bd7411bb24e8832410289fa6f3b";
-    uint32_t const GENESIS_NONCE = 72;
+   uint64_t const CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX = 289;
+   uint64_t const CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX = 289;
+   uint16_t const P2P_DEFAULT_PORT = 9330;
+   uint16_t const RPC_DEFAULT_PORT = 9331;
+   uint16_t const ZMQ_RPC_DEFAULT_PORT = 9332;
+   boost::uuids::uuid const NETWORK_ID = { {
+       0x14 ,0x20, 0xF3, 0x71 , 0x60, 0x01 , 0x30, 0x62, 0x16, 0x35, 0x02, 0x82, 0x15, 0xA2, 0xA1, 0x14
+     } }; // Bender's daydream
+   std::string const GENESIS_TX = "013c01ff0001ffffffffffff0302df5d56da0c7d643ddd1ce61901c7bdc5fb1738bfe39fbe69c28a3a7032729c0f2101168d0c4ca86fb55a4cf6a36d31431be1c53a3bd7411bb24e8832410289fa6f3b";
+   uint32_t const GENESIS_NONCE = 72;
   }
 }
 
@@ -226,5 +203,61 @@ namespace cryptonote
     STAGENET,
     FAKECHAIN,
     UNDEFINED = 255
+  };
+  struct config_t
+  {
+    uint64_t const CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX;
+    uint64_t const CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX;
+    uint64_t const CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX;
+    uint16_t const P2P_DEFAULT_PORT;
+    uint16_t const RPC_DEFAULT_PORT;
+    uint16_t const ZMQ_RPC_DEFAULT_PORT;
+    boost::uuids::uuid const NETWORK_ID;
+    std::string const GENESIS_TX;
+    uint32_t const GENESIS_NONCE;
+  };
+  inline const config_t& get_config(network_type nettype)
+  {
+    static const config_t mainnet = {
+      ::config::CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX,
+      ::config::CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX,
+      ::config::CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX,
+      ::config::P2P_DEFAULT_PORT,
+      ::config::RPC_DEFAULT_PORT,
+      ::config::ZMQ_RPC_DEFAULT_PORT,
+      ::config::NETWORK_ID,
+      ::config::GENESIS_TX,
+      ::config::GENESIS_NONCE
+    };
+    static const config_t testnet = {
+      ::config::testnet::CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX,
+      ::config::testnet::CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX,
+      ::config::testnet::CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX,
+      ::config::testnet::P2P_DEFAULT_PORT,
+      ::config::testnet::RPC_DEFAULT_PORT,
+      ::config::testnet::ZMQ_RPC_DEFAULT_PORT,
+      ::config::testnet::NETWORK_ID,
+      ::config::testnet::GENESIS_TX,
+      ::config::testnet::GENESIS_NONCE
+    };
+    static const config_t stagenet = {
+      ::config::stagenet::CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX,
+      ::config::stagenet::CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX,
+      ::config::stagenet::CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX,
+      ::config::stagenet::P2P_DEFAULT_PORT,
+      ::config::stagenet::RPC_DEFAULT_PORT,
+      ::config::stagenet::ZMQ_RPC_DEFAULT_PORT,
+      ::config::stagenet::NETWORK_ID,
+      ::config::stagenet::GENESIS_TX,
+      ::config::stagenet::GENESIS_NONCE
+    };
+    switch (nettype)
+    {
+      case MAINNET: return mainnet;
+      case TESTNET: return testnet;
+      case STAGENET: return stagenet;
+      case FAKECHAIN: return mainnet;
+      default: throw std::runtime_error("Invalid network type");
+    }
   };
 }
