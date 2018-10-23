@@ -330,7 +330,7 @@ namespace
     std::stringstream prompt;
     prompt << sw::tr("For URL: ") << url
            << ", " << dnssec_str << std::endl
-           << sw::tr(" Monero Address = ") << addresses[0]
+           << sw::tr(" Triton Address = ") << addresses[0]
            << std::endl
            << sw::tr("Is this OK? (Y/n) ")
     ;
@@ -1640,7 +1640,7 @@ bool simple_wallet::blackball(const std::vector<std::string> &args)
   uint64_t amount = std::numeric_limits<uint64_t>::max(), offset, num_offsets;
   if (args.size() == 0)
   {
-    fail_msg_writer() << tr("usage: mark_output_spent <amount>/<offset> | <filename> [add]");
+    fail_msg_writer() << tr("usage: blackball <amount>/<offset> | <filename> [add]");
     return true;
   }
 
@@ -1718,7 +1718,7 @@ bool simple_wallet::blackball(const std::vector<std::string> &args)
   }
   catch (const std::exception &e)
   {
-    fail_msg_writer() << tr("Failed to mark output spent: ") << e.what();
+    fail_msg_writer() << tr("Failed to blackball output: ") << e.what();
   }
 
   return true;
@@ -1729,7 +1729,7 @@ bool simple_wallet::unblackball(const std::vector<std::string> &args)
   std::pair<uint64_t, uint64_t> output;
   if (args.size() != 1)
   {
-    fail_msg_writer() << tr("usage: mark_output_unspent <amount>/<offset>");
+    fail_msg_writer() << tr("usage: unblackball <amount>/<offset>");
     return true;
   }
 
@@ -1745,7 +1745,7 @@ bool simple_wallet::unblackball(const std::vector<std::string> &args)
   }
   catch (const std::exception &e)
   {
-    fail_msg_writer() << tr("Failed to mark output unspent: ") << e.what();
+    fail_msg_writer() << tr("Failed to unblackball output: ") << e.what();
   }
 
   return true;
@@ -1756,7 +1756,7 @@ bool simple_wallet::blackballed(const std::vector<std::string> &args)
   std::pair<uint64_t, uint64_t> output;
   if (args.size() != 1)
   {
-    fail_msg_writer() << tr("usage: is_output_spent <amount>/<offset>");
+    fail_msg_writer() << tr("usage: blackballed <amount>/<offset>");
     return true;
   }
 
@@ -1769,13 +1769,13 @@ bool simple_wallet::blackballed(const std::vector<std::string> &args)
   try
   {
     if (m_wallet->is_output_blackballed(output))
-      message_writer() << tr("Spent: ") << output.first << "/" << output.second;
+      message_writer() << tr("Blackballed: ") << output.first << "/" << output.second;
     else
-      message_writer() << tr("Not spent: ") << output.first << "/" << output.second;
+      message_writer() << tr("not blackballed: ") << output.first << "/" << output.second;
   }
   catch (const std::exception &e)
   {
-    fail_msg_writer() << tr("Failed to check whether output is spent: ") << e.what();
+    fail_msg_writer() << tr("Failed to unblackball output: ") << e.what();
   }
 
   return true;
@@ -2036,7 +2036,7 @@ bool simple_wallet::set_unit(const std::vector<std::string> &args/* = std::vecto
 
   if (unit == "triton")
     decimal_point = CRYPTONOTE_DISPLAY_DECIMAL_POINT;
-  else if (unit == "nanoton")
+  else if (unit == "milliton")
     decimal_point = CRYPTONOTE_DISPLAY_DECIMAL_POINT - 2;
   else if (unit == "picton")
     decimal_point = 0;
@@ -2408,8 +2408,8 @@ simple_wallet::simple_wallet()
                                   "  Set the fee to default/unimportant/normal/elevated/priority.\n "
                                   "confirm-missing-payment-id <1|0>\n "
                                   "ask-password <0|1|2   (or never|action|decrypt)>\n "
-                                  "unit <triton|nanoton|picton>\n "
-                                  "  Set the default monero (sub-)unit.\n "
+                                  "unit <triton|milliton|picton>\n "
+                                  "  Set the default triton (sub-)unit.\n "
                                   "min-outputs-count [n]\n "
                                   "  Try to keep at least that many outputs of value at least min-outputs-value.\n "
                                   "min-outputs-value [n]\n "
@@ -2595,18 +2595,18 @@ simple_wallet::simple_wallet()
                            boost::bind(&simple_wallet::save_known_rings, this, _1),
                            tr("save_known_rings"),
                            tr("Save known rings to the shared rings database"));
-  m_cmd_binder.set_handler("mark_output_spent",
+  m_cmd_binder.set_handler("blackball",
                            boost::bind(&simple_wallet::blackball, this, _1),
-                           tr("mark_output_spent <amount>/<offset> | <filename> [add]"),
-                           tr("Mark output(s) as spent so they never get selected as fake outputs in a ring"));
-  m_cmd_binder.set_handler("mark_output_unspent",
+                           tr("blackball <amount>/<offset> | <filename> [add]"),
+                           tr("Blackball output(s) so they never get selected as fake outputs in a ring"));
+  m_cmd_binder.set_handler("unblackball",
                            boost::bind(&simple_wallet::unblackball, this, _1),
-                           tr("mark_output_unspent <amount>/<offset>"),
-                           tr("Marks an output as unspent so it may get selected as a fake output in a ring"));
-  m_cmd_binder.set_handler("is_output_spent",
+                           tr("unblackball <amount>/<offset>"),
+                           tr("Unblackballs an output so it may get selected as a fake output in a ring"));
+  m_cmd_binder.set_handler("blackballed",
                            boost::bind(&simple_wallet::blackballed, this, _1),
-                           tr("is_output_spent <amount>/<offset>"),
-                           tr("Checks whether an output is marked as spent"));
+                           tr("blackballed <amount>/<offset>"),
+                           tr("Checks whether an output is blackballed"));
   m_cmd_binder.set_handler("version",
                            boost::bind(&simple_wallet::version, this, _1),
                            tr("version"),
@@ -2702,7 +2702,7 @@ bool simple_wallet::set_variable(const std::vector<std::string> &args)
     CHECK_SIMPLE_VARIABLE("priority", set_default_priority, tr("0, 1, 2, 3, or 4, or one of ") << join_priority_strings(", "));
     CHECK_SIMPLE_VARIABLE("confirm-missing-payment-id", set_confirm_missing_payment_id, tr("0 or 1"));
     CHECK_SIMPLE_VARIABLE("ask-password", set_ask_password, tr("0|1|2 (or never|action|decrypt)"));
-    CHECK_SIMPLE_VARIABLE("unit", set_unit, tr("triton, nanoton, picoton"));
+    CHECK_SIMPLE_VARIABLE("unit", set_unit, tr("triton, milliton, picton"));
     CHECK_SIMPLE_VARIABLE("min-outputs-count", set_min_output_count, tr("unsigned integer"));
     CHECK_SIMPLE_VARIABLE("min-outputs-value", set_min_output_value, tr("amount"));
     CHECK_SIMPLE_VARIABLE("merge-destinations", set_merge_destinations, tr("0 or 1"));
@@ -6033,7 +6033,7 @@ bool simple_wallet::sign_transfer(const std::vector<std::string> &args_)
   std::vector<tools::wallet2::pending_tx> ptx;
   try
   {
-    bool r = m_wallet->sign_tx("unsigned_triton_tx", "signed_triton_tx", ptx, [&](const tools::wallet2::unsigned_tx_set &tx){ return accept_loaded_tx(tx); }, export_raw);
+    bool r = m_wallet->sign_tx("unsigned_triton_tx", "signed_monero_tx", ptx, [&](const tools::wallet2::unsigned_tx_set &tx){ return accept_loaded_tx(tx); }, export_raw);
     if (!r)
     {
       fail_msg_writer() << tr("Failed to sign transaction");
@@ -6053,7 +6053,7 @@ bool simple_wallet::sign_transfer(const std::vector<std::string> &args_)
       txids_as_text += (", ");
     txids_as_text += epee::string_tools::pod_to_hex(get_transaction_hash(t.tx));
   }
-  success_msg_writer(true) << tr("Transaction successfully signed to file ") << "signed_triton_tx" << ", txid " << txids_as_text;
+  success_msg_writer(true) << tr("Transaction successfully signed to file ") << "signed_monero_tx" << ", txid " << txids_as_text;
   if (export_raw)
   {
     std::string rawfiles_as_text;
@@ -6061,7 +6061,7 @@ bool simple_wallet::sign_transfer(const std::vector<std::string> &args_)
     {
       if (i > 0)
         rawfiles_as_text += ", ";
-      rawfiles_as_text += "signed_triton_tx_raw" + (ptx.size() == 1 ? "" : ("_" + std::to_string(i)));
+      rawfiles_as_text += "signed_monero_tx_raw" + (ptx.size() == 1 ? "" : ("_" + std::to_string(i)));
     }
     success_msg_writer(true) << tr("Transaction raw hex data exported to ") << rawfiles_as_text;
   }
@@ -6081,7 +6081,7 @@ bool simple_wallet::submit_transfer(const std::vector<std::string> &args_)
   try
   {
     std::vector<tools::wallet2::pending_tx> ptx_vector;
-    bool r = m_wallet->load_tx("signed_triton_tx", ptx_vector, [&](const tools::wallet2::signed_tx_set &tx){ return accept_loaded_tx(tx); });
+    bool r = m_wallet->load_tx("signed_monero_tx", ptx_vector, [&](const tools::wallet2::signed_tx_set &tx){ return accept_loaded_tx(tx); });
     if (!r)
     {
       fail_msg_writer() << tr("Failed to load transaction from file");
@@ -6234,7 +6234,7 @@ bool simple_wallet::get_tx_proof(const std::vector<std::string> &args)
   try
   {
     std::string sig_str = m_wallet->get_tx_proof(txid, info.address, info.is_subaddress, args.size() == 3 ? args[2] : "");
-    const std::string filename = "triton_tx_proof";
+    const std::string filename = "monero_tx_proof";
     if (epee::file_io_utils::save_string_to_file(filename, sig_str))
       success_msg_writer() << tr("signature file saved to: ") << filename;
     else
@@ -6449,7 +6449,7 @@ bool simple_wallet::get_spend_proof(const std::vector<std::string> &args)
   try
   {
     const std::string sig_str = m_wallet->get_spend_proof(txid, args.size() == 2 ? args[1] : "");
-    const std::string filename = "triton_spend_proof";
+    const std::string filename = "monero_spend_proof";
     if (epee::file_io_utils::save_string_to_file(filename, sig_str))
       success_msg_writer() << tr("signature file saved to: ") << filename;
     else
@@ -6544,7 +6544,7 @@ bool simple_wallet::get_reserve_proof(const std::vector<std::string> &args)
   try
   {
     const std::string sig_str = m_wallet->get_reserve_proof(account_minreserve, args.size() == 2 ? args[1] : "");
-    const std::string filename = "triton_reserve_proof";
+    const std::string filename = "monero_reserve_proof";
     if (epee::file_io_utils::save_string_to_file(filename, sig_str))
       success_msg_writer() << tr("signature file saved to: ") << filename;
     else
@@ -8067,7 +8067,7 @@ void simple_wallet::commit_or_save(std::vector<tools::wallet2::pending_tx>& ptx_
       cryptonote::blobdata blob;
       tx_to_blob(ptx.tx, blob);
       const std::string blob_hex = epee::string_tools::buff_to_hex_nodelimer(blob);
-      const std::string filename = "raw_triton_tx" + (ptx_vector.size() == 1 ? "" : ("_" + std::to_string(i++)));
+      const std::string filename = "raw_monero_tx" + (ptx_vector.size() == 1 ? "" : ("_" + std::to_string(i++)));
       if (epee::file_io_utils::save_string_to_file(filename, blob_hex))
         success_msg_writer(true) << tr("Transaction successfully saved to ") << filename << tr(", txid ") << txid;
       else
@@ -8125,12 +8125,12 @@ int main(int argc, char* argv[])
   bool should_terminate = false;
   std::tie(vm, should_terminate) = wallet_args::main(
    argc, argv,
-   "triton-wallet-cli [--wallet-file=<file>|--generate-new-wallet=<file>] [<COMMAND>]",
-    sw::tr("This is the command line triton wallet. It needs to connect to a triton\ndaemon to work correctly.\nWARNING: Do not reuse your Triton keys on another fork, UNLESS this fork has key reuse mitigations built in. Doing so will harm your privacy."),
+   "monero-wallet-cli [--wallet-file=<file>|--generate-new-wallet=<file>] [<COMMAND>]",
+    sw::tr("This is the command line monero wallet. It needs to connect to a monero\ndaemon to work correctly.\nWARNING: Do not reuse your Monero keys on another fork, UNLESS this fork has key reuse mitigations built in. Doing so will harm your privacy."),
     desc_params,
     positional_options,
     [](const std::string &s, bool emphasis){ tools::scoped_message_writer(emphasis ? epee::console_color_white : epee::console_color_default, true) << s; },
-    "triton-wallet-cli.log"
+    "monero-wallet-cli.log"
   );
 
   if (!vm)

@@ -69,8 +69,6 @@ namespace cryptonote {
   //-----------------------------------------------------------------------------------------------
   size_t get_min_block_weight(uint8_t version)
   {
-    if (version < 2)
-      return CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1;
     return CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V1;
   }
   //-----------------------------------------------------------------------------------------------
@@ -88,12 +86,10 @@ namespace cryptonote {
     static_assert(DIFFICULTY_TARGET_V2%60==0&&DIFFICULTY_TARGET_V1%60==0,"difficulty targets must be a multiple of 60");
     const int target = DIFFICULTY_TARGET_V2;
     const int target_minutes = target / 60;
-    const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE - (target_minutes-1);
-
-    if(median_size > 0 && already_generated_coins < TRITON_SWAP_PREMINE){
-      reward = TRITON_SWAP_PREMINE;
+    const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE;
+    if(version == 1){
+      reward = TRITON_SWAP_PREMINE / 100;
       return true;
-
     }
 
     uint64_t base_reward = (MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
@@ -133,6 +129,8 @@ namespace cryptonote {
     assert(reward_lo < base_reward);
 
     reward = reward_lo;
+    MERROR(base_reward << " " << reward << " " << median_weight << " " << current_block_weight << " " << reward_lo);
+
     return true;
   }
   //------------------------------------------------------------------------------------

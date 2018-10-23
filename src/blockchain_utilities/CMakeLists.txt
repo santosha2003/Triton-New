@@ -184,7 +184,7 @@ target_link_libraries(blockchain_blackball
 
 set_property(TARGET blockchain_blackball
 	PROPERTY
-	OUTPUT_NAME "triton-blockchain-mark-spent-outputs")
+	OUTPUT_NAME "triton-blockchain-blackball")
 install(TARGETS blockchain_blackball DESTINATION bin)
 
 

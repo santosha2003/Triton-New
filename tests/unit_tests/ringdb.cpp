@@ -136,21 +136,21 @@ TEST(ringdb, different_genesis)
   ASSERT_FALSE(ringdb.get_ring(KEY_2, KEY_IMAGE_1, outs2));
 }
 
-TEST(spent_outputs, not_found)
+TEST(blackball, not_found)
 {
   RingDB ringdb;
   ASSERT_TRUE(ringdb.blackball(OUTPUT_1));
   ASSERT_FALSE(ringdb.blackballed(OUTPUT_2));
 }
 
-TEST(spent_outputs, found)
+TEST(blackball, found)
 {
   RingDB ringdb;
   ASSERT_TRUE(ringdb.blackball(OUTPUT_1));
   ASSERT_TRUE(ringdb.blackballed(OUTPUT_1));
 }
 
-TEST(spent_outputs, vector)
+TEST(blackball, vector)
 {
   RingDB ringdb;
   std::vector<std::pair<uint64_t, uint64_t>> outputs;
@@ -174,7 +174,7 @@ TEST(spent_outputs, vector)
   ASSERT_TRUE(ringdb.blackballed(std::make_pair(30, 5)));
 }
 
-TEST(spent_outputs, mark_as_unspent)
+TEST(blackball, unblackball)
 {
   RingDB ringdb;
   ASSERT_TRUE(ringdb.blackball(OUTPUT_1));
@@ -182,7 +182,7 @@ TEST(spent_outputs, mark_as_unspent)
   ASSERT_FALSE(ringdb.blackballed(OUTPUT_1));
 }
 
-TEST(spent_outputs, clear)
+TEST(blackball, clear)
 {
   RingDB ringdb;
   ASSERT_TRUE(ringdb.blackball(OUTPUT_1));
