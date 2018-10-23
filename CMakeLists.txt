@@ -172,11 +172,30 @@ else()
   message(STATUS "Building without build tag")
 endif()
 
+if(NOT MANUAL_SUBMODULES)
+  find_package(Git)
+  if(GIT_FOUND)
+    message(STATUS "Checking submodules")
+    execute_process(COMMAND bash -c "cd ${CMAKE_CURRENT_SOURCE_DIR}/external/miniupnp && git rev-parse HEAD" OUTPUT_VARIABLE miniupnpLocalHead WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+    execute_process(COMMAND bash -c "cd ${CMAKE_CURRENT_SOURCE_DIR}/external/unbound && git rev-parse HEAD" OUTPUT_VARIABLE unboundLocalHead WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+    execute_process(COMMAND bash -c "cd ${CMAKE_CURRENT_SOURCE_DIR}/external/rapidjson && git rev-parse HEAD" OUTPUT_VARIABLE rapidjsonLocalHead WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+    execute_process(COMMAND bash -c "git ls-tree HEAD ${CMAKE_CURRENT_SOURCE_DIR}/external/miniupnp | awk '{print $3}'" OUTPUT_VARIABLE miniupnpCheckedHead WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+    execute_process(COMMAND bash -c "git ls-tree HEAD ${CMAKE_CURRENT_SOURCE_DIR}/external/unbound | awk '{print $3}'" OUTPUT_VARIABLE unboundCheckedHead WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+    execute_process(COMMAND bash -c "git ls-tree HEAD ${CMAKE_CURRENT_SOURCE_DIR}/external/rapidjson | awk '{print $3}'" OUTPUT_VARIABLE rapidjsonCheckedHead WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+    string(COMPARE EQUAL "${miniupnpLocalHead}" "${miniupnpCheckedHead}" miniupnpUpToDate)
+    string(COMPARE EQUAL "${unboundLocalHead}" "${unboundCheckedHead}" unboundUpToDate)
+    string(COMPARE EQUAL "${rapidjsonLocalHead}" "${rapidjsonCheckedHead}" rapidjsonUpToDate)
+    if (NOT miniupnpUpToDate OR NOT unboundUpToDate OR NOT rapidjsonUpToDate)
+      message(FATAL_ERROR "Submodules not up to date. Please update with git submodule init && git submodule update, or run cmake with -DMANUAL_SUBMODULES=1")
+    endif()
+  endif()
+endif()
+
 set(CMAKE_C_FLAGS_RELEASE "-DNDEBUG ${OPT_FLAGS_RELEASE}")
 set(CMAKE_CXX_FLAGS_RELEASE "-DNDEBUG ${OPT_FLAGS_RELEASE}")
 
 # set this to 0 if per-block checkpoint needs to be disabled
-set(PER_BLOCK_CHECKPOINT 0)
+set(PER_BLOCK_CHECKPOINT 1)
 
 if(PER_BLOCK_CHECKPOINT)
   add_definitions("-DPER_BLOCK_CHECKPOINT")
@@ -477,7 +496,7 @@ include_directories(${LIBUNWIND_INCLUDE})
 link_directories(${LIBUNWIND_LIBRARY_DIRS})
 
 # Final setup for hid
-if (HIDAPI_FOUND)
+if (HIDAPI_FOUND) 
   message(STATUS "Using HIDAPI include dir at ${HIDAPI_INCLUDE_DIR}")
   add_definitions(-DHAVE_HIDAPI)
   include_directories(${HIDAPI_INCLUDE_DIR})
@@ -762,7 +781,7 @@ else()
   endif(ARM)
 
   if(ANDROID AND NOT BUILD_GUI_DEPS STREQUAL "ON" OR IOS)
-    #From Android 5: "only position independent executables (PIE) are supported"
+    #From Android 5: "only position independent executables (PIE) are supported" 
     message(STATUS "Enabling PIE executable")
     set(PIC_FLAG "")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIE")
@@ -883,7 +902,7 @@ endif()
 
 list(APPEND EXTRA_LIBRARIES ${CMAKE_DL_LIBS})
 
-if (HIDAPI_FOUND)
+if (HIDAPI_FOUND) 
   if (APPLE)
     if(DEPENDS)
       list(APPEND EXTRA_LIBRARIES "-framework Foundation -framework IOKit")
