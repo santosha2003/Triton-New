@@ -6980,7 +6980,7 @@ void wallet2::get_outs(std::vector<std::vector<tools::wallet2::get_outs_entry>> 
             // outputs, we still need to reach the minimum ring size)
             if (allow_blackballed)
               break;
-            MINFO("Not enough output not marked as spent, we'll allow outputs marked as spent");
+            MINFO("Not enough non blackballed outputs, we'll allow blackballed ones");
             allow_blackballed = true;
             num_usable_outs = num_outs;
           }

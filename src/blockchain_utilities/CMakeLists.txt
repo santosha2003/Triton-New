@@ -184,11 +184,7 @@ target_link_libraries(blockchain_blackball
 
 set_property(TARGET blockchain_blackball
 	PROPERTY
-<<<<<<< HEAD
 	OUTPUT_NAME "triton-blockchain-blackball")
-=======
-	OUTPUT_NAME "monero-blockchain-mark-spent-outputs")
->>>>>>> bdd32bc... Merge pull request #4650
 install(TARGETS blockchain_blackball DESTINATION bin)
 
 
