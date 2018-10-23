@@ -97,8 +97,8 @@ namespace cryptonote {
     uint64_t full_reward_zone = get_min_block_weight(version);
 
     //make it soft
-    if (median_weight < full_reward_zone) {
-      median_weight = full_reward_zone;
+    if (median_weight < 80000) {
+      median_weight = 80000;
     }
 
     if (current_block_weight <= median_weight) {
