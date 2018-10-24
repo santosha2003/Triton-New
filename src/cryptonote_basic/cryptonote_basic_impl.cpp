@@ -88,7 +88,7 @@ namespace cryptonote {
     const int target_minutes = target / 60;
     const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE;
     if(version == 1){
-      reward = TRITON_SWAP_PREMINE / 100;
+      reward = TRITON_SWAP_PREMINE / 200;
       return true;
     }
 
