@@ -800,9 +800,9 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
     m_timestamps.push_back(m_db->get_block_timestamp(index));
     m_difficulties.push_back(m_db->get_block_cumulative_difficulty(index));
 
-    while (m_timestamps.size() > DIFFICULTY_BLOCKS_COUNT)
+    while (m_timestamps.size() > DIFFICULTY_BLOCKS_COUNT_V1)
       m_timestamps.erase(m_timestamps.begin());
-    while (m_difficulties.size() > DIFFICULTY_BLOCKS_COUNT)
+    while (m_difficulties.size() > DIFFICULTY_BLOCKS_COUNT_V1)
       m_difficulties.erase(m_difficulties.begin());
 
     m_timestamps_and_difficulties_height = height;
@@ -811,7 +811,7 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
   }
   else
   {
-    size_t offset = height - std::min < size_t > (height, static_cast<size_t>(DIFFICULTY_BLOCKS_COUNT));
+    size_t offset = height - std::min < size_t > (height, static_cast<size_t>(DIFFICULTY_BLOCKS_COUNT_V1));
     if (offset == 0)
       ++offset;
 
@@ -2279,7 +2279,7 @@ bool Blockchain::check_tx_outputs(const transaction& tx, tx_verification_context
   const uint8_t hf_version = m_hardfork->get_current_version();
 
   // from hard fork 2, we forbid dust and compound outputs
-  if (hf_version >= 2) {
+  if (hf_version >= 1) {
     for (auto &o: tx.vout) {
       if (tx.version == 1)
       {
@@ -2292,7 +2292,7 @@ bool Blockchain::check_tx_outputs(const transaction& tx, tx_verification_context
   }
 
   // in a v2 tx, all outputs must have 0 amount
-  if (hf_version >= 2) {
+  if (hf_version >= 1) {
     if (tx.version >= 2) {
       for (auto &o: tx.vout) {
         if (o.amount != 0) {
@@ -2304,7 +2304,7 @@ bool Blockchain::check_tx_outputs(const transaction& tx, tx_verification_context
   }
 
   // from v4, forbid invalid pubkeys
-  if (hf_version >= 2) {
+  if (hf_version >= 1) {
     for (const auto &o: tx.vout) {
       if (o.target.type() == typeid(txout_to_key)) {
         const txout_to_key& out_to_key = boost::get<txout_to_key>(o.target);
@@ -2317,7 +2317,7 @@ bool Blockchain::check_tx_outputs(const transaction& tx, tx_verification_context
   }
 
   // from v8, allow bulletproofs
-  if (hf_version < 2) {
+  if (hf_version < 1) {
     if (tx.version >= 2) {
       const bool bulletproof = rct::is_rct_bulletproof(tx.rct_signatures.type);
       if (bulletproof || !tx.rct_signatures.p.bulletproofs.empty())
@@ -2446,7 +2446,7 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
 
   // from hard fork 2, we require mixin at least 2 unless one output cannot mix with 2 others
   // if one output cannot mix with 2 others, we accept at most 1 output that can mix
-  if (hf_version >= 2)
+  if (hf_version >= 1)
   {
     size_t n_unmixable = 0, n_mixable = 0;
     size_t mixin = std::numeric_limits<size_t>::max();
@@ -2503,14 +2503,14 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
     }
 
     // min/max tx version based on HF, and we accept v1 txes if having a non mixable
-    const size_t max_tx_version = (hf_version <= 1) ? 1 : 2;
+    const size_t max_tx_version = 2;
     if (tx.version > max_tx_version)
     {
       MERROR_VER("transaction version " << (unsigned)tx.version << " is higher than max accepted version " << max_tx_version);
       tvc.m_verifivation_failed = true;
       return false;
     }
-    const size_t min_tx_version = (n_unmixable > 0 ? 1 : (hf_version >= HF_VERSION_ENFORCE_RCT) ? 2 : 1);
+    const size_t min_tx_version = 2);
     if (tx.version < min_tx_version)
     {
       MERROR_VER("transaction version " << (unsigned)tx.version << " is lower than min accepted version " << min_tx_version);
@@ -2520,7 +2520,7 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
   }
 
   // from v7, sorted ins
-  if (hf_version >= 2) {
+  if (hf_version >= 1) {
     const crypto::key_image *last_key_image = NULL;
     for (size_t n = 0; n < tx.vin.size(); ++n)
     {
@@ -2805,7 +2805,7 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
     // for bulletproofs, check they're only multi-output after v8
     if (rct::is_rct_bulletproof(rv.type))
     {
-      if (hf_version < 2)
+      if (hf_version < 1)
       {
         for (const rct::Bulletproof &proof: rv.p.bulletproofs)
         {
