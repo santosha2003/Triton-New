@@ -833,7 +833,13 @@ difficulty_type Blockchain::get_difficulty_for_next_block()
     m_difficulties = difficulties;
   }
   size_t target = get_difficulty_target();
-  difficulty_type diff = next_difficulty(timestamps, difficulties, target);
+  difficulty_type diff = 0;
+  if(get_current_hard_fork_version() >= 2){
+  diff = next_difficulty(timestamps, difficulties, target);
+
+}else{
+  diff = 10000;
+}
 
   CRITICAL_REGION_LOCAL1(m_difficulty_lock);
   m_difficulty_for_next_block_top_hash = top_hash;
