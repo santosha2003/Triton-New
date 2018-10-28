@@ -1,21 +1,21 @@
 // Copyright (c) 2014-2018, The Monero Project
-//
+// 
 // All rights reserved.
-//
+// 
 // Redistribution and use in source and binary forms, with or without modification, are
 // permitted provided that the following conditions are met:
-//
+// 
 // 1. Redistributions of source code must retain the above copyright notice, this list of
 //    conditions and the following disclaimer.
-//
+// 
 // 2. Redistributions in binary form must reproduce the above copyright notice, this list
 //    of conditions and the following disclaimer in the documentation and/or other
 //    materials provided with the distribution.
-//
+// 
 // 3. Neither the name of the copyright holder nor the names of its contributors may be
 //    used to endorse or promote products derived from this software without specific
 //    prior written permission.
-//
+// 
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
 // EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
 // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
@@ -44,11 +44,6 @@ static uint8_t get_block_vote(const cryptonote::block &b)
   // For the purposes of voting, we consider 0 to refer to
   // version number 1, which is what all blocks from the genesis
   // block are. It makes things simpler.
-  if (b.major_version >= BLOCK_MAJOR_VERSION_1 &&
-        b.major_version < BLOCK_MAJOR_VERSION_7){
-
-        return b.major_version;
-  }
   if (b.minor_version == 0)
     return 1;
   return b.minor_version;
@@ -112,15 +107,8 @@ uint8_t HardFork::get_effective_version(uint8_t voting_version) const
 
 bool HardFork::do_check(uint8_t block_version, uint8_t voting_version) const
 {
-
-	MDEBUG("HardFork version check: comparing block versions " << (unsigned)block_version << " & " <<
-		(unsigned)heights[current_fork_index].version << " - voting version " << (unsigned)voting_version << " Block Version: " << (unsigned)block_version << " Height1:" << (unsigned)heights[current_fork_index].height << "Fork Index: " << (unsigned)current_fork_index
-    << "Voting Version: "<< (unsigned)voting_version  << " Heights1: " << (unsigned)heights[current_fork_index].height);
-    if((unsigned)heights[current_fork_index].height <= 3){
-      return true;
-    }else{
-  return block_version == heights[current_fork_index].version && voting_version >= heights[current_fork_index].version;
-  }
+  return block_version == heights[current_fork_index].version
+      && voting_version >= heights[current_fork_index].version;
 }
 
 bool HardFork::check(const cryptonote::block &block) const
@@ -391,20 +379,24 @@ uint8_t HardFork::get_ideal_version(uint64_t height) const
 
 uint64_t HardFork::get_earliest_ideal_height_for_version(uint8_t version) const
 {
-  for (unsigned int n = heights.size() - 1; n > 0; --n) {
-    if (heights[n].version <= version)
-      return heights[n].height;
+  uint64_t height = std::numeric_limits<uint64_t>::max();
+  for (auto i = heights.rbegin(); i != heights.rend(); ++i) {
+    if (i->version >= version) {
+      height = i->height;
+    } else {
+      break;
+    }
   }
-  return 0;
+  return height;
 }
 
 uint8_t HardFork::get_next_version() const
 {
   CRITICAL_REGION_LOCAL(lock);
   uint64_t height = db.height();
-  for (unsigned int n = heights.size() - 1; n > 0; --n) {
-    if (height >= heights[n].height) {
-      return heights[n < heights.size() - 1 ? n + 1 : n].version;
+  for (auto i = heights.rbegin(); i != heights.rend(); ++i) {
+    if (height >= i->height) {
+      return (i == heights.rbegin() ? i : (i - 1))->version;
     }
   }
   return original_version;
@@ -426,3 +418,4 @@ bool HardFork::get_voting_info(uint8_t version, uint32_t &window, uint32_t &vote
   voting = heights.back().version;
   return enabled;
 }
+

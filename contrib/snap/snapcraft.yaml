@@ -1,31 +1,31 @@
-name: triton
+name: monero
 version: 0.11.1.0-1
-summary: "Triton: the secure, private, untraceable cryptocurrency https://gettriton.org"
+summary: "Monero: the secure, private, untraceable cryptocurrency https://getmonero.org"
 description: |
-    Triton is a private, secure, untraceable, decentralised digital currency.
+    Monero is a private, secure, untraceable, decentralised digital currency.
     You are your bank, you control your funds, and nobody can trace your transfers
     unless you allow them to do so.
 grade: devel
 confinement: strict
 
 apps:
-    tritond:
+    monerod:
         daemon: forking
         command: |
-          tritond-wrapper --detach --data-dir ${SNAP_COMMON} --config-file ${SNAP_USER_DATA}/etc/tritond.conf
+          monerod-wrapper --detach --data-dir ${SNAP_COMMON} --config-file ${SNAP_USER_DATA}/etc/monerod.conf
         plugs:
             - network
             - network-bind
-    triton-wallet-rpc:
+    monero-wallet-rpc:
         command: |
-          triton-wallet-rpc --log-file ${SNAP_USER_DATA}
+          monero-wallet-rpc --log-file ${SNAP_USER_DATA}
         plugs:
             - home
             - network
             - network-bind
-    triton-wallet-cli:
+    monero-wallet-cli:
         command: |
-          triton-wallet-cli --log-file ${SNAP_USER_DATA}
+          monero-wallet-cli --log-file ${SNAP_USER_DATA}
         plugs:
             - home
             - network
@@ -71,8 +71,8 @@ parts:
         plugin: dump
         source: .
         organize:
-            contrib/snap/tritond.conf: etc/tritond.conf
-            contrib/snap/tritond-wrapper: bin/tritond-wrapper
+            contrib/snap/monerod.conf: etc/monerod.conf
+            contrib/snap/monerod-wrapper: bin/monerod-wrapper
         prime:
             - etc
             - bin

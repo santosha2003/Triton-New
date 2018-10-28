@@ -1,21 +1,21 @@
 // Copyright (c) 2014-2018, The Monero Project
-//
+// 
 // All rights reserved.
-//
+// 
 // Redistribution and use in source and binary forms, with or without modification, are
 // permitted provided that the following conditions are met:
-//
+// 
 // 1. Redistributions of source code must retain the above copyright notice, this list of
 //    conditions and the following disclaimer.
-//
+// 
 // 2. Redistributions in binary form must reproduce the above copyright notice, this list
 //    of conditions and the following disclaimer in the documentation and/or other
 //    materials provided with the distribution.
-//
+// 
 // 3. Neither the name of the copyright holder nor the names of its contributors may be
 //    used to endorse or promote products derived from this software without specific
 //    prior written permission.
-//
+// 
 // THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY
 // EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
 // MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL
@@ -25,13 +25,12 @@
 // INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
 // STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF
 // THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-//
+// 
 // Parts of this file are originally copyright (c) 2012-2013 The Cryptonote developers
 
 #pragma once
 #include "blobdatatype.h"
 #include "cryptonote_basic_impl.h"
-#include "cryptonote_basic/difficulty.h"
 #include "account.h"
 #include "subaddress_index.h"
 #include "include_base_utils.h"
@@ -63,8 +62,7 @@ namespace cryptonote
     field = boost::get<T>(*it);
     return true;
   }
-  bool append_mm_tag_to_extra(std::vector<uint8_t>& tx_extra, const tx_extra_merge_mining_tag& mm_tag);
-  bool get_mm_tag_from_extra(const std::vector<uint8_t>& tx_extra, tx_extra_merge_mining_tag& mm_tag);
+
   bool parse_tx_extra(const std::vector<uint8_t>& tx_extra, std::vector<tx_extra_field>& tx_extra_fields);
   crypto::public_key get_tx_pub_key_from_extra(const std::vector<uint8_t>& tx_extra, size_t pk_index = 0);
   crypto::public_key get_tx_pub_key_from_extra(const transaction_prefix& tx, size_t pk_index = 0);
@@ -108,22 +106,19 @@ namespace cryptonote
   crypto::hash get_pruned_transaction_hash(const transaction& t, const crypto::hash &pruned_data_hash);
 
   blobdata get_block_hashing_blob(const block& b);
-  bool get_block_hashing_blob(const block& b, blobdata& blob);
-  bool get_bytecoin_block_hashing_blob(const block& b, blobdata& blob);
   bool calculate_block_hash(const block& b, crypto::hash& res);
   bool get_block_hash(const block& b, crypto::hash& res);
-  bool get_block_header_hash(const block& b, crypto::hash& res);
   crypto::hash get_block_hash(const block& b);
   bool get_block_longhash(const block& b, crypto::hash& res, uint64_t height);
-  bool get_bytecoin_block_longhash(const block& blk, crypto::hash& res);
   crypto::hash get_block_longhash(const block& b, uint64_t height);
-  bool get_genesis_block_hash(crypto::hash& h);
   bool parse_and_validate_block_from_blob(const blobdata& b_blob, block& b);
   bool get_inputs_money_amount(const transaction& tx, uint64_t& money);
   uint64_t get_outs_money_amount(const transaction& tx);
   bool check_inputs_types_supported(const transaction& tx);
   bool check_outs_valid(const transaction& tx);
   bool parse_amount(uint64_t& amount, const std::string& str_amount);
+  uint64_t get_transaction_weight(const transaction &tx);
+  uint64_t get_transaction_weight(const transaction &tx, size_t blob_size);
 
   bool check_money_overflow(const transaction& tx);
   bool check_outs_overflow(const transaction& tx);
@@ -135,7 +130,6 @@ namespace cryptonote
   unsigned int get_default_decimal_point();
   std::string get_unit(unsigned int decimal_point = -1);
   std::string print_money(uint64_t amount, unsigned int decimal_point = -1);
-
   //---------------------------------------------------------------
   template<class t_object>
   bool t_serializable_object_to_blob(const t_object& to, blobdata& b_blob)
@@ -237,9 +231,6 @@ namespace cryptonote
   void get_tx_tree_hash(const std::vector<crypto::hash>& tx_hashes, crypto::hash& h);
   crypto::hash get_tx_tree_hash(const std::vector<crypto::hash>& tx_hashes);
   crypto::hash get_tx_tree_hash(const block& b);
-  bool check_proof_of_work_v1(const block& bl, difficulty_type current_diffic, crypto::hash& proof_of_work);
-  bool check_proof_of_work_v2(const block& bl, difficulty_type current_diffic, crypto::hash& proof_of_work);
-  bool check_proof_of_work(const block& bl, difficulty_type current_diffic, crypto::hash& proof_of_work);
   bool is_valid_decomposed_amount(uint64_t amount);
   void get_hash_stats(uint64_t &tx_hashes_calculated, uint64_t &tx_hashes_cached, uint64_t &block_hashes_calculated, uint64_t & block_hashes_cached);
 

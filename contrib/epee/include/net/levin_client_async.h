@@ -31,8 +31,8 @@
 #include "net_helper.h"
 #include "levin_base.h"
 
-#undef TRITON_DEFAULT_LOG_CATEGORY
-#define TRITON_DEFAULT_LOG_CATEGORY "net"
+#undef MONERO_DEFAULT_LOG_CATEGORY
+#define MONERO_DEFAULT_LOG_CATEGORY "net"
 
 
 namespace epee

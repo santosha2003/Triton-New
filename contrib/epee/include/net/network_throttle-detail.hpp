@@ -1,8 +1,8 @@
 /// @file
-/// @author rfree (current maintainer in triton.cc project)
+/// @author rfree (current maintainer in monero.cc project)
 /// @brief implementaion for throttling of connection (count and rate-limit speed etc)
 
-// Copyright (c) 2014-2018, The Triton Project
+// Copyright (c) 2014-2018, The Monero Project
 // 
 // All rights reserved.
 // 
