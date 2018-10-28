@@ -41,26 +41,13 @@ namespace hw {
     /*  SETUP                                                                  */
     /* ======================================================================= */
 
-    static device_registry *get_device_registry(bool clear = false){
-      static device_registry *registry = new device_registry();
-      if (clear)
-      {
-        delete registry;
-        registry = NULL;
-      }
-      return registry;
-    }
-
-    static void clear_device_registry(){
-      get_device_registry(true);
-    }
+    static std::unique_ptr<device_registry> registry;
 
     device_registry::device_registry(){
         hw::core::register_all(registry);
         #ifdef WITH_DEVICE_LEDGER
         hw::ledger::register_all(registry);
         #endif
-        atexit(clear_device_registry);
     }
 
     bool device_registry::register_device(const std::string & device_name, device * hw_device){
@@ -93,12 +80,18 @@ namespace hw {
     }
 
     device& get_device(const std::string & device_descriptor) {
-        device_registry *registry = get_device_registry();
+        if (!registry){
+            registry.reset(new device_registry());
+        }
+
         return registry->get_device(device_descriptor);
     }
 
     bool register_device(const std::string & device_name, device * hw_device){
-        device_registry *registry = get_device_registry();
+        if (!registry){
+            registry.reset(new device_registry());
+        }
+
         return registry->register_device(device_name, hw_device);
     }
 

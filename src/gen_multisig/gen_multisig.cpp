@@ -104,7 +104,7 @@ static bool generate_multisig(uint32_t threshold, uint32_t total, const std::str
       wallets[n]->decrypt_keys(pwd_container->password());
       if (!tools::wallet2::verify_multisig_info(wallets[n]->get_multisig_info(), sk[n], pk[n]))
       {
-        tools::fail_msg_writer() << genms::tr("Failed to verify multisig info");
+        tools::fail_msg_writer() << tr("Failed to verify multisig info");
         return false;
       }
       wallets[n]->encrypt_keys(pwd_container->password());
@@ -130,8 +130,8 @@ static bool generate_multisig(uint32_t threshold, uint32_t total, const std::str
       ss << "  " << name << std::endl;
     }
 
-    //exchange keys unless exchange_multisig_keys returns no extra info
-    while (!extra_info[0].empty())
+    // finalize step if needed
+    if (!extra_info[0].empty())
     {
       std::unordered_set<crypto::public_key> pkeys;
       std::vector<crypto::public_key> signers(total);
@@ -145,7 +145,11 @@ static bool generate_multisig(uint32_t threshold, uint32_t total, const std::str
       }
       for (size_t n = 0; n < total; ++n)
       {
-          extra_info[n] = wallets[n]->exchange_multisig_keys(pwd_container->password(), pkeys, signers);
+        if (!wallets[n]->finalize_multisig(pwd_container->password(), pkeys, signers))
+        {
+          tools::fail_msg_writer() << genms::tr("Error finalizing multisig");
+          return false;
+        }
       }
     }
 
@@ -178,12 +182,12 @@ int main(int argc, char* argv[])
   bool should_terminate = false;
   std::tie(vm, should_terminate) = wallet_args::main(
    argc, argv,
-   "triton-gen-multisig [(--testnet|--stagenet)] [--filename-base=<filename>] [--scheme=M/N] [--threshold=M] [--participants=N]",
+   "Triton-gen-multisig [(--testnet|--stagenet)] [--filename-base=<filename>] [--scheme=M/N] [--threshold=M] [--participants=N]",
     genms::tr("This program generates a set of multisig wallets - use this simpler scheme only if all the participants trust each other"),
     desc_params,
     boost::program_options::positional_options_description(),
     [](const std::string &s, bool emphasis){ tools::scoped_message_writer(emphasis ? epee::console_color_white : epee::console_color_default, true) << s; },
-    "triton-gen-multisig.log"
+    "Triton-gen-multisig.log"
   );
   if (!vm)
     return 1;
@@ -242,6 +246,11 @@ int main(int argc, char* argv[])
     return 1;
   }
 
+  if (threshold != total-1 && threshold != total)
+  {
+    tools::fail_msg_writer() << genms::tr("Error: unsupported scheme: only N/N and N-1/N are supported");
+    return 1;
+  }
   bool create_address_file = command_line::get_arg(*vm, arg_create_address_file);
   if (!generate_multisig(threshold, total, basename, testnet ? TESTNET : stagenet ? STAGENET : MAINNET, create_address_file))
     return 1;

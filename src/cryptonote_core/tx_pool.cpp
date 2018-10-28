@@ -83,7 +83,7 @@ namespace cryptonote
     uint64_t get_transaction_weight_limit(uint8_t version)
     {
       // from v8, limit a tx to 50% of the minimum block weight
-      if (version >= 2)
+      if (version >= 8)
         return get_min_block_weight(version) / 2 - CRYPTONOTE_COINBASE_BLOB_RESERVED_SIZE;
       else
         return get_min_block_weight(version) - CRYPTONOTE_COINBASE_BLOB_RESERVED_SIZE;
@@ -766,7 +766,7 @@ namespace cryptonote
     m_blockchain.for_all_txpool_txes([&tx_infos, key_image_infos, include_sensitive_data](const crypto::hash &txid, const txpool_tx_meta_t &meta, const cryptonote::blobdata *bd){
       tx_info txi;
       txi.id_hash = epee::string_tools::pod_to_hex(txid);
-      txi.tx_blob = epee::string_tools::buff_to_hex_nodelimer(*bd);
+      txi.tx_blob = *bd;
       transaction tx;
       if (!parse_and_validate_tx_from_blob(*bd, tx))
       {
@@ -1146,7 +1146,7 @@ namespace cryptonote
     uint64_t best_coinbase = 0, coinbase = 0;
     total_weight = 0;
     fee = 0;
-
+    
     //baseline empty block
     get_block_reward(median_weight, total_weight, already_generated_coins, best_coinbase, version);
 

@@ -791,9 +791,9 @@ namespace cryptonote
       case 4:
         return "triton";
       case 2:
-        return "milliton";
+        return "millitriton";
       case 0:
-        return "picton";
+        return "picotriton";
       default:
         ASSERT_MES_AND_THROW("Invalid decimal point specification: " << default_decimal_point);
     }
@@ -985,7 +985,7 @@ namespace cryptonote
   //---------------------------------------------------------------
   bool calculate_block_hash(const block& b, crypto::hash& res)
   {
-
+    // EXCEPTION FOR BLOCK 202612
     bool hash_result = get_object_hash(get_block_hashing_blob(b), res);
     return hash_result;
   }
@@ -1019,10 +1019,11 @@ namespace cryptonote
   //---------------------------------------------------------------
   bool get_block_longhash(const block& b, crypto::hash& res, uint64_t height)
   {
+    // block 202612 bug workaround
     blobdata bd = get_block_hashing_blob(b);
     const int cn_variant = 1;
     const int light = 1;
-    crypto::cn_slow_hash(bd.data(), bd.size(), res, light,cn_variant);
+    crypto::cn_slow_hash(bd.data(), bd.size(), res, light, cn_variant);
     return true;
   }
   //---------------------------------------------------------------

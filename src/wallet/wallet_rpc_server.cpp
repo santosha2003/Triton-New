@@ -3125,7 +3125,7 @@ namespace tools
       return false;
     }
 
-    if (req.multisig_info.size() < 1 || req.multisig_info.size() > total)
+    if (req.multisig_info.size() < threshold - 1)
     {
       er.code = WALLET_RPC_ERROR_CODE_THRESHOLD_NOT_REACHED;
       er.message = "Needs multisig info from more participants";
@@ -3149,55 +3149,6 @@ namespace tools
     }
     res.address = m_wallet->get_account().get_public_address_str(m_wallet->nettype());
 
-    return true;
-  }
-  //------------------------------------------------------------------------------------------------------------------------------
-  bool wallet_rpc_server::on_exchange_multisig_keys(const wallet_rpc::COMMAND_RPC_EXCHANGE_MULTISIG_KEYS::request& req, wallet_rpc::COMMAND_RPC_EXCHANGE_MULTISIG_KEYS::response& res, epee::json_rpc::error& er)
-  {
-    if (!m_wallet) return not_open(er);
-    if (m_restricted)
-    {
-      er.code = WALLET_RPC_ERROR_CODE_DENIED;
-      er.message = "Command unavailable in restricted mode.";
-      return false;
-    }
-    bool ready;
-    uint32_t threshold, total;
-    if (!m_wallet->multisig(&ready, &threshold, &total))
-    {
-      er.code = WALLET_RPC_ERROR_CODE_NOT_MULTISIG;
-      er.message = "This wallet is not multisig";
-      return false;
-    }
-
-    if (ready)
-    {
-      er.code = WALLET_RPC_ERROR_CODE_ALREADY_MULTISIG;
-      er.message = "This wallet is multisig, and already finalized";
-      return false;
-    }
-
-    if (req.multisig_info.size() < 1 || req.multisig_info.size() > total)
-    {
-      er.code = WALLET_RPC_ERROR_CODE_THRESHOLD_NOT_REACHED;
-      er.message = "Needs multisig info from more participants";
-      return false;
-    }
-
-    try
-    {
-      res.multisig_info = m_wallet->exchange_multisig_keys(req.password, req.multisig_info);
-      if (res.multisig_info.empty())
-      {
-        res.address = m_wallet->get_account().get_public_address_str(m_wallet->nettype());
-      }
-    }
-    catch (const std::exception &e)
-    {
-      er.code = WALLET_RPC_ERROR_CODE_UNKNOWN_ERROR;
-      er.message = std::string("Error calling exchange_multisig_info: ") + e.what();
-      return false;
-    }
     return true;
   }
   //------------------------------------------------------------------------------------------------------------------------------
@@ -3541,7 +3492,7 @@ int main(int argc, char** argv) {
   std::tie(vm, should_terminate) = wallet_args::main(
     argc, argv,
     "triton-wallet-rpc [--wallet-file=<file>|--generate-from-json=<file>|--wallet-dir=<directory>] [--rpc-bind-port=<port>]",
-    tools::wallet_rpc_server::tr("This is the RPC triton wallet. It needs to connect to a triton\ndaemon to work correctly."),
+    tools::wallet_rpc_server::tr("This is the RPC Triton wallet. It needs to connect to a Triton\ndaemon to work correctly."),
     desc_params,
     po::positional_options_description(),
     [](const std::string &s, bool emphasis){ epee::set_console_color(emphasis ? epee::console_color_white : epee::console_color_default, true); std::cout << s << std::endl; if (emphasis) epee::reset_console_color(); },

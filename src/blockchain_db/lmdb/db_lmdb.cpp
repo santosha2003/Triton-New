@@ -649,7 +649,7 @@ uint64_t BlockchainLMDB::get_estimated_batch_size(uint64_t batch_num_blocks, uin
   {
     MDB_txn *rtxn;
     mdb_txn_cursors *rcurs;
-    bool my_rtxn = block_rtxn_start(&rtxn, &rcurs);
+    block_rtxn_start(&rtxn, &rcurs);
     for (uint64_t block_num = block_start; block_num <= block_stop; ++block_num)
     {
       // we have access to block weight, which will be greater or equal to block size,
@@ -661,7 +661,7 @@ uint64_t BlockchainLMDB::get_estimated_batch_size(uint64_t batch_num_blocks, uin
       // some blocks were to be skipped for being outliers.
       ++num_blocks_used;
     }
-    if (my_rtxn) block_rtxn_stop();
+    block_rtxn_stop();
     avg_block_size = total_block_size / num_blocks_used;
     MDEBUG("average block size across recent " << num_blocks_used << " blocks: " << avg_block_size);
   }
@@ -727,7 +727,7 @@ void BlockchainLMDB::add_block(const block& blk, size_t block_weight, const diff
   bi.bi_diff = cumulative_difficulty;
   bi.bi_hash = blk_hash;
   bi.bi_cum_rct = num_rct_outs;
-  if (blk.major_version >= 2)
+  if (blk.major_version >= 4)
   {
     uint64_t last_height = m_height-1;
     MDB_val_set(h, last_height);

@@ -136,14 +136,7 @@ bool t_daemon::run(bool interactive)
   {
     throw std::runtime_error{"Can't run stopped daemon"};
   }
-
-  std::atomic<bool> stop(false);
-  boost::thread([&stop, this] {
-    while (!stop)
-      epee::misc_utils::sleep_no_w(100);
-    this->stop_p2p();
-  }).detach();
-  tools::signal_handler::install([&stop](int){ stop = true; });
+  tools::signal_handler::install(std::bind(&daemonize::t_daemon::stop_p2p, this));
 
   try
   {
