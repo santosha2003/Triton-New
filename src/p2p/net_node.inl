@@ -401,11 +401,7 @@ namespace nodetool
     }
     else
     {
-<<<<<<< HEAD
       full_addrs.insert("104.248.225.218:9231");
-=======
-      full_addrs.insert("104.248.225.218:9231"");
->>>>>>> e98118d4c91da85fe7adec0020cd51bbc539b9ea
       full_addrs.insert("138.68.63.97:9231");
     }
     return full_addrs;
