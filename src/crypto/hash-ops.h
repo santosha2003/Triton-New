@@ -77,9 +77,7 @@ enum {
   HASH_SIZE = 32,
   HASH_DATA_AREA = 136
 };
-size_t tree_depth(size_t count);
-void tree_branch(const char(*hashes)[HASH_SIZE], size_t count, char(*branch)[HASH_SIZE]);
-void tree_hash_from_branch(const char(*branch)[HASH_SIZE], size_t depth, const char *leaf, const void *path, char *root_hash); 
+
 void cn_fast_hash(const void *data, size_t length, char *hash);
 void cn_slow_hash(const void *data, size_t length, char *hash, int light, int variant, int prehashed);
 
