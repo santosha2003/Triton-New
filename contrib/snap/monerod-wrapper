@@ -2,7 +2,7 @@
 
 if [ ! -d "$SNAP_USER_DATA/etc" ]; then
   mkdir $SNAP_USER_DATA/etc/
-  cp -R $SNAP/etc/tritond.conf $SNAP_USER_DATA/etc/tritond.conf
+  cp -R $SNAP/etc/monerod.conf $SNAP_USER_DATA/etc/monerod.conf
 fi
 
-exec "$SNAP/bin/tritond" "$@"
+exec "$SNAP/bin/monerod" "$@"

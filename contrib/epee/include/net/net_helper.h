@@ -42,8 +42,8 @@
 #include "net/net_utils_base.h"
 #include "misc_language.h"
 
-#undef TRITON_DEFAULT_LOG_CATEGORY
-#define TRITON_DEFAULT_LOG_CATEGORY "net"
+#undef MONERO_DEFAULT_LOG_CATEGORY
+#define MONERO_DEFAULT_LOG_CATEGORY "net"
 
 #ifndef MAKE_IP
 #define MAKE_IP( a1, a2, a3, a4 )	(a1|(a2<<8)|(a3<<16)|(a4<<24))
@@ -106,7 +106,8 @@ namespace net_utils
 			~blocked_mode_client()
 		{
 			//profile_tools::local_coast lc("~blocked_mode_client()", 3);
-			shutdown();
+			try { shutdown(); }
+			catch(...) { /* ignore */ }
 		}
 
     inline

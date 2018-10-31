@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2018, The Triton Project
+// Copyright (c) 2014-2018, The Monero Project
 //
 // All rights reserved.
 //
@@ -36,8 +36,8 @@
 #include "wipeable_string.h"
 #include "http_base.h"
 
-#undef TRITON_DEFAULT_LOG_CATEGORY
-#define TRITON_DEFAULT_LOG_CATEGORY "net.http"
+#undef MONERO_DEFAULT_LOG_CATEGORY
+#define MONERO_DEFAULT_LOG_CATEGORY "net.http"
 
 namespace epee
 {
